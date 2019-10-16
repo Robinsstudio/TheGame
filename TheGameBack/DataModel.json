@@ -12,6 +12,11 @@ Card : {
 	value: number
 	}
 
+Action : {
+	_id : String,
+	type : enum
+}
+
 Game : {
 	_id : String,
 	players : {
@@ -24,5 +29,9 @@ Game : {
 		orientation : String,
 		cards : [ Card ]
 	}],
-	nowPlaying : String
+	nowPlaying : String,
+	actions : [ Action ]
 }
+
+
+// Nb Action = Versionning;
