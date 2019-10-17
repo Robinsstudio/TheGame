@@ -30,7 +30,8 @@ Game : {
 		cards : [ Card ]
 	}],
 	nowPlaying : String,
-	actions : [ Action ]
+	actions : [ Action ],
+	status : enum
 }
 
 
