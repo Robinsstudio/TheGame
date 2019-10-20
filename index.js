@@ -5,3 +5,4 @@ mongoose.connect('mongodb://localhost:27017/thegame', { useNewUrlParser: true, u
 
 const Card = require('./model/Card');
 const Player = require('./model/Player');
+const Game = require('./model/Game');
