@@ -6,7 +6,6 @@ mongoose.connect('mongodb://localhost:27017/thegame', { useNewUrlParser: true, u
 const Card = require('./model/Card');
 const Player = require('./model/Player');
 const Game = require('./model/Game');
-//Game.createGame();
-//Game.joinGame('hello','5db1562c859fd712d0fa6551')
-//Game.drawCard('5db015e62e08783f3c12eae')
-Game.refillPlayerHand('5db1562c859fd712d0fa6551','hello');
+//Game.createGame().then(res=>console.log(res)).catch(err=>console.log(err));
+//Game.joinGame('hello2','5db1569d7c4c4132fcb2dfc1').then(res=>console.log(res)).catch(err=>console.log("err"));
+//Game.refillPlayerHand('5db1569d7c4c4132fcb2dfc1','hello2').then(res=>console.log(res)).catch(err=>console.log("err"));;

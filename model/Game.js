@@ -44,44 +44,24 @@ GameSchema.statics.createGame = function(){
 		}
 		return a;
 	};
-	Card.find(/*{value:{$gte: 2, $lte : 99}}*/)
+	return Card.find(/*{value:{$gte: 2, $lte : 99}}*/)
 	.then(function(result){
-		new Game({
+		return new Game({
 			deckPile:shuffle(result),
 			piles : [ new Pile({orientation:'down'}),new Pile({orientation : 'down'}),new Pile({}),new Pile({}) ]
 		}).save()
-		.then(res=>console.log(res._id))
-		.catch(err=>console.log('Erreur lors de la création de la partie'));
-	})
-	.catch(function(err){
-		console.log('Erreur lors de la récupération des cartes');
+		.then(res=>{console.log(res._id);return res;});
 	});
 }
 
 GameSchema.statics.joinGame = function(playerId, gameId){
-	return new Promise(function(resolve,reject){
-		Game.findOneAndUpdate({_id : gameId, status : 'waitingPlayers',players : {$nin : [{_id : playerId}] }},{$addToSet : {players : {_id : playerId, hand : [] }} })
-		.then(res=>{
-			if(res===null)
-				throw Error('La partie n existe pas');
-			resolve(res);
-		})
-		.catch(err=>{console.log(`Impossible de rejoindre la partie ${gameId} pour ${playerId}`);reject(err);});
+	return Game.findOneAndUpdate({_id : gameId, status : 'waitingPlayers','players.id' : playerId},{$addToSet : {players : {_id : playerId}} })
+	.then(res=>{
+		if(res===null)
+			throw Error('La partie n existe pas');
+		return res;
 	});
 }
-/*
-GameSchema.statics.drawCard = function(gameId){
-	return new Promise(function(resolve,reject){
-		Game.findOne({_id : gameId})
-		.then(res=>{
-			let draw = res.deckPile.pop();
-			return res.save()
-			.then(res=>resolve(draw))
-			.catch(err=>{console.log("Erreur lors de la sauvegarde");reject(err);});
-		})
-		.catch(err=> {console.log('Aucune partie trouvée avec cet id');reject(err);})
-	});
-}*/
 
 GameSchema.statics.drawCard = function(game){
 	return game.deckPile.pop();
@@ -89,24 +69,22 @@ GameSchema.statics.drawCard = function(game){
 
 //Rempli la main d'un joueur jusqu'à ce que celui ci ait 5 cartes
 GameSchema.statics.refillPlayerHand = function(gameId, playerId){
-	return new Promise(function(resolve,reject){
-		Game.findOne({_id:gameId, players:{$in : [{_id : playerId}]}})
-		.then(res=>{
-			if(res !== null && res.players !== null){
-				res.players.filter((ele)=>ele._id===playerId && ele.hand.length<5).map(ele=>{
-					let card;
-					do{
-						card = Game.drawCard(res);
-						if(card!==null)
-							ele.hand.push(card);
-					}while(card !== null && ele.hand.length<5)
-				});
-				res.save()
-				.then(r=>{console.log(r);resolve(r);})
-				.catch(err=>{console.log(err);reject("Erreur lors de la sauvegarde de l'objet (fonction refillPlayerHand)")});
-			}
-		})
-		.catch(err=> {console.log(err);reject("Erreur lors du lancement de la fonction refillPlayerHand");});
+	return Game.findOne({_id:gameId, 'players._id': playerId})
+	.then(res=>{
+		console.log(res);
+		if(res !== null && res.players !== null){
+			res.players.filter((ele)=>ele._id===playerId && ele.hand.length<5).map(ele=>{
+				let card;
+				do{
+					card = Game.drawCard(res);
+					if(card!==null)
+						ele.hand.push(card);
+				}while(card !== null && ele.hand.length<5)
+			});
+			return res.save()
+			.then(r=>{return r;})
+		}
+		throw Error("players devrait être un tableau pour "+gameId);
 	});
 }
 
@@ -114,7 +92,7 @@ GameSchema.statics.refillPlayerHand = function(gameId, playerId){
 //Jouer une carte
 GameSchema.statics.playCard = function(gameId,playerId,cardId){
 	return new Promise(function(resolve,reject){
-		Game.findOne({_id : gameId, players : { $in : [{_id : playerId}]}})
+		Game.findOne({_id : gameId, "players._id" : playerId})
 		.then(result => {
 			
 		})
