@@ -4,9 +4,12 @@ const util = require('util');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
+const Constants = require('./../Constants');
+
 const randomBytesAsync = util.promisify(crypto.randomBytes);
 const pbkdf2Async = util.promisify(crypto.pbkdf2);
 const signAsync = util.promisify(jwt.sign);
+const verifyAsync = util.promisify(jwt.verify);
 
 const secretKey = fs.readFileSync(__dirname + '/../secret_key', 'utf8');
 
@@ -53,6 +56,16 @@ PlayerSchema.statics.authenticate = function(login, password) {
 			}
 			return signAsync({ idPlayer: player._id }, secretKey);
 		});
+	});
+}
+
+PlayerSchema.statics.isAuthenticated = function(req, res, next) {
+	const cookie = req.cookies[Constants.JWT_COOKIE];
+	verifyAsync(cookie, secretKey).then(function(token) {
+		req.jwt = token;
+		next();
+	}).catch(function() {
+		res.status(401).end();
 	});
 }
 

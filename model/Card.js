@@ -6,8 +6,8 @@ const CardSchema = new mongoose.Schema({
 
 CardSchema.statics.reset = function() {
 	const model = this.model('Card');
-	model.deleteMany().then(function() {
-		model.insertMany(Array.from({ length: 98 }, (_,i) => new Card({ value: i + 2 })));
+	return model.deleteMany().then(function() {
+		return model.insertMany(Array.from({ length: 98 }, (_,i) => new Card({ value: i + 2 })));
 	});
 }
 
