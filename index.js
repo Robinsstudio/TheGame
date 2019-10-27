@@ -12,7 +12,14 @@ const Constants = require('./Constants');
 const app = express();
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(function(req, res, next) {
+	express.json()(req, res, function(err) {
+		if (err) {
+			res.status(400).json({ error: 'Malformed JSON' });
+		}
+		next();
+	});
+});
 
 app.post('/api/register', function(req, res) {
 	const { login, password, email } = req.body;
