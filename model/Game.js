@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Card = require('./Card');
 const Pile = require('./Pile');
+const Action = require('./Action');
 const GameSchema = new mongoose.Schema({
 	players : [ {
 		_id : String,
@@ -9,17 +10,7 @@ const GameSchema = new mongoose.Schema({
 	deckPile : [ Card.schema ],
 	piles : [ Pile.schema ],
 	nowPlaying : String, //Le joueur du tour
-	actions : [ 
-			{
-				_id : String,
-				type : {
-					type : String,
-					enum : [ 'playCard', 'endTurn' , 'ping' ],
-					default : 'playCard'
-				},
-				details : {}//A redéfinir si jamais la persistance de l'objet details ne s'effectue pas
-			}
-	],
+	actions : [ Action.schema ],
 	status : {
 		type : String,
 		enum : [ 'playing' , 'waitingPlayers','ended' ],
@@ -148,7 +139,9 @@ GameSchema.statics.playCard = function(gameId,playerId,cardId,pileId){
 			else{
 				let card = Game.getCardFromPlayerHand(game,playerId,cardId);
 				Game.putCardOnPile(game,playerId,pile,card);
+				game.actions.push(new Action({type:"playCard",details:{who:playerId,pile:pileId,card:card}}));
 			}
+			
 			return game.save();
 		}
 		else{
@@ -184,6 +177,7 @@ GameSchema.statics.endTurn = function(gameId,playerId){
 		}
 		game.nowPlaying=Game.getNextPlayer(game);
 		Game.refillPlayerHand(gameId,playerId);
+		game.actions.push(new Action({type:"endTurn",details:{who:playerId}}));
 		return game.save();
 	});
 }
@@ -191,7 +185,40 @@ GameSchema.statics.endTurn = function(gameId,playerId){
 
 //récupérer les actions précédentes
 GameSchema.statics.getActions = function(gameId,playerId,version){
-	return ;
+	return Game.findOne({_id:gameId})
+	.then(game=>{
+		if(version !== undefined){
+			return {
+				players : game.players.map(ele=>{
+					if(ele._id != playerId){
+						ele.hand.map(card=>{card.value=0;card._id=0;return card})
+					}
+					return ele;
+				}),
+				piles : game.piles,
+				actions : game.actions.slice(version),
+				version : game.actions.length,
+				nowPlaying : game.nowPlaying,
+				deckPile : game.deckPile.length,
+				status : game.status
+			}
+		}
+		else{
+			return {
+				players : game.players.map(ele=>{
+					if(ele._id != playerId){
+						ele.hand.map(card=>{card.value=0;card._id=0;return card})
+					}
+					return ele;
+				}),
+				piles : game.piles,
+				version : game.actions.length,
+				nowPlaying : game.nowPlaying,
+				deckPile : game.deckPile.length,
+				status : game.status
+			}
+		}
+	});
 }
 
 const Game = mongoose.model('Game', GameSchema);
