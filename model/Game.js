@@ -57,24 +57,12 @@ GameSchema.statics.refillPlayerHand = function(gameId, playerId){
 	.then(res=>{
 		console.log(res);
 		if(res !== null && res.players !== null){
-			res.players.filter((ele)=>ele._id==playerId && ele.hand.length<5).map(ele=>{
-				/*
-				let card = "";
-				while(card !== null && ele.hand.length<5){
-					card = Game.drawCard(res);
-					if(card !== null)
-						ele.hand.push(card);
-				}
-				*/
-				let card;
-				do{
-					card = Game.drawCard(res);
-					if(card!==null)
-						ele.hand.push(card);
-				}while(card !== null && ele.hand.length<5)
+			res.players.filter((ele)=>ele._id==playerId && ele.hand.length<5).map(player=>{
+				const numCardsToDraw = 5-player.hand.length;
+				const drawCards = game.deckPile.splice(game.deckPile.length-numCardsToDraw,numCardsToDraw);
+				player.hand.push(...drawCards);
 			});
-			return res.save()
-			.then(r=>{return r;})
+			return res.save();
 		}
 		throw Error("players devrait être un tableau pour "+gameId);
 	});
