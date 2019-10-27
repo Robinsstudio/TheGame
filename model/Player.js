@@ -54,7 +54,7 @@ PlayerSchema.statics.authenticate = function(login, password) {
 			if (Buffer.compare(hash, player.password)) {
 				throw new Error('Incorrect password');
 			}
-			return signAsync({ idPlayer: player._id }, secretKey);
+			return signAsync({ playerId: player._id }, secretKey);
 		});
 	});
 }
@@ -65,7 +65,7 @@ PlayerSchema.statics.isAuthenticated = function(req, res, next) {
 		req.jwt = token;
 		next();
 	}).catch(function() {
-		res.status(401).end();
+		res.sendStatus(401);
 	});
 }
 

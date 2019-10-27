@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Card = require('./Card');
-const Pile = require('./Pile');
+const Pile = require('./Card');
+
+const Constants = require('./../Constants');
 
 const GameSchema = new mongoose.Schema({
 	players: [{
@@ -35,127 +37,48 @@ function shuffle(array) {
 	return array;
 }
 
+function fillPlayerHand(player, game) {
+	const numCardsToDraw = Constants.PLAYER_HAND_SIZE - player.hand.length;
+	const drawnCards = game.deckPile.splice(game.deckPile.length - numCardsToDraw, numCardsToDraw);
+	player.hand.push(...drawnCards);
+}
+
 //Création d'une nouvelle partie
 GameSchema.statics.createGame = function() {
 	return Card.find().then(function(cards) {
 		return new Game({
-				deckPile: shuffle(cards),
-				piles: [new Pile({
-					orientation: 'down'
-				}), new Pile({
-					orientation: 'down'
-				}), new Pile({}), new Pile({})]
-			}).save()
+			deckPile: shuffle(cards),
+			piles: [new Pile({
+				orientation: 'down'
+			}), new Pile({
+				orientation: 'down'
+			}), new Pile({}), new Pile({})]
+		}).save();
 	});
 }
 
-// GameSchema.statics.joinGame = function(playerId, gameId) {
-// 	return new Promise(function(resolve, reject) {
-// 		Game.findOneAndUpdate({
-// 				_id: gameId,
-// 				status: 'waitingPlayers',
-// 				players: {
-// 					$nin: [{
-// 						_id: playerId
-// 					}]
-// 				}
-// 			}, {
-// 				$addToSet: {
-// 					players: {
-// 						_id: playerId,
-// 						hand: []
-// 					}
-// 				}
-// 			})
-// 			.then(res => {
-// 				if (res === null)
-// 					throw Error('La partie n existe pas');
-// 				resolve(res);
-// 			})
-// 			.catch(err => {
-// 				console.log(`Impossible de rejoindre la partie ${gameId} pour ${playerId}`);
-// 				reject(err);
-// 			});
-// 	});
-// }
-// /*
-// GameSchema.statics.drawCard = function(gameId){
-// 	return new Promise(function(resolve,reject){
-// 		Game.findOne({_id : gameId})
-// 		.then(res=>{
-// 			let draw = res.deckPile.pop();
-// 			return res.save()
-// 			.then(res=>resolve(draw))
-// 			.catch(err=>{console.log("Erreur lors de la sauvegarde");reject(err);});
-// 		})
-// 		.catch(err=> {console.log('Aucune partie trouvée avec cet id');reject(err);})
-// 	});
-// }*/
+GameSchema.statics.joinGame = function(gameId, playerId) {
+	return Game.findById(gameId).then(function(game) {
+		if (!game) {
+			throw new Error('La partie n\'existe pas');
+		}
 
-// GameSchema.statics.drawCard = function(game) {
-// 	return game.deckPile.pop();
-// }
+		let player = game.players.find(function(pl) {
+			return playerId === pl._id;
+		});
 
-// //Rempli la main d'un joueur jusqu'à ce que celui ci ait 5 cartes
-// GameSchema.statics.refillPlayerHand = function(gameId, playerId) {
-// 	return new Promise(function(resolve, reject) {
-// 		Game.findOne({
-// 				_id: gameId,
-// 				players: {
-// 					$in: [{
-// 						_id: playerId
-// 					}]
-// 				}
-// 			})
-// 			.then(res => {
-// 				if (res !== null && res.players !== null) {
-// 					res.players.filter((ele) => ele._id === playerId && ele.hand.length < 5).map(ele => {
-// 						let card;
-// 						do {
-// 							card = Game.drawCard(res);
-// 							if (card !== null)
-// 								ele.hand.push(card);
-// 						} while (card !== null && ele.hand.length < 5)
-// 					});
-// 					res.save()
-// 						.then(r => {
-// 							console.log(r);
-// 							resolve(r);
-// 						})
-// 						.catch(err => {
-// 							console.log(err);
-// 							reject("Erreur lors de la sauvegarde de l'objet (fonction refillPlayerHand)")
-// 						});
-// 				}
-// 			})
-// 			.catch(err => {
-// 				console.log(err);
-// 				reject("Erreur lors du lancement de la fonction refillPlayerHand");
-// 			});
-// 	});
-// }
+		if (!player) {
+			player = {
+				_id: playerId,
+				hand: []
+			};
 
-
-// //Jouer une carte
-// GameSchema.statics.playCard = function(gameId, playerId, cardId) {
-// 	return new Promise(function(resolve, reject) {
-// 		Game.findOne({
-// 				_id: gameId,
-// 				players: {
-// 					$in: [{
-// 						_id: playerId
-// 					}]
-// 				}
-// 			})
-// 			.then(result => {
-
-// 			})
-// 			.catch(err => {
-// 				console.log(err);
-// 				reject("Erreur lors du lancement de la fonction playCard")
-// 			})
-// 	});
-// }
+			fillPlayerHand(player, game);
+			game.players.push(player);
+			return game.save();
+		}
+	});
+}
 
 const Game = mongoose.model('Game', GameSchema);
 

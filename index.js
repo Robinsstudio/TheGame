@@ -15,7 +15,7 @@ app.use(cookieParser());
 app.use(function(req, res, next) {
 	express.json()(req, res, function(err) {
 		if (err) {
-			res.status(400).json({ error: 'Malformed JSON' });
+			return res.status(400).json({ error: 'JSON invalide' });
 		}
 		next();
 	});
@@ -34,14 +34,23 @@ app.post('/api/authentication', function(req, res) {
 	const { login, password } = req.body;
 	Player.authenticate(login, password).then(function(token) {
 		res.cookie(Constants.JWT_COOKIE, token, { httpOnly: true /*, secure: true */ });
-		res.status(200).end();
+		res.sendStatus(204);
 	}).catch(function() {
 		res.status(403).send('Pseudo ou mot de passe incorrect');
 	});
 });
 
 app.post('/api/game', Player.isAuthenticated, function(req, res) {
-	Game.createGame().then(game => res.status(201).json(({ _id: game._id })));
+	Game.createGame().then(game => res.status(201).json(({ id: game._id })));
+});
+
+app.get('/api/game/:id', Player.isAuthenticated, function(req, res) {
+	const { params: { id }, jwt: { playerId } } = req;
+	Game.joinGame(id, playerId).then(function() {
+		res.sendStatus(204);
+	}).catch(function() {
+		res.sendStatus(404);
+	});
 });
 
 app.get('/', function(req, res) {
