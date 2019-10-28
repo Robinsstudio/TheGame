@@ -25,6 +25,20 @@ const NUM_ITERATIONS = 100000;
 const HASH_SIZE = 512;
 const DIGEST = 'sha512';
 
+function clone(object, options = {}) {
+	const newObject = {};
+	Object.entries(object).forEach(function([key, value]) {
+		if (!options.except || options.except !== key && !options.except.includes(key)) {
+			newObject[key] = value;
+		}
+	});
+	return newObject;
+}
+
+function delaySince(epoch) {
+	return Date.now() / 1000 - epoch;
+}
+
 PlayerSchema.statics.register = function(login, password, email) {
 	const model = this.model('Player');
 	return model.find({ login }).then(function(players) {
@@ -62,6 +76,19 @@ PlayerSchema.statics.authenticate = function(login, password) {
 PlayerSchema.statics.isAuthenticated = function(req, res, next) {
 	const cookie = req.cookies[Constants.JWT_COOKIE];
 	verifyAsync(cookie, secretKey).then(function(token) {
+		if (delaySince(token.iat) > 600) {
+			throw new Error('Token expired');
+		}
+
+		if (delaySince(token.iat) > 300) {
+			return signAsync(clone(token, { except: 'iat' }), secretKey).then(function(tk) {
+				res.cookie(Constants.JWT_COOKIE, tk, { httpOnly: true, /*, secure: true */ });
+				return tk;
+			});
+		}
+
+		return token;
+	}).then(function(token) {
 		req.jwt = token;
 		next();
 	}).catch(function() {

@@ -21,7 +21,7 @@ app.use(function(req, res, next) {
 	});
 });
 
-app.post('/api/register', function(req, res) {
+app.post('/api/account', function(req, res) {
 	const { login, password, email } = req.body;
 	Player.register(login, password, email).then(function() {
 		res.status(201).end();
@@ -33,11 +33,14 @@ app.post('/api/register', function(req, res) {
 app.post('/api/authentication', function(req, res) {
 	const { login, password } = req.body;
 	Player.authenticate(login, password).then(function(token) {
-		res.cookie(Constants.JWT_COOKIE, token, { httpOnly: true /*, secure: true */ });
-		res.sendStatus(204);
+		res.cookie(Constants.JWT_COOKIE, token, { httpOnly: true /*, secure: true */ }).sendStatus(204);
 	}).catch(function() {
 		res.status(403).send('Pseudo ou mot de passe incorrect');
 	});
+});
+
+app.delete('/api/authentication', Player.isAuthenticated, function(req, res) {
+	res.clearCookie(Constants.JWT_COOKIE).sendStatus(204);
 });
 
 app.post('/api/game', Player.isAuthenticated, function(req, res) {
