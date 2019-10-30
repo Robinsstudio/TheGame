@@ -7,11 +7,17 @@ class ConnexionPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mailConnexion: "",
+      loginConnexion: "",
       passwordConnexion: "",
+
+      loginRegister: "",
+      mailRegister: "",
+      passwordRegister: "",
+      passwordConfirmation: "",
 
       validForm: false
     };
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
   /////////////////////////////////////////////////////////////////////////////////////////////
   // Fonction qui se lance à la création du composant pour pouvoir utiliser le jQuery
@@ -35,6 +41,32 @@ class ConnexionPage extends Component {
       });
     });
   }
+  //////////////////////////////////////////////////////
+  // Fonction pour modifier les valeurs des inputs
+  handleInputChange = event => {
+    let { value, name } = event.target;
+    this.setState({
+      [name]: value
+    });
+  };
+  ///////////////////////////////////////////////////////////////////
+  // Fonction regex pour valider un mot de passe de plus de 8 caractères
+  validatePassword(mdp) {
+    const regex = /^.{8,}$/;
+    return regex.test(mdp);
+  }
+  ///////////////////////////////////////////////////////////////////
+  // Fonction regex pour valider le pseudo
+  validatePseudo(pseudo) {
+    const regex = /^.{1,}$/;
+    return regex.test(pseudo);
+  }
+  /////////////////////////////////////////////
+  // fonction pour vérifier le format du mail
+  validateEmail(email) {
+    const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regex.test(String(email).toLowerCase());
+  }
   render() {
     return (
       <div className="body">
@@ -48,14 +80,26 @@ class ConnexionPage extends Component {
             <button>S'inscrire</button>
           </div>
           <div className="wrapper">
-            <form id="login" tabIndex="1">
+            <form id="login" tabIndex="1" autoComplete="on">
               <h3>Connexion</h3>
               <div className="mail">
-                <input type="mail" name="" />
+                <input
+                  type="mail"
+                  name="loginConnexion"
+                  autoComplete="username"
+                  onChange={this.handleInputChange}
+                  required
+                />
                 <label>Mail ou Pseudo</label>
               </div>
               <div className="passwd">
-                <input type="password" name="" />
+                <input
+                  type="password"
+                  name="passwordConnexion"
+                  autoComplete="current-password"
+                  onChange={this.handleInputChange}
+                  required
+                />
                 <label>Mot de passe</label>
               </div>
               <div className="submit">
@@ -64,23 +108,47 @@ class ConnexionPage extends Component {
                 </Link>
               </div>
             </form>
-            <form id="register" tabIndex="2">
+            <form id="register" tabIndex="2" autoComplete="on">
               <h3>Inscription</h3>
               <div className="name">
-                <input type="text" name="" />
-                <label>Prénom</label>
+                <input
+                  type="text"
+                  name="loginRegister"
+                  autoComplete="username"
+                  onChange={this.handleInputChange}
+                  required
+                />
+                <label>Pseudo</label>
               </div>
               <div className="mail">
-                <input type="mail" name="" />
+                <input
+                  type="mail"
+                  name="mailRegister"
+                  autoComplete="email"
+                  onChange={this.handleInputChange}
+                  required
+                />
                 <label>Mail</label>
               </div>
               <div className="uid">
-                <input type="text" name="" />
-                <label>Pseudo</label>
+                <input
+                  type="password"
+                  name="passwordRegister"
+                  autoComplete="new-password"
+                  onChange={this.handleInputChange}
+                  required
+                />
+                <label>Mot de passe</label>
               </div>
               <div className="passwd">
-                <input type="password" name="" />
-                <label>Mot de passe</label>
+                <input
+                  type="password"
+                  name="passwordConfirmation"
+                  autoComplete="new-password"
+                  onChange={this.handleInputChange}
+                  required
+                />
+                <label>Confirmation</label>
               </div>
               <div className="submit">
                 <button className="dark">S'inscrire</button>

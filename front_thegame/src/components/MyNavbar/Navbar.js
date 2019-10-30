@@ -56,14 +56,20 @@ class Navbar extends Component {
         </div>
       );
     }
-    if (this.props.location.pathname === "/connected") {
+    if (
+      this.props.location.pathname === "/connected" ||
+      this.props.location.pathname === "/profile" ||
+      this.props.location.pathname === "/settings"
+    ) {
       return (
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarDark">
             <Toolbar>
-              <Typography variant="h6" className="HomeTypo">
-                The Game
-              </Typography>
+              <Link to={"/connected"} className="linkHome HomeTypo">
+                <Typography variant="h6" className="HomeTypo">
+                  The Game
+                </Typography>
+              </Link>
               <Account></Account>
             </Toolbar>
           </AppBar>
@@ -74,8 +80,8 @@ class Navbar extends Component {
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarDark">
             <Toolbar>
-              <Link to={"/"} className="linkHome HomeTypo">
-                <Typography variant="h6" className="HomeTypo">
+              <Link to={"/"} className="linkHome ConnexionTypo">
+                <Typography variant="h6" className="ConnexionTypo">
                   The Game
                 </Typography>
               </Link>

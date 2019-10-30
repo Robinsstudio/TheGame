@@ -1,34 +1,26 @@
 import React, { Component } from "react";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import "./LobbyPage.css";
+import ButtonSection from "./ButtonSection";
+import JoinGame from "./JoinGame";
+import HistoryGame from "./HistoryGame";
 
 export default class LobbyPage extends Component {
   render() {
     return (
       <Container maxWidth="lg">
         <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Paper className="paper">Coucou</Paper>
+          <Grid item xs={12} className="gridButtonSection">
+            <ButtonSection></ButtonSection>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Paper className="paper">xs=12 sm=6</Paper>
+            <h3>Parties en attente :</h3>
+            <JoinGame></JoinGame>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Paper className="paper">xs=12 sm=6</Paper>
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Paper className="paper">xs=6 sm=3</Paper>
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Paper className="paper">xs=6 sm=3</Paper>
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Paper className="paper">xs=6 sm=3</Paper>
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Paper className="paper">xs=6 sm=3</Paper>
+            <h3>Votre historique de parties :</h3>
+            <HistoryGame></HistoryGame>
           </Grid>
         </Grid>
       </Container>
