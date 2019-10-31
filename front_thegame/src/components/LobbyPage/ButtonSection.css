@@ -1,19 +1,19 @@
 .lobbyButton {
-  font-size: 1.5em !important;
+  font-size: 1.4em !important;
   color: white !important;
   background-color: #0cb8b6 !important;
-  padding: 0.5em !important;
+  padding: 0.4em !important;
   margin-left: 2em !important;
 }
 
 .lobbyIcon {
-  font-size: 1.5em !important;
+  font-size: 1.3em !important;
   color: white !important;
   margin-right: 10px;
 }
 
 .lobbyIconReply {
-  font-size: 1.5em !important;
+  font-size: 1.3em !important;
   color: white !important;
   margin-right: 10px;
   transform: rotateY(180deg);

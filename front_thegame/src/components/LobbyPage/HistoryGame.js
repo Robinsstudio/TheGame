@@ -17,16 +17,16 @@ const useStyles = makeStyles({
   }
 });
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(name, type, statut, joueurs) {
+  return { name, type, statut, joueurs };
 }
 
 const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9)
+  createData("Partie avec les potes", "normale", "en cours", "2/5"),
+  createData("Normal game", "normale", "terminée", "2/3"),
+  createData("Solo", "personnalisée", "terminée", "1/1"),
+  createData("Dieu roi", "normale", "terminée", "4/5"),
+  createData("Zeus foudre", "personnalisée", "terminée", "3/3")
 ];
 
 export default function HistoryGame() {
@@ -40,8 +40,7 @@ export default function HistoryGame() {
             <TableCell>Nom de la partie :</TableCell>
             <TableCell align="right">Type</TableCell>
             <TableCell align="right">Statut</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
+            <TableCell align="right">Nombre de joueurs</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -50,10 +49,9 @@ export default function HistoryGame() {
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
+              <TableCell align="right">{row.type}</TableCell>
+              <TableCell align="right">{row.statut}</TableCell>
+              <TableCell align="right">{row.joueurs}</TableCell>
             </TableRow>
           ))}
         </TableBody>

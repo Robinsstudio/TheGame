@@ -7,6 +7,7 @@ import Connexion from "./components/ConnexionPage/ConnexionPage";
 import Lobby from "./components/LobbyPage/LobbyPage";
 import Profile from "./components/MyNavbar/Account/Profile";
 import Settings from "./components/MyNavbar/Account/Settings";
+import Game from "./components/LobbyPage/Game";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/connected" component={Lobby} />
           <Route path="/profile" component={Profile}></Route>
           <Route path="/settings" component={Settings}></Route>
+          <Route path="/game" component={Game}></Route>
         </Switch>
       </div>
     </Router>

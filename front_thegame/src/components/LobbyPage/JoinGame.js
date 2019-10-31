@@ -17,16 +17,16 @@ const useStyles = makeStyles({
   }
 });
 
-function createData(name, calories, fat, carbs) {
-  return { name, calories, fat, carbs };
+function createData(name, type, statut, joueurs) {
+  return { name, type, statut, joueurs };
 }
 
 const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24),
-  createData("Ice cream sandwich", 237, 9.0, 37),
-  createData("Eclair", 262, 16.0, 24),
-  createData("Cupcake", 305, 3.7, 67),
-  createData("Gingerbread", 356, 16.0, 49)
+  createData("Frozen yoghurt", "normale", "publique", "2/5"),
+  createData("Ice cream sandwich", "normale", "publique", "2/3"),
+  createData("Eclair", "personnalisée", "privée", "1/2"),
+  createData("Cupcake", "normale", "publique", "4/5"),
+  createData("Gingerbread", "personnalisée", "privée", "3/3")
 ];
 
 export default function JoinGame() {
@@ -49,9 +49,9 @@ export default function JoinGame() {
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
+              <TableCell align="right">{row.type}</TableCell>
+              <TableCell align="right">{row.statut}</TableCell>
+              <TableCell align="right">{row.joueurs}</TableCell>
             </TableRow>
           ))}
         </TableBody>

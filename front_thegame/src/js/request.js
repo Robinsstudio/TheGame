@@ -1,4 +1,4 @@
-class Request {
+export default class Request {
   constructor(url) {
     this.url = url;
     this.method = "get";
