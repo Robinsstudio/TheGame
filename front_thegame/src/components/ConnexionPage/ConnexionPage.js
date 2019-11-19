@@ -151,7 +151,9 @@ class ConnexionPage extends Component {
                 <label>Confirmation</label>
               </div>
               <div className="submit">
-                <button className="dark">S'inscrire</button>
+                <button className="dark" disabled={!this.state.validForm}>
+                  S'inscrire
+                </button>
               </div>
             </form>
           </div>

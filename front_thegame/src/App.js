@@ -5,7 +5,7 @@ import Home from "./components/Home/Home";
 import NavBar from "./components/MyNavbar/Navbar";
 import Connexion from "./components/ConnexionPage/ConnexionPage";
 import Lobby from "./components/LobbyPage/LobbyPage";
-import Profile from "./components/MyNavbar/Account/Profile";
+import Profile from "./components/MyNavbar/Account/Profile/Profile";
 import Settings from "./components/MyNavbar/Account/Settings";
 import Game from "./components/LobbyPage/Game";
 

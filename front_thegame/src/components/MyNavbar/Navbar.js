@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-constructor */
 import React, { Component } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -59,7 +58,8 @@ class Navbar extends Component {
     if (
       this.props.location.pathname === "/connected" ||
       this.props.location.pathname === "/profile" ||
-      this.props.location.pathname === "/settings"
+      this.props.location.pathname === "/settings" ||
+      this.props.location.pathname === "/game"
     ) {
       return (
         <div className="HomeTypo" id="myNavbarDark">
