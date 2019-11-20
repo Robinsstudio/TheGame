@@ -16,7 +16,7 @@ export default class MySnackbar extends Component {
         }}
         open={this.props.open}
         autoHideDuration={2500}
-        onClose={() => this.props.close(false)}
+        onClose={this.props.close}
       >
         <SnackbarContent
           style={{ backgroundColor: green[600], margin: "0.01071em" }}
@@ -41,7 +41,7 @@ export default class MySnackbar extends Component {
               key="close"
               aria-label="Close"
               color="inherit"
-              onClick={() => this.props.close(false)}
+              onClick={this.props.close}
             >
               <CloseIcon style={{ fontSize: 20 }} />
             </IconButton>

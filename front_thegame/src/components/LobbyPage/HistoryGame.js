@@ -38,9 +38,9 @@ export default function HistoryGame() {
         <TableHead>
           <TableRow>
             <TableCell>Nom de la partie :</TableCell>
-            <TableCell align="right">Type</TableCell>
-            <TableCell align="right">Statut</TableCell>
-            <TableCell align="right">Nombre de joueurs</TableCell>
+            <TableCell align="center">Type</TableCell>
+            <TableCell align="center">Statut</TableCell>
+            <TableCell align="center">Nombre de joueurs</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -49,9 +49,9 @@ export default function HistoryGame() {
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell align="right">{row.type}</TableCell>
-              <TableCell align="right">{row.statut}</TableCell>
-              <TableCell align="right">{row.joueurs}</TableCell>
+              <TableCell align="center">{row.type}</TableCell>
+              <TableCell align="center">{row.statut}</TableCell>
+              <TableCell align="center">{row.joueurs}</TableCell>
             </TableRow>
           ))}
         </TableBody>

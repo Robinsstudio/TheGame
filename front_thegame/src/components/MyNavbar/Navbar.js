@@ -8,10 +8,6 @@ import "./Navbar.css";
 import Account from "./Account/Account";
 
 class Navbar extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     if (this.props.location.pathname === "/login") {
       return (

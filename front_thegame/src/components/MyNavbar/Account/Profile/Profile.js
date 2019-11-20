@@ -22,6 +22,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Divider from "@material-ui/core/Divider";
 import "./Profile.css";
 //var Request = require("../../../../js/request");
 
@@ -36,17 +37,28 @@ export default class Profile extends React.Component {
       mail: "email@mail.com",
       password: "",
 
-      openSnackbar: false,
-      openDialog: false
+      openSnackbarInfo: false,
+      openSnackbarPassword: false,
+      openDialog: false,
+      openModal: false
     };
-    this.changeSnackbar = this.changeSnackbar.bind(this);
+    this.changeSnackbarInfo = this.changeSnackbarInfo.bind(this);
+    this.changeSnackbarPassword = this.changeSnackbarPassword.bind(this);
     this.changeDialog = this.changeDialog.bind(this);
+    this.changeModal = this.changeModal.bind(this);
   }
   ////////////////////////////////////////////////////////////
   ///// Fonction pour ouvrir le snackbar après la sauvegarde des données
-  changeSnackbar(boolean) {
+  changeSnackbarInfo() {
     this.setState({
-      openSnackbar: boolean
+      openSnackbar: !this.state.openSnackbar
+    });
+  }
+  ////////////////////////////////////////////////////////////
+  ///// Fonction pour ouvrir le snackbar après la modification du mot de passe
+  changeSnackbarPassword() {
+    this.setState({
+      openSnackbarPassword: !this.state.openSnackbarPassword
     });
   }
   ////////////////////////////////////////////////////////////////
@@ -54,6 +66,13 @@ export default class Profile extends React.Component {
   changeDialog() {
     this.setState({
       openDialog: !this.state.openDialog
+    });
+  }
+  ////////////////////////////////////////////////////////////////
+  ////// Fonction pour ouvrir le modal de modification du password
+  changeModal() {
+    this.setState({
+      openModal: !this.state.openModal
     });
   }
   render() {
@@ -114,6 +133,7 @@ export default class Profile extends React.Component {
             <Button
               className="mediumSizeProfile buttonMargintopProfile"
               color="primary"
+              onClick={this.changeModal}
             >
               <LockIcon /> Modifier mon mot de passe
             </Button>
@@ -136,8 +156,8 @@ export default class Profile extends React.Component {
               <Button
                 className="bigSizeProfile buttonMarginProfile"
                 color="primary"
-                onClick={item => this.changeSnackbar(true)}
-                disabled={!this.state.validForm}
+                onClick={this.changeSnackbarInfo}
+                //disabled={!this.state.validForm}
               >
                 Sauvegarder
               </Button>
@@ -145,12 +165,21 @@ export default class Profile extends React.Component {
             <MySnackbar
               message={"Informations modifées."}
               open={this.state.openSnackbar}
-              close={item => this.changeSnackbar(item)}
+              close={this.changeSnackbarInfo}
             />
           </Grid>
           <Grid item xs={3}></Grid>
         </Grid>
-
+        <PasswordModal
+          open={this.state.openModal}
+          toggle={this.changeModal}
+          snackbar={this.changeSnackbarPassword}
+        />
+        <MySnackbar
+          message={"Mot de passe modifié."}
+          open={this.state.openSnackbarPassword}
+          close={this.changeSnackbarPassword}
+        />
         {
           ///////////////////////////////////////////////////
           ////Dialogue de suppresion de compte
@@ -160,19 +189,26 @@ export default class Profile extends React.Component {
           onClose={this.changeDialog}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
+          maxWidth="sm"
+          fullWidth={true}
         >
-          <DialogTitle id="alert-dialog-title">
+          <DialogTitle
+            id="alert-dialog-title"
+            className="h2ProfileDialog h3Profile"
+          >
             {"Voulez-vous supprimer votre compte ?"}
           </DialogTitle>
+          <Divider></Divider>
           <DialogContent>
             <DialogContentText
               id="alert-dialog-description"
               className="bigSizeProfile"
-              style={{ margin: "1em" }}
+              style={{ margin: "1em", textAlign: "center" }}
             >
               Attention, toute suppression est définitive !
             </DialogContentText>
           </DialogContent>
+          <Divider></Divider>
           <DialogActions>
             <Button
               onClick={this.changeDialog}
