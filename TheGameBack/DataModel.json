@@ -1,0 +1,38 @@
+User : {
+	_id : String,
+	login : String,
+	password : String,
+	token : String,
+	email : String,
+	registrationDate : String
+}
+
+Card : {
+	_id : String, 
+	value: number
+	}
+
+Action : {
+	_id : String,
+	type : enum
+}
+
+Game : {
+	_id : String,
+	players : {
+				_id : String,
+				hand : [ Card ]
+			},
+	deckPile : [ Card ],
+	piles : [ pile : {
+		_id : String,
+		orientation : String,
+		cards : [ Card ]
+	}],
+	nowPlaying : String,
+	actions : [ Action ],
+	status : enum
+}
+
+
+// Nb Action = Versionning;
