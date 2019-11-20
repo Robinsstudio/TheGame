@@ -1,0 +1,47 @@
+.h3Profile {
+  margin-bottom: 1.5em;
+  color: #0cb8b6;
+}
+
+.gridProfile {
+  margin-top: 1em !important;
+  text-align: center;
+}
+
+.h2ProfileDialog > h2 {
+  font-size: 1em !important;
+}
+
+.boxShadowProfile {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+/* CSS des inputs */
+.bigSizeProfile {
+  font-size: 16px !important;
+}
+.mediumSizeProfile {
+  font-size: 10px !important;
+}
+
+.widthInputProfile {
+  width: 200px !important;
+}
+
+.inputMarginProfile {
+  margin-bottom: 1em !important;
+}
+
+/* CSS des boutons */
+.deleteButtonProfile {
+  margin: 2em !important;
+}
+
+.buttonMarginProfile {
+  margin: 0 1em 1em 1em !important;
+}
+
+.buttonMargintopProfile {
+  margin-top: 1em !important;
+}

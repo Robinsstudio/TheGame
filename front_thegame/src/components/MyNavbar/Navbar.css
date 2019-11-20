@@ -1,0 +1,27 @@
+.linkHome,
+.linkHome:hover,
+.linkHome:active,
+.linkHome:focus {
+  color: white !important;
+  text-decoration: none;
+}
+
+.ConnexionTypo {
+  flex-flow: initial !important;
+  color: white !important;
+  font-size: 1.25em !important;
+}
+
+.myNavbarDark {
+  background-color: black !important;
+}
+
+.myNavbarSilver {
+  background-color: #555555 !important;
+  transition: all 0.5s !important;
+}
+
+.myNavbarRed {
+  background-color: #700000 !important;
+  transition: all 0.5s !important;
+}

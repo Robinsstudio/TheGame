@@ -1,0 +1,17 @@
+.paper {
+  text-align: center;
+  padding: 2em;
+}
+
+.gridButtonSection {
+  margin-top: 2em !important;
+  text-align: center;
+}
+
+/* CSS des tableaux de parties */
+.MuiTableCell-root {
+  font-size: 14px !important;
+}
+.MuiTableHead-root {
+  background-color: silver;
+}

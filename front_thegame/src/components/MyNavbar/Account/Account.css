@@ -1,0 +1,25 @@
+.material-icons {
+  margin-right: 5px;
+}
+
+.linkNavbar {
+  color: white !important;
+  font-size: 1em !important;
+  background-color: transparent !important;
+}
+
+.MuiMenuItem-root {
+  font-size: 1em !important;
+}
+
+.dropdown-divider {
+  height: 0;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  border-top: 1px solid #e9ecef;
+}
+
+.linkMenu {
+  color: rgba(0, 0, 0, 0.87) !important;
+  text-decoration: none !important;
+}
