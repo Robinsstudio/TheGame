@@ -49,9 +49,11 @@ app.post('/api/game', Player.isAuthenticated, function(req, res) {
 
 app.get('/api/game/:id', Player.isAuthenticated, function(req, res) {
 	const { params: { id }, jwt: { playerId } } = req;
+	console.log(playerId);
 	Game.joinGame(id, playerId).then(function() {
 		res.sendStatus(204);
-	}).catch(function() {
+	}).catch(function(err) {
+		console.log(err);
 		res.sendStatus(404);
 	});
 });

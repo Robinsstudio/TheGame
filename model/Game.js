@@ -135,13 +135,25 @@ GameSchema.statics.createGame = function(){
 	});
 }
 
-GameSchema.statics.joinGame = function(playerId, gameId){
-	return Game.findOneAndUpdate({_id : gameId, status : 'waitingPlayers','players.id' : playerId},{$addToSet : {players : {_id : playerId}} })
+GameSchema.statics.joinGame = function(gameId, playerId){
+	return Game.findOne({_id : gameId})
+	.then(res=>{
+		if(res===null)
+			throw Error("La partie n'existe pas");
+		if(res.status === 'waitingPlayers' && res.players === undefined)
+			res.players = [{_id:playerId,hand:[]}];
+		else{
+			if(res.status === 'waitingPlayers' && res.players.filter(ele=>ele._id.toString()===playerId).length===0)
+				res.players.push({_id:playerId,hand:[]});
+		}
+		return res.save();
+	})
+	/*return Game.findOneAndUpdate({_id : gameId, status : 'waitingPlayers'},{$addToSet : {players : {_id : playerId}} })
 	.then(res=>{
 		if(res === null)
 			throw Error("La partie n'existe pas");
 		return res;
-	});
+	});*/
 }
 
 GameSchema.statics.drawCard = function(game){
