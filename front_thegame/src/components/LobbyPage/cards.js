@@ -4,15 +4,13 @@ var cards = (function() {
   //The global options
   var opt = {
     cardSize: { width: 69, height: 94, padding: 18 },
-    animationSpeed: 500,
+    animationSpeed: 1000,
     table: "body",
     cardback: "red",
     acesHigh: false,
-    cardsUrl: "img/cards.png",
-    blackJoker: false,
-    redJoker: false
+    cardsUrl: "img/cards.png"
   };
-  var zIndexCounter = 1;
+  var zIndexCounter = 100;
   var all = []; //All the cards created.
 
   function mouseEvent(ev) {
@@ -45,25 +43,22 @@ var cards = (function() {
       all.push(new Card("d", i, opt.table));
       all.push(new Card("c", i, opt.table));
     }
-    if (opt.blackJoker) {
-      all.push(new Card("bj", 0, opt.table));
-    }
-    if (opt.redJoker) {
-      all.push(new Card("rj", 0, opt.table));
-    }
 
     $(".card").click(mouseEvent);
     shuffle(all);
   }
 
   function shuffle(deck) {
-    //Fisher yates shuffle
     var i = deck.length;
     if (i === 0) return;
     while (--i) {
+      // On prend un nombre aléatoire
       var j = Math.floor(Math.random() * (i + 1));
+      // On récupère la carte dans le deck à l'index i
       var tempi = deck[i];
+      // Puis on récupère la carte à l'index j
       var tempj = deck[j];
+      // Et on échange leurs places
       deck[i] = tempj;
       deck[j] = tempi;
     }
@@ -88,7 +83,7 @@ var cards = (function() {
           position: "absolute",
           cursor: "pointer"
         })
-        .addClass("card")
+        .addClass("card testcss")
         .data("card", this)
         .appendTo($(table));
       this.showCard();
