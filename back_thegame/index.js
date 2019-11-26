@@ -109,6 +109,17 @@ app.put('/api/game/:id/ready',Player.isAuthenticated,function(req,res){
 	})
 })
 
+app.get('/api/game/:id/cards/where/:cardValue',Player.isAuthenticated,function(req,res){
+	const { params: { id,cardValue }, jwt: { playerId } } = req;
+	Game.whereToPlay(id,cardValue,playerId)
+	.then(function(result){
+		res.status(200).json({result});
+	})
+	.catch(function(err){
+		console.log(err);
+		res.status(404).send(err);
+	})
+})
 
 app.get('/', function(req, res) {
 	res.send('This page is not very interesting at the moment.');
