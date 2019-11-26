@@ -30,7 +30,7 @@ app.post('/api/account', function(req, res) {
 	});
 });
 
-app.post('/api/authentication', function(req, res) {
+app.put('/api/authentication', function(req, res) {
 	const { login, password } = req.body;
 	Player.authenticate(login, password).then(function(token) {
 		res.cookie(Constants.JWT_COOKIE, token, { httpOnly: true /*, secure: true */ }).sendStatus(204);
@@ -47,16 +47,68 @@ app.post('/api/game', Player.isAuthenticated, function(req, res) {
 	Game.createGame().then(game => res.status(201).json(({ id: game._id })));
 });
 
-app.get('/api/game/:id', Player.isAuthenticated, function(req, res) {
+app.put('/api/game/:id', Player.isAuthenticated, function(req, res) {
 	const { params: { id }, jwt: { playerId } } = req;
-	console.log(playerId);
 	Game.joinGame(id, playerId).then(function() {
-		res.sendStatus(204);
-	}).catch(function(err) {
+		return Game.getActions(id,playerId)
+	})
+	.then(function(result){
+		res.status(204).json(result);
+	})
+	.catch(function(err) {
 		console.log(err);
 		res.sendStatus(404);
 	});
 });
+
+app.get('/api/game/:id',Player.isAuthenticated,function(req,res){
+	const { params: { id }, jwt: { playerId } } = req;
+	Game.getActions(id,playerId)
+	.then(function(result){
+		res.status(200).json(result);
+	})
+	.catch(function(err) {
+		console.log(err);
+		res.status(404).send(err);
+	});
+});
+
+app.put('/api/game/:id/fintour',Player.isAuthenticated,function(req,res){
+	const { params: { id }, jwt: { playerId } } = req;
+	Game.endTurn(id,playerId)
+	.then(function(){
+		res.sendStatus(200);
+	})
+	.catch(function(err){
+		console.log(err);
+		res.status(404).send(err);
+	})
+});
+
+app.put('/api/game/:id/cartes',Player.isAuthenticated,function(req,res){
+	const { body : { cardId,pileId }, params: { id }, jwt: { playerId } } = req;
+	Game.playCard(id,playerId,cardId,pileId)
+	.then(function(){
+		res.sendStatus(200);
+	})
+	.catch(function(err){
+		console.log(err);
+		res.status(404).send(err);
+	})
+})
+
+app.put('/api/game/:id/ready',Player.isAuthenticated,function(req,res){
+	const { params: { id }, jwt: { playerId } } = req;
+	Game.ready(id,playerId)
+	.then(function(){
+		res.sendStatus(200);
+	})
+	.catch(function(err){
+		console.log(err);
+		res.status(404).send(err);
+	})
+})
+
 
 app.get('/', function(req, res) {
 	res.send('This page is not very interesting at the moment.');

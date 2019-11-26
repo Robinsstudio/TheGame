@@ -8,7 +8,11 @@ const Action = require('./Action');
 const GameSchema = new mongoose.Schema({
 	players : [ {
 		_id : String,
-		hand : [ Card.schema ]
+		hand : [ Card.schema ],
+		ready : {
+			type : Boolean,
+			default : false
+		}
 	} ],
 	deckPile : [ Card.schema ],
 	piles : [ Pile.schema ],
@@ -16,7 +20,7 @@ const GameSchema = new mongoose.Schema({
 	actions : [ Action.schema ],
 	status : {
 		type : String,
-		enum : [ 'playing' , 'waitingPlayers','ended' ],
+		enum : [ 'playing' , 'waitingPlayers','ended','won','game over' ],
 		default : 'waitingPlayers'
 	}
 });
@@ -31,7 +35,7 @@ let shuffle = function (a) {
 	return a;
 };
 
-GameSchema.methods.getPlayer = function(game, playerId){
+GameSchema.statics.getPlayer = function(game, playerId){
 	let player = game.players.filter(ele => ele._id === playerId)[0];
 	if(player === undefined){
 		throw Error("Le joueur n'existe pas");
@@ -39,7 +43,7 @@ GameSchema.methods.getPlayer = function(game, playerId){
 	return player;
 }
 
-GameSchema.methods.getCardFromPlayerHand = function(game, playerId, cardId){
+GameSchema.statics.getCardFromPlayerHand = function(game, playerId, cardId){
 	let player = Game.getPlayer(game, playerId);
 	let card = player.hand.filter(ele => ele._id == cardId)[0];
 	if(card === undefined){
@@ -48,12 +52,12 @@ GameSchema.methods.getCardFromPlayerHand = function(game, playerId, cardId){
 	return card;
 }
 
-GameSchema.methods.removeCardFromPlayerHand = function(game, playerId, cardId){
+GameSchema.statics.removeCardFromPlayerHand = function(game, playerId, cardId){
 	let player = Game.getPlayer(game,playerId);
 	player.hand = player.hand.filter(ele => ele._id !== cardId);
 }
 
-GameSchema.methods.putCardOnPile = function(game, playerId, pile, card){
+GameSchema.statics.putCardOnPile = function(game, playerId, pile, card){
 	if(pile.cards.length === 0){
 		Game.removeCardFromPlayerHand(game, playerId, card._id);
 		pile.cards.push(card);
@@ -71,38 +75,38 @@ GameSchema.methods.putCardOnPile = function(game, playerId, pile, card){
 	}
 }
 
-GameSchema.methods.canBePlaced = function(pile,card){
+GameSchema.statics.canBePlaced = function(pile,card){
 	return (pile.orientation === 'down' && pile.cards[pile.cards.length-1].value > card.value || 
 	pile.orientation === 'up' && pile.cards[pile.cards.length-1].value < card.value);
 }
 
-GameSchema.methods.canBePlacedOnAtLeastOne = function(piles,card){
+GameSchema.statics.canBePlacedOnAtLeastOne = function(piles,card){
 	if(piles === undefined)
 		throw Error("Il n'y a pas de piles");
 	return piles.reduce((prev,pile)=>(prev || Game.canBePlaced(pile,card)),false);
 }
 
-GameSchema.methods.getNextPlayer = function(game){
+GameSchema.statics.getNextPlayer = function(game){
 	let playerPos = game.players.map(ele => ele._id.toString()).indexOf(game.nowPlaying)+1;
 	if(playerPos === game.players.length)
 		playerPos=0;
 	return game.players[playerPos]._id;
 }
 
-GameSchema.methods.hasToPlayAgain = function(game, playerId){
+GameSchema.statics.hasToPlayAgain = function(game, playerId){
 	if(game.nowPlaying !== playerId){
 		throw Error(`Ce n'est pas à ${playerId} de jouer`);
 	}
 	let player = Game.getPlayer(game, playerId);
 	let nbCardPlayed = Game.countCardPlayedThisTurn(game);
-	return (player.hand.length!==0 && (nbCardPlayed >= 2 && game.deckPile.length > 0) || (nbCardPlayed >= 1 && game.deckPile.length === 0));
+	return (player.hand.length!==0 && ((nbCardPlayed < 2 && game.deckPile.length > 0) || (nbCardPlayed < 1 && game.deckPile.length === 0)));
 }
 
-GameSchema.methods.countCardPlayable = function(game,hand){
+GameSchema.statics.countCardPlayable = function(game,hand){
 	return hand.filter(card=>Game.canBePlacedOnAtLeastOne(game.piles,card)).length;
 }
 
-GameSchema.methods.canPlayAgain = function(game,playerId){
+GameSchema.statics.canPlayAgain = function(game,playerId){
 	if(game.nowPlaying !== playerId){
 		throw Error(`Ce n'est pas à ${playerId} de jouer`);
 	}
@@ -110,7 +114,7 @@ GameSchema.methods.canPlayAgain = function(game,playerId){
 	return !(player.hand.length===0 || Game.countCardPlayable(game,player.hand).length===0);	
 }
 
-GameSchema.methods.countCardPlayedThisTurn = function(game){
+GameSchema.statics.countCardPlayedThisTurn = function(game){
 	if(game.actions === undefined)
 		throw Error("Aucune action à traiter")
 	let nbCardPlayed = game.actions.filter(ele=>(ele.type==="endTurn" || ele.type==="playCard"));
@@ -118,15 +122,24 @@ GameSchema.methods.countCardPlayedThisTurn = function(game){
 	return nbCardPlayed;
 }
 
-GameSchema.methods.playersStillHaveCards = function(game){
+GameSchema.statics.playersStillHaveCards = function(game){
 	return game.players.filter((player)=>player.hand.length>0).length>0;
 }
+
+GameSchema.statics.drawCard = function(game){
+	game.players.map(player=>{
+		const numCardsToDraw = 5-player.hand.length;
+		const drawCards = game.deckPile.splice(game.deckPile.length-numCardsToDraw,numCardsToDraw);
+		player.hand.push(...drawCards);
+	});
+}
+
 
 //------Méthodes statiques de l'objet Game ------//
 
 //Création d'une nouvelle partie
 GameSchema.statics.createGame = function(){
-	return Card.find(/*{value:{$gte: 2, $lte : 99}}*/)
+	return Card.find({value:{$gte: 2, $lte : 11}})
 	.then(result => {
 		return new Game({
 			deckPile:shuffle(result),
@@ -156,25 +169,43 @@ GameSchema.statics.joinGame = function(gameId, playerId){
 	});*/
 }
 
-GameSchema.statics.drawCard = function(game){
-	return game.deckPile.pop();
+GameSchema.statics.ready = function(gameId,playerId){
+	return Game.findOne({_id : gameId})
+	.then(res=>{
+		if(res===null)
+			throw Error("La partie n'existe pas")
+		if(res.players === undefined)
+			throw Error("Il n'y a pas de joueurs dans cette partie");	
+		if(res.players.filter(ele=>ele._id.toString() === playerId).length === 0)
+			throw Error("Ce joueur n'est pas dans la partie");
+		if(res.status !== "waitingPlayers")
+			throw Error("Cette action ne peut être exécutée actuellement");
+		res.player = res.players.map(ele=>{
+			if(ele._id.toString()===playerId)
+				ele.ready=true;
+			return ele;
+		});
+		if(res.players.filter(ele=>!ele.ready).length===0){
+			res.status = 'playing';
+			res.nowPlaying = res.players[0]._id;
+			Game.drawCard(res);
+		}
+		return res.save();
+	})
 }
 
-//Remplit la main d'un joueur jusqu'à ce que celui ci ait 5 cartes
-GameSchema.statics.refillPlayerHand = function(gameId, playerId){
-	return Game.findOne({_id : gameId, 'players._id': playerId})
-	.then(res => {
-		console.log(res);
-		if(res !== null && res.players !== null){
-			res.players.filter((ele)=>ele._id==playerId && ele.hand.length<5).map(player=>{
-				const numCardsToDraw = 5-player.hand.length;
-				const drawCards = game.deckPile.splice(game.deckPile.length-numCardsToDraw,numCardsToDraw);
-				player.hand.push(...drawCards);
-			});
-			return res.save();
-		}
-		throw Error("players devrait être un tableau pour "+gameId);
-	});
+//Quitter une partie n'ayant pas commencé
+GameSchema.statics.leaveGame = function(gameId,playerId){
+	return Game.findOne({_id : gameId})
+	.then(res=>{
+		if(res===null)
+			throw Error("La partie n'existe pas");
+		if(res.players === undefined)
+			throw Error("Il n'y a pas de joueurs dans cette partie");
+		if(res.status === 'waitingPlayers')
+			res.players = res.player.filter(ele=>ele._id.toString() !== playerId);
+		return res.save();
+	})
 }
 
 //Jouer une carte
@@ -219,7 +250,6 @@ GameSchema.statics.playCard = function(gameId, playerId, cardId, pileId){
 GameSchema.statics.endTurn = function(gameId, playerId){
 	return Game.findOne({_id : gameId})
 	.then(game => {
-
 		if(game.status !== "playing"){
 			throw Error("Cette action ne peut pas être réalisée actuellement");
 		}
@@ -231,7 +261,7 @@ GameSchema.statics.endTurn = function(gameId, playerId){
 			throw Error("Vous n'avez pas joué assez de cartes");
 		}
 		game.nowPlaying=Game.getNextPlayer(game);
-		Game.refillPlayerHand(gameId, playerId);
+		Game.drawCard(game);
 		game.actions.push(new Action({type : "endTurn", details : { who : playerId }}));
 		return game.save();
 	});
