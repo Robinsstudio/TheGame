@@ -1,0 +1,40 @@
+#buttons {
+  text-align: center;
+}
+
+a img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 0;
+}
+button {
+  padding: 1em;
+  margin: 8px auto;
+  border-radius: 25px;
+}
+img.preload {
+  display: none;
+}
+
+#card-table {
+  background-color: rgb(0, 128, 96);
+  height: 400px;
+  border: solid 6px brown;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  box-shadow: #111 1px 1px 2px;
+}
+
+.borderPile {
+  transform: scale(1.2) !important;  
+  border: 2px solid black !important;
+}
+
+.borderCard {
+  transform: scale(1.2) !important;  
+  border : 2px solid black !important;
+}
