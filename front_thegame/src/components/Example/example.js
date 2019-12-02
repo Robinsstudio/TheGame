@@ -1,4 +1,3 @@
-const nbJoueurs = 3
 // Tell the library which element to use for the table
 cards.init({ table: "#card-table" });
 
@@ -13,7 +12,7 @@ deck.addCards(cards.all);
 deck.render({ immediate: true });
 
 // Now lets create a couple of hands, one face down, one face up.
-upperhand = new cards.Hand({ faceUp: false, y: 60, x: 140});
+upperhand = new cards.Hand({ faceUp: false, y: 60, x: 140 });
 myHand = new cards.Hand({ faceUp: true, y: 340 });
 righthand = new cards.Hand({ faceUp: false, y: 340, x: 140 });
 
@@ -29,16 +28,16 @@ descendantPile1.x += 50;
 descendantPile2.x += 150;
 
 // Fonction qui initialise les decks et mains des joueurs
-deck.deal(7, [upperhand, myHand, righthand], 50, function() {
-//This is a callback function, called when the dealing is done
-  ascendantPile1.addCard(deck.topCard());
-  ascendantPile1.render();
-  ascendantPile2.addCard(deck.topCard());
-  ascendantPile2.render();
-  descendantPile1.addCard(deck.topCard());
+deck.deal(7, [upperhand, myHand, righthand], function() {
+  //This is a callback function, called when the dealing is done
+  descendantPile1.addCard(deck.firstCard());
   descendantPile1.render();
-  descendantPile2.addCard(deck.topCard());
+  descendantPile2.addCard(deck.firstCard());
   descendantPile2.render();
+  ascendantPile1.addCard(deck.firstCard());
+  ascendantPile1.render();
+  ascendantPile2.addCard(deck.firstCard());
+  ascendantPile2.render();
 });
 /////////////////////////////////////////////////////////
 // Fonction finir le tour du joueur et piocher des cartes
@@ -46,35 +45,62 @@ $("#buttonEndTurn").click(function() {
   // On retire toutes les bordures
   deleteBorderCards();
   deleteBorderPiles();
-  while(myHand.length<7) {
-      myHand.addCard(deck.topCard());
-      myHand.render();
-    }
+  while (myHand.length < 7) {
+    myHand.addCard(deck.topCard());
+    myHand.render();
+  }
 });
 ////////////////////////////////////////////////////
-// Fonction pour mettre une carte sur une pile
+// Fonction pour sélectionner une carte dans notre main
 myHand.click(function(card) {
-
+  let isSelected = false;
+  // On regarde si la carte était déjà sélectionnée
+  if (card.el.hasClass("borderCard")) {
+    isSelected = true;
+  }
   // On retire toutes les bordures
   deleteBorderCards();
   deleteBorderPiles();
 
-  ascendantPile1.borderChange(true);
-  ascendantPile2.borderChange(true);
+  let cardValue = card.rank;
+  // On regarde si la carte était déjà sélectionnée
+  if (isSelected === false) {
+    addBorderPilesAsc(ascendantPile1, cardValue);
+    addBorderPilesAsc(ascendantPile2, cardValue);
+    addBorderPilesDesc(descendantPile1, cardValue);
+    addBorderPilesDesc(descendantPile2, cardValue);
 
-  myHand.borderChange(card, true);
-
-  /*
-  console.log(deck);
-  console.log(ascendantPile1);
-  console.log(myHand);
-  */
-
-  //ascendantPile1.addCard(card);
-  //ascendantPile2.addCard(card);
+    myHand.borderChange(card, true);
+  }
 });
+////////////////////////////////////////////////////////////
+// Fonction pour savoir si met des bordures à la pile ascendante
+function addBorderPilesAsc(pile, rankCard) {
+  const ind = pile.length - 1;
+  const rankPile = pile[ind].rank;
+  const tenDiff = pile[ind].rank + 10;
+  if (rankPile > rankCard) {
+    pile.borderChange(true);
+  }
+  if (tenDiff === rankCard) {
+    pile.borderChange(true);
+  }
+}
+////////////////////////////////////////////////////////////
+// Fonction pour savoir si met des bordures à la pile descendante
+function addBorderPilesDesc(pile, rankCard) {
+  const ind = pile.length - 1;
+  const rankPile = pile[ind].rank;
+  const tenDiff = pile[ind].rank - 10;
+  if (rankPile < rankCard) {
+    pile.borderChange(true);
+  }
+  if (tenDiff === rankCard) {
+    pile.borderChange(true);
+  }
+}
 ///////////////////////////////////////////////////////////
-// Fonction pour vérifier si une carte est déjà sélectionnée
+// Fonction pour supprimer les bordures des cartes
 function deleteBorderCards() {
   myHand.forEach(function(card) {
     myHand.borderChange(card, false);
@@ -91,8 +117,8 @@ function deleteBorderPiles() {
 /////////////////////////////////////////////////////////
 // Fonction pour mettre la carte sélectionné sur la pile
 ascendantPile1.click(function() {
-  const ind = ascendantPile1.length -1;
-  if(ascendantPile1[ind].el.hasClass("borderPile")) {
+  const ind = ascendantPile1.length - 1;
+  if (ascendantPile1[ind].el.hasClass("borderPile")) {
     const cardSelected = getCardSelected(myHand);
     // On retire les bordures
     deleteBorderPiles();
@@ -104,8 +130,8 @@ ascendantPile1.click(function() {
   }
 });
 ascendantPile2.click(function() {
-  const ind = ascendantPile2.length -1;
-  if(ascendantPile2[ind].el.hasClass("borderPile")) {
+  const ind = ascendantPile2.length - 1;
+  if (ascendantPile2[ind].el.hasClass("borderPile")) {
     const cardSelected = getCardSelected(myHand);
     // On retire les bordures
     deleteBorderPiles();
@@ -117,8 +143,8 @@ ascendantPile2.click(function() {
   }
 });
 descendantPile1.click(function() {
-  const ind = descendantPile1.length -1;
-  if(descendantPile1[ind].el.hasClass("borderPile")) {
+  const ind = descendantPile1.length - 1;
+  if (descendantPile1[ind].el.hasClass("borderPile")) {
     const cardSelected = getCardSelected(myHand);
     // On retire les bordures
     deleteBorderPiles();
@@ -130,8 +156,8 @@ descendantPile1.click(function() {
   }
 });
 descendantPile2.click(function() {
-  const ind = descendantPile2.length -1;
-  if(descendantPile2[ind].el.hasClass("borderPile")) {
+  const ind = descendantPile2.length - 1;
+  if (descendantPile2[ind].el.hasClass("borderPile")) {
     const cardSelected = getCardSelected(myHand);
     // On retire les bordures
     deleteBorderPiles();
@@ -147,26 +173,24 @@ descendantPile2.click(function() {
 function getCardSelected(myHand) {
   let cardSelected = "";
   myHand.forEach(function(card) {
-    if(card.el.hasClass("borderCard")) {
+    if (card.el.hasClass("borderCard")) {
       cardSelected = card;
     }
   });
   return cardSelected;
 }
-
 ////////////////////////////////////////////////////////
-// Fonction pour mettre une carte d'une main sur une pile
+// Fonction pour mettre une carte d'une main  d'un autre joueur sur une pile
 function playerAddCard(pile, main, carte) {
   pile.addCard(carte);
   pile.render();
   main.render();
 }
-
 ////////////////////////////////////////////////////////
-// Fonction pour qu'un autre joueur repioche
+// Fonction pour qu'un autre joueur repioche des cartes à la fin
 function playerEndTurn(main) {
-    while(main.length<7) {
-      main.addCard(deck.topCard());
-      main.render();
-    }
+  while (main.length < 7) {
+    main.addCard(deck.topCard());
+    main.render();
+  }
 }
