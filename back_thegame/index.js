@@ -37,9 +37,8 @@ app.put('/api/authentication', function(req, res) {
 	}).catch(function() {
 		res.status(403).send('Pseudo ou mot de passe incorrect');
 	});
-});
-
-app.delete('/api/authentication', Player.isAuthenticated, function(req, res) {
+})
+.delete('/api/authentication', Player.isAuthenticated, function(req, res) {
 	res.clearCookie(Constants.JWT_COOKIE).sendStatus(204);
 });
 
@@ -59,11 +58,24 @@ app.put('/api/game/:id', Player.isAuthenticated, function(req, res) {
 		console.log(err);
 		res.sendStatus(404);
 	});
-});
-
-app.get('/api/game/:id',Player.isAuthenticated,function(req,res){
+})
+.get('/api/game/:id',Player.isAuthenticated,function(req,res){
 	const { params: { id }, jwt: { playerId } } = req;
 	Game.getActions(id,playerId)
+	.then(function(result){
+		res.status(200).json(result);
+	})
+	.catch(function(err) {
+		console.log(err);
+		res.status(404).send(err);
+	});
+});
+
+
+
+app.get('/api/game/:id/:version',Player.isAuthenticated,function(req,res){
+	const { params: { id, version }, jwt: { playerId } } = req;
+	Game.getActions(id,playerId,version)
 	.then(function(result){
 		res.status(200).json(result);
 	})
