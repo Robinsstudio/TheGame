@@ -236,7 +236,7 @@ GameSchema.statics.playCard = function(gameId, playerId, cardId, pileId){
 				if(Game.hasToPlayAgain(game,playerId) && !Game.canPlayAgain(game,playerId))
 					game.status="game over";
 				if(game.deckPile.length===0 && !Game.playersStillHaveCards(game))
-					game.status = "win";
+					game.status = "won";
 			}
 			return game.save();
 		}
@@ -295,6 +295,24 @@ GameSchema.statics.getActions = function(gameId, playerId, version){
 
 		return gameInfo;
 	});
+}
+
+
+//Connaitre les piles sur lesquelles le joueur peut jouer
+GameSchema.statics.whereToPlay = function(gameId,cardValue,playerId){
+	return Game.findOne({_id: gameId})
+	.then(game=>{
+		if(game.status !== 'playing')
+			return [];
+		if(game.nowPlaying !== playerId)
+			return [];
+		if(game.piles !== undefined){
+			return game.piles.filter(pile=>((pile.orientation==='up' && cardValue>pile.cards[pile.cards.length-1].value) ||
+			(pile.orientation==='down' && cardValue<pile.cards[pile.cards.length-1].value)))
+			.map(pile=>pile._id);
+		}
+		return [];
+	})
 }
 
 const Game = mongoose.model('Game', GameSchema);
