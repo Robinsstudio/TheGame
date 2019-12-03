@@ -36,7 +36,7 @@ export default class Request {
     };
 
     if (this.json) {
-      options.body = this.json;
+      options.body = JSON.stringify(this.json);
     }
 
     return fetch(this.url, options);

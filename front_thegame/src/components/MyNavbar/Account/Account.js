@@ -7,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
 
-export default function Account() {
+export default function Account({disconnect}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = event => {
@@ -53,10 +53,8 @@ export default function Account() {
             <Link to={"/settings"} className="linkMenu">
               <MenuItem onClick={handleClose}>Paramètres</MenuItem>
             </Link>
-            <div class="dropdown-divider"></div>
-            <Link to={"/"}>
-              <MenuItem onClick={handleClose}>Déconnexion</MenuItem>
-            </Link>
+            <div className="dropdown-divider"></div>
+            <MenuItem onClick={()=>{handleClose();disconnect();}}>Déconnexion</MenuItem>
           </MenuList>
         </Paper>
       </Popover>

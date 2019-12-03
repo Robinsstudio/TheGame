@@ -32,8 +32,18 @@ app.post('/api/account', function(req, res) {
 
 app.put('/api/authentication', function(req, res) {
 	const { login, password } = req.body;
-	Player.authenticate(login, password).then(function(token) {
-		res.cookie(Constants.JWT_COOKIE, token, { httpOnly: true /*, secure: true */ }).sendStatus(204);
+	Player.authenticate(login, password).then(function(info) {
+		let body = {id : info.playerId.toString(), login : info.playerLogin};
+		//res.cookie(Constants.JWT_COOKIE, token, { httpOnly: true /*, secure: true */ }).sendStatus(204);
+		res.cookie(Constants.JWT_COOKIE, info.token, { httpOnly: true /*, secure: true */ }).status(200).json(body);
+	}).catch(function() {
+		res.status(403).send('Pseudo ou mot de passe incorrect');
+	});
+})
+.get('/api/authentication',Player.isAuthenticated,function(req,res){
+	const { jwt: { playerId } } = req;
+	Player.getPlayerInfo(playerId).then(function(info) {
+		res.status(200).json({id : info._id, login : info.login})
 	}).catch(function() {
 		res.status(403).send('Pseudo ou mot de passe incorrect');
 	});

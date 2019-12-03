@@ -68,7 +68,8 @@ PlayerSchema.statics.authenticate = function(login, password) {
 			if (Buffer.compare(hash, player.password)) {
 				throw new Error('Incorrect password');
 			}
-			return signAsync({ playerId: player._id }, secretKey);
+			return signAsync({ playerId: player._id }, secretKey)
+			.then(token=>{return {token : token, playerId: player._id, playerLogin : player.login}});
 		});
 	});
 }
@@ -94,6 +95,10 @@ PlayerSchema.statics.isAuthenticated = function(req, res, next) {
 	}).catch(function() {
 		res.sendStatus(401);
 	});
+}
+
+PlayerSchema.statics.getPlayerInfo = function(playerId){
+	return Player.findOne({_id : playerId});
 }
 
 const Player = mongoose.model('Player', PlayerSchema);

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "./ConnexionPage.css";
 import $ from "jquery";
-import { Link, withRouter } from "react-router-dom";
-
+import { withRouter } from "react-router-dom";
+import Request from '../../js/request.js';
 class ConnexionPage extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +18,10 @@ class ConnexionPage extends Component {
       validForm: false
     };
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.connect = this.connect.bind(this);
+    this.register = this.register.bind(this);
   }
+
   /////////////////////////////////////////////////////////////////////////////////////////////
   // Fonction qui se lance à la création du composant pour pouvoir utiliser le jQuery
   componentDidMount() {
@@ -53,7 +56,7 @@ class ConnexionPage extends Component {
   // Fonction regex pour valider un mot de passe de plus de 8 caractères
   validatePassword(mdp) {
     const regex = /^.{8,}$/;
-    return regex.test(mdp);
+    return regex.test(mdp) && mdp === this.state.passwordConfirmation;
   }
   ///////////////////////////////////////////////////////////////////
   // Fonction regex pour valider le pseudo
@@ -67,6 +70,37 @@ class ConnexionPage extends Component {
     const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return regex.test(String(email).toLowerCase());
   }
+
+  connect(){
+    new Request('/api/authentication')
+    .put()
+    .body({login : this.state.loginConnexion,password : this.state.passwordConnexion})
+    .send()
+    .then(res=>{if(res.ok)return res.json(res); throw Error("Erreur de connexion")})
+    .then(res=>{console.log(res);if(this.props.onRequestReceived!==undefined)this.props.onRequestReceived(res);})
+    .catch(err=>console.log(err));
+    /*fetch('http://localhost:8080/api/authentication',{
+            method : 'PUT',
+            headers: new Headers({
+                "Content-Type": "application/json"
+            }),
+            body : JSON.stringify({login : this.state.loginConnexion,password : this.state.passwordConnexion}) 
+        })
+    .then(res=>console.log(res)).catch(err=>console.log(err))*/
+  }
+
+  register(){
+    new Request('/api/account')
+    .post()
+    .body({login : this.state.loginRegister,email : this.state.mailRegister,password : this.state.passwordRegister})
+    .send()
+    .then(res=>{if(res.ok)return res; return res.text().then(err=>{console.log(err);throw Error(err)})})
+    .then(res=>this.setState({loginConnexion : this.state.loginRegister,
+                            passwordConnexion : this.state.passwordRegister }))
+    .then(()=>this.connect())
+    .catch(err=>console.log(err));
+  }
+
   render() {
     return (
       <div className="body">
@@ -103,9 +137,7 @@ class ConnexionPage extends Component {
                 <label>Mot de passe</label>
               </div>
               <div className="submit">
-                <Link to={"/connected"} className="linkHome">
-                  <button className="dark">Connexion</button>
-                </Link>
+                <button type="button" className="dark" onClick={this.connect}>Connexion</button>
               </div>
             </form>
             <form id="register" tabIndex="2" autoComplete="on">
@@ -151,7 +183,7 @@ class ConnexionPage extends Component {
                 <label>Confirmation</label>
               </div>
               <div className="submit">
-                <button className="dark" disabled={!this.state.validForm}>
+                <button type="button" onClick={this.register}className="dark" /*disabled={!this.state.validForm}*/>
                   S'inscrire
                 </button>
               </div>
