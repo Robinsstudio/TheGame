@@ -3,12 +3,14 @@
 var cards = (function() {
   //The global options
   var opt = {
-    cardSize: { width: 69, height: 94, padding: 18 },
-    animationSpeed: 1000,
+    cardSize: { width: 69, height: 106, padding: 20 },
+    animationSpeed: 100,
     table: "body",
-    cardback: "red",
+    cardback: "img/dos.png",
     acesHigh: false,
-    cardsUrl: "img/cards.png"
+    cardsUrl: "img/carteSolo.png",
+    pileAsc: "img/1.png",
+    pileDsc: "img/100.png"
   };
   var zIndexCounter = 100;
   var all = []; //All the cards created.
@@ -31,37 +33,22 @@ var cards = (function() {
         }
       }
     }
-    var start = opt.acesHigh ? 2 : 1;
-    var end = start + 12;
+    let start = 2;
+    let end = 99;
     opt.table = $(opt.table)[0];
     if ($(opt.table).css("position") === "static") {
       $(opt.table).css("position", "relative");
     }
-    for (i = start; i <= end; i++) {
-      all.push(new Card("h", i, opt.table));
-      all.push(new Card("s", i, opt.table));
-      all.push(new Card("d", i, opt.table));
-      all.push(new Card("c", i, opt.table));
-    }
+    // Création des 4 piles
+    all.unshift(new Card("pileDsc1", 100, opt.table));
+    all.unshift(new Card("pileDsc2", 100, opt.table));
+    all.unshift(new Card("pileAsc1", 1, opt.table));
+    all.unshift(new Card("pileAsc2", 1, opt.table));
 
+    for (let i = start; i <= end; i++) {
+      all.push(new Card(i, i, opt.table));
+    }
     $(".card").click(mouseEvent);
-    shuffle(all);
-  }
-
-  function shuffle(deck) {
-    var i = deck.length;
-    if (i === 0) return;
-    while (--i) {
-      // On prend un nombre aléatoire
-      var j = Math.floor(Math.random() * (i + 1));
-      // On récupère la carte dans le deck à l'index i
-      var tempi = deck[i];
-      // Puis on récupère la carte à l'index j
-      var tempj = deck[j];
-      // Et on échange leurs places
-      deck[i] = tempj;
-      deck[j] = tempi;
-    }
   }
 
   function Card(suit, rank, table) {
@@ -70,22 +57,52 @@ var cards = (function() {
 
   Card.prototype = {
     init: function(suit, rank, table) {
-      this.shortName = suit + rank;
+      this.shortName = rank;
       this.suit = suit;
       this.rank = rank;
-      this.name = suit.toUpperCase() + rank;
+      this.name = "carte" + rank;
       this.faceUp = false;
-      this.el = $("<div/>")
-        .css({
-          width: opt.cardSize.width,
-          height: opt.cardSize.height,
-          "background-image": "url(" + opt.cardsUrl + ")",
-          position: "absolute",
-          cursor: "pointer"
-        })
-        .addClass("card testcss")
-        .data("card", this)
-        .appendTo($(table));
+      if (rank === 100) {
+        this.el = $("<div/>")
+          .css({
+            width: opt.cardSize.width,
+            height: opt.cardSize.height,
+            "background-image": "url(" + opt.pileDsc + ")",
+            position: "absolute",
+            cursor: "pointer"
+          })
+          .addClass("card")
+          .data("card", this)
+          .appendTo($(table));
+      }
+      if (rank === 1) {
+        this.el = $("<div/>")
+          .css({
+            width: opt.cardSize.width,
+            height: opt.cardSize.height,
+            "background-image": "url(" + opt.pileAsc + ")",
+            position: "absolute",
+            cursor: "pointer"
+          })
+          .addClass("card")
+          .data("card", this)
+          .appendTo($(table));
+      }
+      if (rank > 1 && rank < 100) {
+        this.el = $("<div/>")
+          .css({
+            width: opt.cardSize.width,
+            height: opt.cardSize.height,
+            "background-image": "url(" + opt.cardsUrl + ")",
+            position: "absolute",
+            cursor: "pointer",
+            color: "white"
+          })
+          .addClass("card")
+          .data("card", this)
+          .text(rank)
+          .appendTo($(table));
+      }
       this.showCard();
       this.moveToFront();
     },
@@ -112,24 +129,41 @@ var cards = (function() {
     },
 
     showCard: function() {
-      var offsets = { c: 0, d: 1, h: 2, s: 3 };
-      var xpos, ypos;
-      var rank = this.rank;
-      if (rank === 14) {
-        rank = 1; //Aces high must work as well.
-      }
-      xpos = -rank * opt.cardSize.width;
-      ypos = -offsets[this.suit] * opt.cardSize.height;
+      /*
+      let offsets = {
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5,
+        "6": 6,
+        "7": 7,
+        "8": 8,
+        "9": 9
+      };
+      */
+      //var xpos, ypos;
+      let rank = this.rank;
+      //xpos = -rank * opt.cardSize.width;
+      //ypos = -offsets[this.suit] * opt.cardSize.height;
       this.rotate(0);
-      $(this.el).css("background-position", xpos + "px " + ypos + "px");
+      if (rank === 100) {
+        $(this.el).css("background-image", "url(" + opt.pileDsc + ")");
+      }
+      if (rank === 1) {
+        $(this.el).css("background-image", "url(" + opt.pileAsc + ")");
+      }
+      if (rank > 1 && rank < 100) {
+        $(this.el).css("background-image", "url(" + opt.cardsUrl + ")");
+        $(this.el).text(rank);
+        //$(this.el).css('background-position', xpos + 'px ' + ypos + 'px');
+      }
     },
 
     hideCard: function(position) {
-      var y =
-        opt.cardback === "red"
-          ? 0 * opt.cardSize.height
-          : -1 * opt.cardSize.height;
-      $(this.el).css("background-position", "0px " + y + "px");
+      $(this.el).css("background-image", "url(" + opt.cardback + ")");
+      $(this.el).text("");
       this.rotate(0);
     },
 
@@ -193,7 +227,7 @@ var cards = (function() {
 
     render: function(options) {
       options = options || {};
-      var speed = options.speed || opt.animationSpeed;
+      var speed = opt.animationSpeed;
       this.calcPosition(options);
       for (var i = 0; i < this.length; i++) {
         var card = this[i];
@@ -235,12 +269,14 @@ var cards = (function() {
       }
     },
 
+    // Retourne la carte sur le paquet (donc la dernière du tableau)
     topCard: function() {
       return this[this.length - 1];
     },
 
-    toString: function() {
-      return "Container";
+    // Retourne la première carte du deck (la carte en dessous du deck)
+    firstCard: function() {
+      return this[0];
     }
   });
 
@@ -264,12 +300,16 @@ var cards = (function() {
         this[i].targetLeft = left;
       }
     },
-
-    toString: function() {
-      return "Deck";
+    // Changement taille de la pile
+    borderChange: function(boolean) {
+      const ind = this.length - 1;
+      if (boolean === false) {
+        this[ind].el.removeClass("borderPile");
+      } else {
+        this[ind].el.addClass("borderPile");
+      }
     },
-
-    deal: function(count, hands, speed, callback) {
+    deal: function(count, hands, callback) {
       var me = this;
       var i = 0;
       var totalCount = count * hands.length;
@@ -281,7 +321,10 @@ var cards = (function() {
           return;
         }
         hands[i % hands.length].addCard(me.topCard());
-        hands[i % hands.length].render({ callback: dealOne, speed: speed });
+        hands[i % hands.length].render({
+          callback: dealOne,
+          speed: opt.animationSpeed
+        });
         i++;
       }
       dealOne();
@@ -293,6 +336,14 @@ var cards = (function() {
   }
   Hand.prototype = new Container();
   Hand.prototype.extend({
+    // changement de taille pour la carte séléctionnée
+    borderChange: function(card, boolean) {
+      if (boolean === false) {
+        card.el.removeClass("borderCard");
+      } else {
+        card.el.addClass("borderCard");
+      }
+    },
     calcPosition: function(options) {
       options = options || {};
       var width = opt.cardSize.width + (this.length - 1) * opt.cardSize.padding;
@@ -302,10 +353,6 @@ var cards = (function() {
         this[i].targetTop = top;
         this[i].targetLeft = left + i * opt.cardSize.padding;
       }
-    },
-
-    toString: function() {
-      return "Hand";
     }
   });
 
@@ -317,10 +364,6 @@ var cards = (function() {
   Pile.prototype.extend({
     calcPosition: function(options) {
       options = options || {};
-    },
-
-    toString: function() {
-      return "Pile";
     },
 
     deal: function(count, hands) {
@@ -339,8 +382,7 @@ var cards = (function() {
     Container: Container,
     Deck: Deck,
     Hand: Hand,
-    Pile: Pile,
-    shuffle: shuffle
+    Pile: Pile
   };
 })();
 
