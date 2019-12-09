@@ -25,7 +25,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Divider from "@material-ui/core/Divider";
 import "./Profile.css";
 import Request from '../../../../js/request.js';
-//var Request = require("../../../../js/request");
 
 export default class Profile extends React.Component {
   constructor(props) {
@@ -37,9 +36,6 @@ export default class Profile extends React.Component {
       oldMail : "",
       pseudo: "",
       mail: "",
-      oldPassword : "",
-      newPassword : "",
-      newPasswordConfirm: "",
 
       openSnackbarInfo: false,
       openSnackbarPassword: false,
@@ -55,7 +51,7 @@ export default class Profile extends React.Component {
   sendNewData(){
     new Request('/api/account/')
     .put()
-    .body({login : this.state.pseudo,mail:this.state.mail,oldPassword:this.state.oldPassword,newPassword : this.state.newPassword})
+    .body({login : this.state.pseudo,mail:this.state.mail})
     .send()
     .then(res=>{if(res.ok)return res.json();return res.text().then(r=>{throw new Error(r)})})
     .then(res=>this.props.onRequestReceived({login : res.login,mail : res.mail}))

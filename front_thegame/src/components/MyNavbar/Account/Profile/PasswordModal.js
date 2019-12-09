@@ -17,7 +17,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-
+import Request from '../../../../js/request.js';
 export default class PasswordModal extends React.Component {
   constructor(props) {
     super(props);
@@ -36,6 +36,17 @@ export default class PasswordModal extends React.Component {
     };
     this.handleClickShowPassword = this.handleClickShowPassword.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
+    this.sendNewData = this.sendNewData.bind(this);
+  }
+
+  sendNewData(){
+    new Request('/api/account/')
+    .put()
+    .body({oldPassword:this.state.password,newPassword : this.state.newPassword})
+    .send()
+    .then(res=>{if(res.ok)return res;return res.text().then(r=>{throw new Error(r)})})
+    .then(res=>this.handleChangePassword())
+    .catch(err=>console.log(err));
   }
 
   ///////////////////////////////////////////////////////////////////
@@ -88,6 +99,8 @@ export default class PasswordModal extends React.Component {
                 type={this.state.showPassword ? "text" : "password"}
                 className="bigSizeProfile widthInputProfile"
                 autoComplete="current-password"
+                value={this.state.password}
+                onChange={(evt)=>this.setState({password:evt.target.value})}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -119,6 +132,8 @@ export default class PasswordModal extends React.Component {
                 type={this.state.showPassword ? "text" : "password"}
                 className="bigSizeProfile widthInputProfile"
                 autoComplete="new-password"
+                value={this.state.newPassword}
+                onChange={(evt)=>this.setState({newPassword:evt.target.value})}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -156,6 +171,8 @@ export default class PasswordModal extends React.Component {
                 type={this.state.showPassword ? "text" : "password"}
                 className="bigSizeProfile widthInputProfile"
                 autoComplete="new-password"
+                value={this.state.newPasswordConfirm}
+                onChange={(evt)=>this.setState({newPasswordConfirm:evt.target.value})}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -193,7 +210,7 @@ export default class PasswordModal extends React.Component {
           <Button
             color="secondary"
             style={{ fontSize: "14px" }}
-            onClick={this.handleChangePassword}
+            onClick={this.sendNewData}
             //disabled={!this.state.validForm}
           >
             Modifier
