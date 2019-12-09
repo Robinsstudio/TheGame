@@ -1,11 +1,15 @@
 import $ from "jquery";
 import cards from "./cards.js";
 
-export default function init() {
+let deck;
+let ascendantPile1, ascendantPile2, descendantPile1, descendantPile2;
+let hands = [];
+
+export function init() {
   //Tell the library which element to use for the table
   cards.init({ table: "#card-table" });
   //Create a new deck of cards
-  let deck = new cards.Deck();
+  deck = new cards.Deck();
   //By default it's in the middle of the container, put it slightly to the side
   deck.x -= 50;
   //cards.all contains all cards, put them all in the deck
@@ -29,16 +33,16 @@ export default function init() {
   });
 
   // Les piles de cartes
-  let ascendantPile1 = new cards.Deck({
+  ascendantPile1 = new cards.Deck({
     faceUp: true
   });
-  let ascendantPile2 = new cards.Deck({
+  ascendantPile2 = new cards.Deck({
     faceUp: true
   });
-  let descendantPile1 = new cards.Deck({
+  descendantPile1 = new cards.Deck({
     faceUp: true
   });
-  let descendantPile2 = new cards.Deck({
+  descendantPile2 = new cards.Deck({
     faceUp: true
   });
   // Le placement des piles de cartes
@@ -47,21 +51,17 @@ export default function init() {
   descendantPile1.x += 50;
   descendantPile2.x += 150;
 
-  //Let's deal when the Deal button is pressed:
-  $("#deal").click(function() {
-    // Fonction qui initialise les decks et mains des joueurs
-    $("#deal").hide();
-    deck.deal(7, [upperhand, myHand, righthand], function() {
-      //This is a callback function, called when the dealing is done
-      descendantPile1.addCard(deck.firstCard());
-      descendantPile1.render();
-      descendantPile2.addCard(deck.firstCard());
-      descendantPile2.render();
-      ascendantPile1.addCard(deck.firstCard());
-      ascendantPile1.render();
-      ascendantPile2.addCard(deck.firstCard());
-      ascendantPile2.render();
-    });
+  //$("#deal").hide();
+  deck.deal(7, [upperhand, myHand, righthand], function() {
+    //This is a callback function, called when the dealing is done
+    descendantPile1.addCard(deck.firstCard());
+    descendantPile1.render();
+    descendantPile2.addCard(deck.firstCard());
+    descendantPile2.render();
+    ascendantPile1.addCard(deck.firstCard());
+    ascendantPile1.render();
+    ascendantPile2.addCard(deck.firstCard());
+    ascendantPile2.render();
   });
   /////////////////////////////////////////////////////////
   // Fonction finir le tour du joueur et piocher des cartes
@@ -203,19 +203,26 @@ export default function init() {
     });
     return cardSelected;
   }
-  ////////////////////////////////////////////////////////
-  // Fonction pour mettre une carte d'une main  d'un autre joueur sur une pile
-  function playerAddCard(pile, main, carte) {
-    pile.addCard(carte);
-    pile.render();
+}
+////////////////////////////////////////////////////////
+// Fonction pour mettre une carte d'une main  d'un autre joueur sur une pile
+export function playerAddCard(pile, main, carte) {
+  pile.addCard(carte);
+  pile.render();
+  main.render();
+}
+////////////////////////////////////////////////////////
+// Fonction pour qu'un autre joueur repioche des cartes à la fin
+export function playerEndTurn(main) {
+  while (main.length < 7) {
+    main.addCard(deck.topCard());
     main.render();
   }
-  ////////////////////////////////////////////////////////
-  // Fonction pour qu'un autre joueur repioche des cartes à la fin
-  function playerEndTurn(main) {
-    while (main.length < 7) {
-      main.addCard(deck.topCard());
-      main.render();
-    }
-  }
 }
+
+function pioche(main, carte) {
+  main.addCard(deck.getCard(carte));
+  main.render();
+}
+
+export default { init, playerEndTurn, playerAddCard, pioche };
