@@ -273,10 +273,6 @@
     // Retourne la première carte du deck (la carte en dessous du deck)
     firstCard: function() {
       return this[0];
-    },
-
-    toString: function() {
-      return "Container";
     }
   });
 
@@ -299,10 +295,6 @@
         this[i].targetTop = top;
         this[i].targetLeft = left;
       }
-    },
-
-    toString: function() {
-      return "Deck";
     },
     // Changement taille de la pile
     borderChange: function(boolean) {

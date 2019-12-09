@@ -1,11 +1,9 @@
 // Tell the library which element to use for the table
 cards.init({ table: "#card-table" });
-
 // Créer le deck avec toutes les cartes
 deck = new cards.Deck();
 // By default it's in the middle of the container, put it slightly to the side
 deck.x -= 50;
-
 //cards.all contains all cards, put them all in the deck
 deck.addCards(cards.all);
 //No animation here, just get the deck onto the table.
