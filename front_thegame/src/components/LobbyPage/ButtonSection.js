@@ -10,7 +10,7 @@ export default class ButtonSection extends Component {
   render() {
     return (
       <div>
-        <Link to={"/game"} className="linkMenu">
+        <Link to={"/createGame"} className="linkMenu">
           <Button className="lobbyButton">
             <AddCircleIcon className="lobbyIcon"></AddCircleIcon> Créer une
             partie
