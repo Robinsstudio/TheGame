@@ -28,12 +28,24 @@ app.post('/api/account', function(req, res) {
 	}).catch(function() {
 		res.status(409).send('Pseudo déjà utilisé');
 	});
+})
+.put('/api/account',Player.isAuthenticated,function(req,res){
+	const {jwt : {playerId}} = req;
+	Player.editPlayer(playerId,req.body.login,req.body.mail,req.body.oldPassword,req.body.newPassword)
+	.then(result=>res.status(200).json({login : result.login,mail : result.email}))
+	.catch(err=>{console.log(err);res.sendStatus(404)});
+})
+.delete('/api/account',Player.isAuthenticated,function(req,res){
+	const {jwt : {playerId}} = req;
+	Player.deletePlayer(playerId)
+	.then(()=>res.clearCookie(Constants.JWT_COOKIE).status(200).send("Compte supprimé"))
+	.catch(()=>res.status(404).send('Impossible de supprimer le compte'));
 });
 
 app.put('/api/authentication', function(req, res) {
 	const { login, password } = req.body;
 	Player.authenticate(login, password).then(function(info) {
-		let body = {id : info.playerId.toString(), login : info.playerLogin};
+		let body = {id : info.playerId.toString(), login : info.playerLogin,mail : info.playerMail};
 		//res.cookie(Constants.JWT_COOKIE, token, { httpOnly: true /*, secure: true */ }).sendStatus(204);
 		res.cookie(Constants.JWT_COOKIE, info.token, { httpOnly: true /*, secure: true */ }).status(200).json(body);
 	}).catch(function() {
@@ -43,7 +55,7 @@ app.put('/api/authentication', function(req, res) {
 .get('/api/authentication',Player.isAuthenticated,function(req,res){
 	const { jwt: { playerId } } = req;
 	Player.getPlayerInfo(playerId).then(function(info) {
-		res.status(200).json({id : info._id, login : info.login})
+		res.status(200).json({id : info._id, login : info.login,mail : info.email})
 	}).catch(function() {
 		res.status(403).send('Pseudo ou mot de passe incorrect');
 	});

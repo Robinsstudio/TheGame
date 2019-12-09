@@ -56,6 +56,49 @@ PlayerSchema.statics.register = function(login, password, email) {
 	});
 }
 
+PlayerSchema.statics.editPlayer = function(playerId,login,mail,oldPass,newPass){
+	return Player.findOne({_id: playerId})
+	.then(player=>{if(player === undefined)throw new Error("Le joueur n'existe pas");return player})
+	.then(player=>{
+		if(login !== undefined && login !== player.login)
+			return Player.find({login}).then(function(players) {
+				if (players.length) {
+					throw new Error('Login unavailable');
+				}
+				player.login = login;
+				return player;
+			});
+		return player;
+	})
+	.then(player=>{
+		if(mail!== undefined && mail !== player.mail)
+			player.email = mail;
+		return player;
+	})
+	.then(player=>{
+		if(oldPass !== undefined && newPass !== undefined && oldPass !== newPass){
+			return pbkdf2Async(oldPass, player.salt, NUM_ITERATIONS, HASH_SIZE, DIGEST)
+			.then(function(hash) {
+				if (Buffer.compare(hash, player.password)) {
+					throw new Error('Incorrect password');
+				}
+				return randomBytesAsync(256).then(function(buffer) {
+					return buffer;
+				}).then(function(salt) {
+					return pbkdf2Async(newPass, salt, NUM_ITERATIONS, HASH_SIZE, DIGEST)
+					.then(function(hashNewPass) {
+						player.salt = salt;
+						player.password = hashNewPass;
+						return player;
+					});
+				});
+			});
+		}
+		return player;
+	})
+	.then(player=>player.save())
+}
+
 PlayerSchema.statics.authenticate = function(login, password) {
 	const model = this.model('Player');
 	return model.find({ login }).then(function(players) {
@@ -69,7 +112,7 @@ PlayerSchema.statics.authenticate = function(login, password) {
 				throw new Error('Incorrect password');
 			}
 			return signAsync({ playerId: player._id }, secretKey)
-			.then(token=>{return {token : token, playerId: player._id, playerLogin : player.login}});
+			.then(token=>{return {token : token, playerId: player._id, playerLogin : player.login,playerMail : player.email}});
 		});
 	});
 }
@@ -99,6 +142,10 @@ PlayerSchema.statics.isAuthenticated = function(req, res, next) {
 
 PlayerSchema.statics.getPlayerInfo = function(playerId){
 	return Player.findOne({_id : playerId});
+}
+
+PlayerSchema.statics.deletePlayer = function(playerId){
+	return Player.deleteOne({_id : playerId});
 }
 
 const Player = mongoose.model('Player', PlayerSchema);

@@ -24,6 +24,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Divider from "@material-ui/core/Divider";
 import "./Profile.css";
+import Request from '../../../../js/request.js';
 //var Request = require("../../../../js/request");
 
 export default class Profile extends React.Component {
@@ -32,10 +33,13 @@ export default class Profile extends React.Component {
 
     this.state = {
       validForm: false,
-
-      pseudo: "pseudo",
-      mail: "email@mail.com",
-      password: "",
+      oldPseudo : "",
+      oldMail : "",
+      pseudo: "",
+      mail: "",
+      oldPassword : "",
+      newPassword : "",
+      newPasswordConfirm: "",
 
       openSnackbarInfo: false,
       openSnackbarPassword: false,
@@ -47,6 +51,28 @@ export default class Profile extends React.Component {
     this.changeDialog = this.changeDialog.bind(this);
     this.changeModal = this.changeModal.bind(this);
   }
+
+  sendNewData(){
+    new Request('/api/account/')
+    .put()
+    .body({login : this.state.pseudo,mail:this.state.mail,oldPassword:this.state.oldPassword,newPassword : this.state.newPassword})
+    .send()
+    .then(res=>{if(res.ok)return res.json();return res.text().then(r=>{throw new Error(r)})})
+    .then(res=>this.props.onRequestReceived({login : res.login,mail : res.mail}))
+    .then(res=>this.changeSnackbarInfo())
+    .catch(err=>console.log(err));
+  }
+
+  componentDidMount(){
+    if(this.props.login !== undefined && this.props.mail !== undefined)
+      this.setState({oldPseudo : this.props.login, oldMail : this.props.mail, pseudo : this.props.login,mail : this.props.mail})
+  }
+
+  componentDidUpdate(){
+    if(this.state.oldPseudo === "" && this.state.mail === "" && this.props.login !== undefined && this.props.mail !== undefined)
+      this.setState({oldPseudo : this.props.login, oldMail : this.props.mail, pseudo : this.props.login,mail : this.props.mail})
+  }
+
   ////////////////////////////////////////////////////////////
   ///// Fonction pour ouvrir le snackbar après la sauvegarde des données
   changeSnackbarInfo() {
@@ -75,6 +101,23 @@ export default class Profile extends React.Component {
       openModal: !this.state.openModal
     });
   }
+  pseudoChange(login){
+    this.setState({pseudo : login});
+  }
+
+  emailChange(email){
+    this.setState({mail : email})
+  }
+
+  deleteAccount(){
+    new Request("/api/account")
+    .delete()
+    .send()
+    .then(res=>{if(res.ok)return res; return res.text().then(err=>{console.log(err);throw Error(err)})})
+    .then(res=>{if(this.props.disconnect !== undefined)this.props.disconnect()})
+    .catch(err=>console.log(err));
+  }
+
   render() {
     return (
       <Container maxWidth="lg">
@@ -97,6 +140,7 @@ export default class Profile extends React.Component {
                 type="text"
                 value={this.state.pseudo}
                 color="primary"
+                onChange={evt=>this.pseudoChange(evt.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
                     <AccountCircle
@@ -118,6 +162,7 @@ export default class Profile extends React.Component {
                 className="bigSizeProfile widthInputProfile"
                 type="email"
                 value={this.state.mail}
+                onChange={evt=>this.emailChange(evt.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
                     <EmailIcon
@@ -147,21 +192,19 @@ export default class Profile extends React.Component {
               Supprimer mon compte
             </Button>
             <div></div>
-            <Link to={"/connected"} className="linkHome HomeTypo">
+            <Link to={"/"} className="linkHome HomeTypo">
               <Button className="bigSizeProfile buttonMarginProfile">
                 Retour
               </Button>
             </Link>
-            <Link to={"/profile"} className="linkHome HomeTypo">
               <Button
                 className="bigSizeProfile buttonMarginProfile"
                 color="primary"
-                onClick={this.changeSnackbarInfo}
+                onClick={()=>this.sendNewData()}
                 //disabled={!this.state.validForm}
               >
                 Sauvegarder
               </Button>
-            </Link>
             <MySnackbar
               message={"Informations modifées."}
               open={this.state.openSnackbar}
@@ -217,11 +260,9 @@ export default class Profile extends React.Component {
             >
               Non, annuler
             </Button>
-            <Link to={"/"} className="linkHome HomeTypo">
-              <Button color="secondary" style={{ fontSize: "13px" }}>
-                Oui, supprimer mon compte
-              </Button>
-            </Link>
+            <Button onClick={()=>this.deleteAccount()} color="secondary" style={{ fontSize: "13px" }}>
+              Oui, supprimer mon compte
+            </Button>
           </DialogActions>
         </Dialog>
       </Container>
