@@ -13,8 +13,9 @@ class App extends Component{
   constructor(props){
     super(props);
     this.state = {
-      id : undefined,
-      login : undefined
+      id : "",
+      login : undefined,
+      mail : undefined
     }
   }
   
@@ -22,8 +23,13 @@ class App extends Component{
     new Request('/api/authentication')
     .get()
     .send()
-    .then(res=>res.json(res))
-    .then(res=>{this.setState({login : res.login,id : res.id});});
+    .then(res=>{if(res.ok)return res.json(res);return res.text()})
+    .then(res=>{this.setState({login : res.login,id : res.id,mail : res.mail});})
+    .catch(err=>this.setState({id:undefined}));
+  }
+
+  disconnect(){
+    this.setState({login : undefined, id : undefined,mail : undefined});
   }
 
   render(){
@@ -31,14 +37,14 @@ class App extends Component{
     return (
       <Router>
         <div className="App">
-          <NavBar onDisconnect={()=>this.setState({login : undefined, id : undefined})} login={this.state.login}></NavBar>
+          <NavBar onDisconnect={()=>this.disconnect()} login={this.state.login}></NavBar>
           <Switch>
             <Route exact path="/" component={Home} />
-            <PrivateRoute test={this.state.id === undefined} props={{onRequestReceived:({id,login})=>this.setState({id : id, login : login})}} component={Connexion} path="/login"/>
+            <PrivateRoute test={this.state.id === undefined} props={{onRequestReceived:({id,login,mail})=>this.setState({id : id, login : login,mail : mail})}} component={Connexion} path="/login"/>
             <PrivateRoute path="/lobby" test={this.state.id !== undefined} component={Lobby} />
-            <Route path="/profile" component={Profile}></Route>
-            <Route path="/settings" component={Settings}></Route>
-            <Route path="/game" component={Game}></Route>
+            <PrivateRoute test={this.state.id !== undefined} props={{onRequestReceived:({login,mail})=>this.setState({login : login,mail : mail}),disconnect:()=>this.disconnect(),login : this.state.login,mail : this.state.mail}} component={Profile} path="/profile"/>
+            <PrivateRoute test={this.state.id !== undefined} component={Settings} path="/settings"/>
+            <PrivateRoute test={this.state.id !== undefined} props={{login : this.state.login,mail : this.state.mail}} component={Game} path="/game"/>
           </Switch>
         </div>
       </Router>

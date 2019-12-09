@@ -60,9 +60,13 @@ class ConnexionPage extends Component {
   }
   ///////////////////////////////////////////////////////////////////
   // Fonction regex pour valider le pseudo
-  validatePseudo(pseudo) {
+  /*validatePseudo(pseudo) {
     const regex = /^.{1,}$/;
     return regex.test(pseudo);
+  }*/
+
+  validatePseudo(){
+    return "[a-zA-Z0-9]{1,}";
   }
   /////////////////////////////////////////////
   // fonction pour vérifier le format du mail
@@ -77,7 +81,7 @@ class ConnexionPage extends Component {
     .body({login : this.state.loginConnexion,password : this.state.passwordConnexion})
     .send()
     .then(res=>{if(res.ok)return res.json(res); throw Error("Erreur de connexion")})
-    .then(res=>{console.log(res);if(this.props.onRequestReceived!==undefined)this.props.onRequestReceived(res);})
+    .then(res=>{if(this.props.onRequestReceived!==undefined)this.props.onRequestReceived(res);})
     .catch(err=>console.log(err));
     /*fetch('http://localhost:8080/api/authentication',{
             method : 'PUT',
@@ -114,7 +118,7 @@ class ConnexionPage extends Component {
             <button>S'inscrire</button>
           </div>
           <div className="wrapper">
-            <form id="login" tabIndex="1" autoComplete="on">
+            <form id="login" tabIndex="1" autoComplete="on" onSubmit={(evt)=>{evt.preventDefault();this.connect();}}>
               <h3>Connexion</h3>
               <div className="mail">
                 <input
@@ -137,10 +141,10 @@ class ConnexionPage extends Component {
                 <label>Mot de passe</label>
               </div>
               <div className="submit">
-                <button type="button" className="dark" onClick={this.connect}>Connexion</button>
+                <button type="submit" className="dark">Connexion</button>
               </div>
             </form>
-            <form id="register" tabIndex="2" autoComplete="on">
+            <form id="register" tabIndex="2" autoComplete="on" onSubmit={(evt)=>{evt.preventDefault();this.register()}}>
               <h3>Inscription</h3>
               <div className="name">
                 <input
@@ -149,6 +153,7 @@ class ConnexionPage extends Component {
                   autoComplete="username"
                   onChange={this.handleInputChange}
                   required
+                  pattern={this.validatePseudo()}
                 />
                 <label>Pseudo</label>
               </div>
@@ -179,11 +184,12 @@ class ConnexionPage extends Component {
                   autoComplete="new-password"
                   onChange={this.handleInputChange}
                   required
+                  pattern={this.state.passwordRegister}
                 />
                 <label>Confirmation</label>
               </div>
               <div className="submit">
-                <button type="button" onClick={this.register}className="dark" /*disabled={!this.state.validForm}*/>
+                <button type="submit" className="dark" /*disabled={!this.state.validForm}*/>
                   S'inscrire
                 </button>
               </div>
