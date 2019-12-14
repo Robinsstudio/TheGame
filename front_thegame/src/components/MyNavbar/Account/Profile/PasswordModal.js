@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import Tooltip from "@material-ui/core/Tooltip";
 // Icons
 import IconButton from "@material-ui/core/IconButton";
 import Visibility from "@material-ui/icons/Visibility";
@@ -15,9 +16,10 @@ import FormControl from "@material-ui/core/FormControl";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Request from '../../../../js/request.js';
+
+import Request from "../../../../js/request.js";
+
 export default class PasswordModal extends React.Component {
   constructor(props) {
     super(props);
@@ -27,39 +29,77 @@ export default class PasswordModal extends React.Component {
       newPassword: "",
       newPasswordConfirm: "",
 
-      validPassword: true,
-      validNewPassword: false,
-      validNewPasswordConfirm: false,
+      showCurrentPassword: false,
+      showNewPassword: false,
 
-      validForm: false,
-      showPassword: false
+      validForm: false
     };
-    this.handleClickShowPassword = this.handleClickShowPassword.bind(this);
+    this.handleClickShowCurrentPassword = this.handleClickShowCurrentPassword.bind(
+      this
+    );
+    this.handleClickShowNewPassword = this.handleClickShowNewPassword.bind(
+      this
+    );
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.sendNewData = this.sendNewData.bind(this);
   }
 
-  sendNewData(){
-    new Request('/api/account/')
-    .put()
-    .body({oldPassword:this.state.password,newPassword : this.state.newPassword})
-    .send()
-    .then(res=>{if(res.ok)return res;return res.text().then(r=>{throw new Error(r)})})
-    .then(res=>this.handleChangePassword())
-    .catch(err=>console.log(err));
+  componentDidUpdate() {
+    if (
+      this.state.newPassword !== "" &&
+      this.state.newPassword === this.state.newPasswordConfirm
+    ) {
+      if (this.state.validForm === false) {
+        this.setState({
+          validForm: true
+        });
+      }
+    } else {
+      if (this.state.validForm === true) {
+        this.setState({
+          validForm: false
+        });
+      }
+    }
+  }
+
+  sendNewData() {
+    if (this.state.validForm === true) {
+      new Request("/api/account/")
+        .put()
+        .body({
+          oldPassword: this.state.password,
+          newPassword: this.state.newPassword
+        })
+        .send()
+        .then(res => {
+          if (res.ok) return res;
+          return res.text().then(r => {
+            this.props.snackbarError();
+            throw new Error(r);
+          });
+        })
+        .then(res => this.handleChangePassword())
+        .catch(err => console.log(err));
+    }
   }
 
   ///////////////////////////////////////////////////////////////////
   ///// Fonctions pour afficher le mot de passe
-  handleClickShowPassword() {
+  handleClickShowCurrentPassword() {
     this.setState({
-      showPassword: !this.state.showPassword
+      showCurrentPassword: !this.state.showCurrentPassword
+    });
+  }
+  handleClickShowNewPassword() {
+    this.setState({
+      showNewPassword: !this.state.showNewPassword
     });
   }
   handleMouseDownPassword = event => {
     event.preventDefault();
   };
-
+  /////////////////////////////////////////////////////////////////
   handleChangePassword() {
     this.props.toggle();
     this.props.snackbar();
@@ -82,33 +122,30 @@ export default class PasswordModal extends React.Component {
         </DialogTitle>
         <Divider></Divider>
         <DialogContent>
-          <DialogContentText
+          <div
             id="alert-dialog-description"
             className="bigSizeProfile"
             style={{ margin: "1em", textAlign: "center" }}
           >
             <FormControl className="inputMarginProfile">
-              <InputLabel
-                htmlFor="standard-adornment-password"
-                className="bigSizeProfile"
-              >
+              <InputLabel htmlFor="current-password" className="bigSizeProfile">
                 Mot de passe actuel
               </InputLabel>
               <Input
-                id="standard-adornment-password"
-                type={this.state.showPassword ? "text" : "password"}
+                id="current-password"
+                type={this.state.showCurrentPassword ? "text" : "password"}
                 className="bigSizeProfile widthInputProfile"
                 autoComplete="current-password"
                 value={this.state.password}
-                onChange={(evt)=>this.setState({password:evt.target.value})}
+                onChange={evt => this.setState({ password: evt.target.value })}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={this.handleClickShowPassword}
+                      onClick={this.handleClickShowCurrentPassword}
                       onMouseDown={this.handleMouseDownPassword}
                     >
-                      {this.state.showPassword ? (
+                      {this.state.showCurrentPassword ? (
                         <Visibility />
                       ) : (
                         <VisibilityOff />
@@ -121,27 +158,28 @@ export default class PasswordModal extends React.Component {
             <div></div>
 
             <FormControl className="inputMarginProfile">
-              <InputLabel
-                htmlFor="standard-adornment-password"
-                className="bigSizeProfile"
-              >
+              <InputLabel htmlFor="new-password" className="bigSizeProfile">
                 Nouveau mot de passe
               </InputLabel>
               <Input
-                id="standard-adornment-password"
-                type={this.state.showPassword ? "text" : "password"}
+                id="new-password"
+                type={this.state.showNewPassword ? "text" : "password"}
                 className="bigSizeProfile widthInputProfile"
                 autoComplete="new-password"
                 value={this.state.newPassword}
-                onChange={(evt)=>this.setState({newPassword:evt.target.value})}
+                onChange={evt =>
+                  this.setState({
+                    newPassword: evt.target.value
+                  })
+                }
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={this.handleClickShowPassword}
+                      onClick={this.handleClickShowNewPassword}
                       onMouseDown={this.handleMouseDownPassword}
                     >
-                      {this.state.showPassword ? (
+                      {this.state.showNewPassword ? (
                         <Visibility />
                       ) : (
                         <VisibilityOff />
@@ -160,27 +198,28 @@ export default class PasswordModal extends React.Component {
             <div></div>
 
             <FormControl>
-              <InputLabel
-                htmlFor="standard-adornment-password"
-                className="bigSizeProfile"
-              >
+              <InputLabel htmlFor="confirm-password" className="bigSizeProfile">
                 Confirmation
               </InputLabel>
               <Input
-                id="standard-adornment-password"
-                type={this.state.showPassword ? "text" : "password"}
+                id="confirm-password"
+                type={this.state.showNewPassword ? "text" : "password"}
                 className="bigSizeProfile widthInputProfile"
                 autoComplete="new-password"
                 value={this.state.newPasswordConfirm}
-                onChange={(evt)=>this.setState({newPasswordConfirm:evt.target.value})}
+                onChange={evt =>
+                  this.setState({
+                    newPasswordConfirm: evt.target.value
+                  })
+                }
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={this.handleClickShowPassword}
+                      onClick={this.handleClickShowNewPassword}
                       onMouseDown={this.handleMouseDownPassword}
                     >
-                      {this.state.showPassword ? (
+                      {this.state.showNewPassword ? (
                         <Visibility />
                       ) : (
                         <VisibilityOff />
@@ -196,7 +235,7 @@ export default class PasswordModal extends React.Component {
                 8 caractères minimum
               </FormHelperText>
             </FormControl>
-          </DialogContentText>
+          </div>
         </DialogContent>
         <Divider></Divider>
         <DialogActions>
@@ -207,14 +246,29 @@ export default class PasswordModal extends React.Component {
           >
             Annuler
           </Button>
-          <Button
-            color="secondary"
-            style={{ fontSize: "14px" }}
-            onClick={this.sendNewData}
-            //disabled={!this.state.validForm}
+          <Tooltip
+            title={
+              this.state.validForm === true ? (
+                ""
+              ) : (
+                <span className="tooltipPerso">
+                  Confirmer le nouveau mot de passe.
+                </span>
+              )
+            }
+            placement="top"
           >
-            Modifier
-          </Button>
+            <span>
+              <Button
+                color="secondary"
+                style={{ fontSize: "14px" }}
+                onClick={this.sendNewData}
+                disabled={!this.state.validForm}
+              >
+                Modifier
+              </Button>
+            </span>
+          </Tooltip>
         </DialogActions>
       </Dialog>
     );

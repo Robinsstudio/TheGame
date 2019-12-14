@@ -24,49 +24,75 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Divider from "@material-ui/core/Divider";
 import "./Profile.css";
-import Request from '../../../../js/request.js';
+import Request from "../../../../js/request.js";
 
 export default class Profile extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      validForm: false,
-      oldPseudo : "",
-      oldMail : "",
+      oldPseudo: "",
+      oldMail: "",
       pseudo: "",
       mail: "",
 
       openSnackbarInfo: false,
       openSnackbarPassword: false,
+      openSnackbarError: false,
       openDialog: false,
       openModal: false
     };
     this.changeSnackbarInfo = this.changeSnackbarInfo.bind(this);
     this.changeSnackbarPassword = this.changeSnackbarPassword.bind(this);
+    this.changeSnackbarError = this.changeSnackbarError.bind(this);
     this.changeDialog = this.changeDialog.bind(this);
     this.changeModal = this.changeModal.bind(this);
   }
 
-  sendNewData(){
-    new Request('/api/account/')
-    .put()
-    .body({login : this.state.pseudo,mail:this.state.mail})
-    .send()
-    .then(res=>{if(res.ok)return res.json();return res.text().then(r=>{throw new Error(r)})})
-    .then(res=>this.props.onRequestReceived({login : res.login,mail : res.mail}))
-    .then(res=>this.changeSnackbarInfo())
-    .catch(err=>console.log(err));
+  sendNewData() {
+    new Request("/api/account/")
+      .put()
+      .body({ login: this.state.pseudo, mail: this.state.mail })
+      .send()
+      .then(res => {
+        if (res.ok) return res.json();
+        return res.text().then(r => {
+          throw new Error(r);
+        });
+      })
+      .then(res =>
+        this.props.onRequestReceived({
+          login: res.login,
+          mail: res.mail
+        })
+      )
+      .then(res => this.changeSnackbarInfo())
+      .catch(err => console.log(err));
   }
 
-  componentDidMount(){
-    if(this.props.login !== undefined && this.props.mail !== undefined)
-      this.setState({oldPseudo : this.props.login, oldMail : this.props.mail, pseudo : this.props.login,mail : this.props.mail})
+  componentDidMount() {
+    if (this.props.login !== undefined && this.props.mail !== undefined)
+      this.setState({
+        oldPseudo: this.props.login,
+        oldMail: this.props.mail,
+        pseudo: this.props.login,
+        mail: this.props.mail
+      });
   }
 
-  componentDidUpdate(){
-    if(this.state.oldPseudo === "" && this.state.mail === "" && this.props.login !== undefined && this.props.mail !== undefined)
-      this.setState({oldPseudo : this.props.login, oldMail : this.props.mail, pseudo : this.props.login,mail : this.props.mail})
+  componentDidUpdate() {
+    if (
+      this.state.oldPseudo === "" &&
+      this.state.mail === "" &&
+      this.props.login !== undefined &&
+      this.props.mail !== undefined
+    )
+      this.setState({
+        oldPseudo: this.props.login,
+        oldMail: this.props.mail,
+        pseudo: this.props.login,
+        mail: this.props.mail
+      });
   }
 
   ////////////////////////////////////////////////////////////
@@ -83,6 +109,13 @@ export default class Profile extends React.Component {
       openSnackbarPassword: !this.state.openSnackbarPassword
     });
   }
+  ////////////////////////////////////////////////////////////
+  ///// Fonction pour ouvrir le snackbar d'erreur du mot de passe
+  changeSnackbarError() {
+    this.setState({
+      openSnackbarError: !this.state.openSnackbarError
+    });
+  }
   ////////////////////////////////////////////////////////////////
   ////// Fonction pour ouvrir le dialogue de suppression de compte
   changeDialog() {
@@ -97,21 +130,29 @@ export default class Profile extends React.Component {
       openModal: !this.state.openModal
     });
   }
-  pseudoChange(login){
-    this.setState({pseudo : login});
+  pseudoChange(login) {
+    this.setState({ pseudo: login });
   }
 
-  emailChange(email){
-    this.setState({mail : email})
+  emailChange(email) {
+    this.setState({ mail: email });
   }
 
-  deleteAccount(){
+  deleteAccount() {
     new Request("/api/account")
-    .delete()
-    .send()
-    .then(res=>{if(res.ok)return res; return res.text().then(err=>{console.log(err);throw Error(err)})})
-    .then(res=>{if(this.props.disconnect !== undefined)this.props.disconnect()})
-    .catch(err=>console.log(err));
+      .delete()
+      .send()
+      .then(res => {
+        if (res.ok) return res;
+        return res.text().then(err => {
+          console.log(err);
+          throw Error(err);
+        });
+      })
+      .then(res => {
+        if (this.props.disconnect !== undefined) this.props.disconnect();
+      })
+      .catch(err => console.log(err));
   }
 
   render() {
@@ -136,7 +177,7 @@ export default class Profile extends React.Component {
                 type="text"
                 value={this.state.pseudo}
                 color="primary"
-                onChange={evt=>this.pseudoChange(evt.target.value)}
+                onChange={evt => this.pseudoChange(evt.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
                     <AccountCircle
@@ -158,7 +199,7 @@ export default class Profile extends React.Component {
                 className="bigSizeProfile widthInputProfile"
                 type="email"
                 value={this.state.mail}
-                onChange={evt=>this.emailChange(evt.target.value)}
+                onChange={evt => this.emailChange(evt.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
                     <EmailIcon
@@ -193,15 +234,19 @@ export default class Profile extends React.Component {
                 Retour
               </Button>
             </Link>
-              <Button
-                className="bigSizeProfile buttonMarginProfile"
-                color="primary"
-                onClick={()=>this.sendNewData()}
-                //disabled={!this.state.validForm}
-              >
-                Sauvegarder
-              </Button>
+            <Button
+              className="bigSizeProfile buttonMarginProfile"
+              color="primary"
+              onClick={() => this.sendNewData()}
+            >
+              Sauvegarder
+            </Button>
+            {
+              ///////////////////////////////////////////////////
+              //// SnackBar Informations modifiées avec succès
+            }
             <MySnackbar
+              error="false"
               message={"Informations modifées."}
               open={this.state.openSnackbar}
               close={this.changeSnackbarInfo}
@@ -213,15 +258,31 @@ export default class Profile extends React.Component {
           open={this.state.openModal}
           toggle={this.changeModal}
           snackbar={this.changeSnackbarPassword}
+          snackbarError={this.changeSnackbarError}
         />
+        {
+          ///////////////////////////////////////////////////
+          //// SnackBar mot de passe modifié avec succès
+        }
         <MySnackbar
+          error="false"
           message={"Mot de passe modifié."}
           open={this.state.openSnackbarPassword}
           close={this.changeSnackbarPassword}
         />
         {
           ///////////////////////////////////////////////////
-          ////Dialogue de suppresion de compte
+          //// SnackBar mot de passe modifié avec succès
+        }
+        <MySnackbar
+          error="true"
+          message={"Mot de passe incorrect !"}
+          open={this.state.openSnackbarError}
+          close={this.changeSnackbarError}
+        />
+        {
+          ///////////////////////////////////////////////////
+          //// Dialogue de suppresion de compte
         }
         <Dialog
           open={this.state.openDialog}
@@ -256,7 +317,11 @@ export default class Profile extends React.Component {
             >
               Non, annuler
             </Button>
-            <Button onClick={()=>this.deleteAccount()} color="secondary" style={{ fontSize: "13px" }}>
+            <Button
+              onClick={() => this.deleteAccount()}
+              color="secondary"
+              style={{ fontSize: "13px" }}
+            >
               Oui, supprimer mon compte
             </Button>
           </DialogActions>
