@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import "./ConnexionPage.css";
 import $ from "jquery";
 import { withRouter } from "react-router-dom";
-import Request from '../../js/request.js';
+import Request from "../../js/request.js";
+
 class ConnexionPage extends Component {
   constructor(props) {
     super(props);
@@ -60,12 +61,7 @@ class ConnexionPage extends Component {
   }
   ///////////////////////////////////////////////////////////////////
   // Fonction regex pour valider le pseudo
-  /*validatePseudo(pseudo) {
-    const regex = /^.{1,}$/;
-    return regex.test(pseudo);
-  }*/
-
-  validatePseudo(){
+  validatePseudo() {
     return "[a-zA-Z0-9]{1,}";
   }
   /////////////////////////////////////////////
@@ -75,34 +71,49 @@ class ConnexionPage extends Component {
     return regex.test(String(email).toLowerCase());
   }
 
-  connect(){
-    new Request('/api/authentication')
-    .put()
-    .body({login : this.state.loginConnexion,password : this.state.passwordConnexion})
-    .send()
-    .then(res=>{if(res.ok)return res.json(res); throw Error("Erreur de connexion")})
-    .then(res=>{if(this.props.onRequestReceived!==undefined)this.props.onRequestReceived(res);})
-    .catch(err=>console.log(err));
-    /*fetch('http://localhost:8080/api/authentication',{
-            method : 'PUT',
-            headers: new Headers({
-                "Content-Type": "application/json"
-            }),
-            body : JSON.stringify({login : this.state.loginConnexion,password : this.state.passwordConnexion}) 
-        })
-    .then(res=>console.log(res)).catch(err=>console.log(err))*/
+  connect() {
+    new Request("/api/authentication")
+      .put()
+      .body({
+        login: this.state.loginConnexion,
+        password: this.state.passwordConnexion
+      })
+      .send()
+      .then(res => {
+        if (res.ok) return res.json(res);
+        throw Error("Erreur de connexion");
+      })
+      .then(res => {
+        if (this.props.onRequestReceived !== undefined)
+          this.props.onRequestReceived(res);
+      })
+      .catch(err => console.log(err));
   }
 
-  register(){
-    new Request('/api/account')
-    .post()
-    .body({login : this.state.loginRegister,email : this.state.mailRegister,password : this.state.passwordRegister})
-    .send()
-    .then(res=>{if(res.ok)return res; return res.text().then(err=>{console.log(err);throw Error(err)})})
-    .then(res=>this.setState({loginConnexion : this.state.loginRegister,
-                            passwordConnexion : this.state.passwordRegister }))
-    .then(()=>this.connect())
-    .catch(err=>console.log(err));
+  register() {
+    new Request("/api/account")
+      .post()
+      .body({
+        login: this.state.loginRegister,
+        email: this.state.mailRegister,
+        password: this.state.passwordRegister
+      })
+      .send()
+      .then(res => {
+        if (res.ok) return res;
+        return res.text().then(err => {
+          console.log(err);
+          throw Error(err);
+        });
+      })
+      .then(res =>
+        this.setState({
+          loginConnexion: this.state.loginRegister,
+          passwordConnexion: this.state.passwordRegister
+        })
+      )
+      .then(() => this.connect())
+      .catch(err => console.log(err));
   }
 
   render() {
@@ -118,7 +129,15 @@ class ConnexionPage extends Component {
             <button>S'inscrire</button>
           </div>
           <div className="wrapper">
-            <form id="login" tabIndex="1" autoComplete="on" onSubmit={(evt)=>{evt.preventDefault();this.connect();}}>
+            <form
+              id="login"
+              tabIndex="1"
+              autoComplete="on"
+              onSubmit={evt => {
+                evt.preventDefault();
+                this.connect();
+              }}
+            >
               <h3>Connexion</h3>
               <div className="mail">
                 <input
@@ -141,10 +160,20 @@ class ConnexionPage extends Component {
                 <label>Mot de passe</label>
               </div>
               <div className="submit">
-                <button type="submit" className="dark">Connexion</button>
+                <button type="submit" className="dark">
+                  Connexion
+                </button>
               </div>
             </form>
-            <form id="register" tabIndex="2" autoComplete="on" onSubmit={(evt)=>{evt.preventDefault();this.register()}}>
+            <form
+              id="register"
+              tabIndex="2"
+              autoComplete="on"
+              onSubmit={evt => {
+                evt.preventDefault();
+                this.register();
+              }}
+            >
               <h3>Inscription</h3>
               <div className="name">
                 <input
@@ -189,7 +218,10 @@ class ConnexionPage extends Component {
                 <label>Confirmation</label>
               </div>
               <div className="submit">
-                <button type="submit" className="dark" /*disabled={!this.state.validForm}*/>
+                <button
+                  type="submit"
+                  className="dark" /*disabled={!this.state.validForm}*/
+                >
                   S'inscrire
                 </button>
               </div>
