@@ -307,7 +307,7 @@ GameSchema.statics.whereToPlay = function(gameId,cardValue,playerId){
 		if(game.nowPlaying !== playerId)
 			return [];
 		if(game.piles !== undefined){
-			return game.piles.filter(pile=>((pile.orientation==='up' && cardValue>pile.cards[pile.cards.length-1].value) ||
+			return game.piles.filter(pile=>((pile.cards.length===0) || (pile.orientation==='up' && cardValue>pile.cards[pile.cards.length-1].value) ||
 			(pile.orientation==='down' && cardValue<pile.cards[pile.cards.length-1].value)))
 			.map(pile=>pile._id);
 		}
