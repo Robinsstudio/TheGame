@@ -3,6 +3,7 @@ import "./ConnexionPage.css";
 import $ from "jquery";
 import { withRouter } from "react-router-dom";
 import Request from "../../js/request.js";
+import { withSnackbar } from "notistack";
 
 class ConnexionPage extends Component {
   constructor(props) {
@@ -21,6 +22,7 @@ class ConnexionPage extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.connect = this.connect.bind(this);
     this.register = this.register.bind(this);
+    this.changeSnackbar = this.changeSnackbar.bind(this);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,8 +72,14 @@ class ConnexionPage extends Component {
     const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return regex.test(String(email).toLowerCase());
   }
-
+  ////////////////////////////////////////////////////////////
+  ///// Fonction pour ouvrir les snackbars
+  changeSnackbar(message, options) {
+    this.props.closeSnackbar();
+    this.props.enqueueSnackbar(message, { variant: options });
+  }
   connect() {
+    this.changeSnackbar("Connexion en cours...", "info");
     new Request("/api/authentication")
       .put()
       .body({
@@ -81,9 +89,14 @@ class ConnexionPage extends Component {
       .send()
       .then(res => {
         if (res.ok) return res.json(res);
-        throw Error("Erreur de connexion");
+        return res.text().then(err => {
+          console.log(err);
+          this.changeSnackbar(err, "error");
+          throw Error(err);
+        });
       })
       .then(res => {
+        this.changeSnackbar("Connexion réussie.", "success");
         if (this.props.onRequestReceived !== undefined)
           this.props.onRequestReceived(res);
       })
@@ -91,6 +104,7 @@ class ConnexionPage extends Component {
   }
 
   register() {
+    this.changeSnackbar("Inscription en cours...", "info");
     new Request("/api/account")
       .post()
       .body({
@@ -103,6 +117,7 @@ class ConnexionPage extends Component {
         if (res.ok) return res;
         return res.text().then(err => {
           console.log(err);
+          this.changeSnackbar(err, "error");
           throw Error(err);
         });
       })
@@ -233,4 +248,4 @@ class ConnexionPage extends Component {
   }
 }
 
-export default withRouter(ConnexionPage);
+export default withRouter(withSnackbar(ConnexionPage));

@@ -53,7 +53,7 @@ class Profile extends React.Component {
       .then(res => {
         if (res.ok) return res.json();
         return res.text().then(r => {
-          this.changeSnackbar("Impossible de modifier les valeurs !", "error");
+          this.changeSnackbar(r, "error");
           throw new Error(r);
         });
       })
@@ -128,10 +128,12 @@ class Profile extends React.Component {
         if (res.ok) return res;
         return res.text().then(err => {
           console.log(err);
+          this.changeSnackbar(err, "error");
           throw Error(err);
         });
       })
       .then(res => {
+        this.changeSnackbar("Suppresion du compte effectué.", "success");
         if (this.props.disconnect !== undefined) this.props.disconnect();
       })
       .catch(err => console.log(err));

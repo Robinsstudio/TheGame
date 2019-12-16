@@ -76,7 +76,7 @@ export default class PasswordModal extends React.Component {
         .then(res => {
           if (res.ok) return res;
           return res.text().then(r => {
-            this.props.snackbar("Mot de passe incorrect !", "error");
+            this.props.snackbar(r, "error");
             throw new Error(r);
           });
         })
