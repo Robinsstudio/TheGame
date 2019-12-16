@@ -3,10 +3,13 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
+import { SnackbarProvider } from "notistack";
 
 ReactDOM.render(
   <BrowserRouter>
-    <App />
+    <SnackbarProvider maxSnack={3}>
+      <App />
+    </SnackbarProvider>
   </BrowserRouter>,
   document.getElementById("root")
 );

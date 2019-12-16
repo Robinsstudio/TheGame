@@ -49,3 +49,7 @@
 .tooltipPerso {
   font-size: 10px !important;
 }
+
+.MuiSnackbarContent-message {
+  font-size: 16px;
+}

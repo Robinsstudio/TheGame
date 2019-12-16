@@ -14,7 +14,6 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import EmailIcon from "@material-ui/icons/Email";
 import LockIcon from "@material-ui/icons/Lock";
 // My Components
-import MySnackbar from "./MySnackbar";
 import PasswordModal from "./PasswordModal";
 // Dialog
 import Dialog from "@material-ui/core/Dialog";
@@ -23,10 +22,11 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Divider from "@material-ui/core/Divider";
+import { withSnackbar } from "notistack";
 import "./Profile.css";
 import Request from "../../../../js/request.js";
 
-export default class Profile extends React.Component {
+class Profile extends React.Component {
   constructor(props) {
     super(props);
 
@@ -36,20 +36,16 @@ export default class Profile extends React.Component {
       pseudo: "",
       mail: "",
 
-      openSnackbarInfo: false,
-      openSnackbarPassword: false,
-      openSnackbarError: false,
       openDialog: false,
       openModal: false
     };
-    this.changeSnackbarInfo = this.changeSnackbarInfo.bind(this);
-    this.changeSnackbarPassword = this.changeSnackbarPassword.bind(this);
-    this.changeSnackbarError = this.changeSnackbarError.bind(this);
+    this.changeSnackbar = this.changeSnackbar.bind(this);
     this.changeDialog = this.changeDialog.bind(this);
     this.changeModal = this.changeModal.bind(this);
   }
 
   sendNewData() {
+    this.changeSnackbar("Modification en cours...", "info");
     new Request("/api/account/")
       .put()
       .body({ login: this.state.pseudo, mail: this.state.mail })
@@ -57,6 +53,7 @@ export default class Profile extends React.Component {
       .then(res => {
         if (res.ok) return res.json();
         return res.text().then(r => {
+          this.changeSnackbar("Impossible de modifier les valeurs !", "error");
           throw new Error(r);
         });
       })
@@ -66,7 +63,7 @@ export default class Profile extends React.Component {
           mail: res.mail
         })
       )
-      .then(res => this.changeSnackbarInfo())
+      .then(res => this.changeSnackbar("Modifications effectuées.", "success"))
       .catch(err => console.log(err));
   }
 
@@ -96,25 +93,10 @@ export default class Profile extends React.Component {
   }
 
   ////////////////////////////////////////////////////////////
-  ///// Fonction pour ouvrir le snackbar après la sauvegarde des données
-  changeSnackbarInfo() {
-    this.setState({
-      openSnackbar: !this.state.openSnackbar
-    });
-  }
-  ////////////////////////////////////////////////////////////
-  ///// Fonction pour ouvrir le snackbar après la modification du mot de passe
-  changeSnackbarPassword() {
-    this.setState({
-      openSnackbarPassword: !this.state.openSnackbarPassword
-    });
-  }
-  ////////////////////////////////////////////////////////////
-  ///// Fonction pour ouvrir le snackbar d'erreur du mot de passe
-  changeSnackbarError() {
-    this.setState({
-      openSnackbarError: !this.state.openSnackbarError
-    });
+  ///// Fonction pour ouvrir les snackbars
+  changeSnackbar(message, options) {
+    this.props.closeSnackbar();
+    this.props.enqueueSnackbar(message, { variant: options });
   }
   ////////////////////////////////////////////////////////////////
   ////// Fonction pour ouvrir le dialogue de suppression de compte
@@ -241,44 +223,13 @@ export default class Profile extends React.Component {
             >
               Sauvegarder
             </Button>
-            {
-              ///////////////////////////////////////////////////
-              //// SnackBar Informations modifiées avec succès
-            }
-            <MySnackbar
-              error="false"
-              message={"Informations modifées."}
-              open={this.state.openSnackbar}
-              close={this.changeSnackbarInfo}
-            />
           </Grid>
           <Grid item xs={3}></Grid>
         </Grid>
         <PasswordModal
           open={this.state.openModal}
           toggle={this.changeModal}
-          snackbar={this.changeSnackbarPassword}
-          snackbarError={this.changeSnackbarError}
-        />
-        {
-          ///////////////////////////////////////////////////
-          //// SnackBar mot de passe modifié avec succès
-        }
-        <MySnackbar
-          error="false"
-          message={"Mot de passe modifié."}
-          open={this.state.openSnackbarPassword}
-          close={this.changeSnackbarPassword}
-        />
-        {
-          ///////////////////////////////////////////////////
-          //// SnackBar mot de passe modifié avec succès
-        }
-        <MySnackbar
-          error="true"
-          message={"Mot de passe incorrect !"}
-          open={this.state.openSnackbarError}
-          close={this.changeSnackbarError}
+          snackbar={(message, options) => this.changeSnackbar(message, options)}
         />
         {
           ///////////////////////////////////////////////////
@@ -330,3 +281,5 @@ export default class Profile extends React.Component {
     );
   }
 }
+
+export default withSnackbar(Profile);

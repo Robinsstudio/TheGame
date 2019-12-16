@@ -65,6 +65,7 @@ export default class PasswordModal extends React.Component {
 
   sendNewData() {
     if (this.state.validForm === true) {
+      this.props.snackbar("Modification en cours...", "info");
       new Request("/api/account/")
         .put()
         .body({
@@ -75,11 +76,11 @@ export default class PasswordModal extends React.Component {
         .then(res => {
           if (res.ok) return res;
           return res.text().then(r => {
-            this.props.snackbarError();
+            this.props.snackbar("Mot de passe incorrect !", "error");
             throw new Error(r);
           });
         })
-        .then(res => this.handleChangePassword())
+        .then(res => this.props.snackbar("Mot de passe modifié.", "success"))
         .catch(err => console.log(err));
     }
   }
