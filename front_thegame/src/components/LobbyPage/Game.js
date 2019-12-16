@@ -20,9 +20,11 @@ export default class Game extends Component {
       this.setState({gameId:urlSearchParams.get("id")})
     }
   }
+
   componentWillUnmount(){
     clearInterval(this.interval);
   }
+
   componentDidUpdate(){
     if(this.props.login !== undefined && this.state.playerLogin === undefined){
       this.setState({playerLogin : this.props.login});
@@ -39,7 +41,17 @@ export default class Game extends Component {
       .send()
       .then(res =>{ if(res.ok) return res.json(res); return res.text()})
       .then(res => console.log(res))
-      .then(res=> {this.interval = setInterval(() => console.log("coucou"), 1000)})
+      .then(res=> {this.interval = setInterval(() => this.getGameInfo(), 3000)})
+      //.then(utils.init())
+      .catch(err => console.log(err));
+  }
+
+  getGameInfo(){
+    new Request("/api/game/" + this.state.gameId + "/" )
+      .get()
+      .send()
+      .then(res =>{ if(res.ok) return res.json(res); return res.text()})
+      .then(res => console.log(res))
       //.then(utils.init())
       .catch(err => console.log(err));
   }

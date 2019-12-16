@@ -63,7 +63,7 @@ PlayerSchema.statics.editPlayer = function(playerId,login,mail,oldPass,newPass){
 		if(login !== undefined && login !== player.login)
 			return Player.find({login}).then(function(players) {
 				if (players.length) {
-					throw new Error('Login unavailable');
+					throw new Error('Login non disponible');
 				}
 				player.login = login;
 				return player;
@@ -80,7 +80,7 @@ PlayerSchema.statics.editPlayer = function(playerId,login,mail,oldPass,newPass){
 			return pbkdf2Async(oldPass, player.salt, NUM_ITERATIONS, HASH_SIZE, DIGEST)
 			.then(function(hash) {
 				if (Buffer.compare(hash, player.password)) {
-					throw new Error('Incorrect password');
+					throw new Error('Mot de passe incorrect');
 				}
 				return randomBytesAsync(256).then(function(buffer) {
 					return buffer;
