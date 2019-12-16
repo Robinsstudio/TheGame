@@ -94,6 +94,9 @@ PlayerSchema.statics.editPlayer = function(playerId,login,mail,oldPass,newPass){
 				});
 			});
 		}
+		if (oldPass !== undefined && oldPass === newPass){
+			throw Error ("Le nouveau mot de passe doit être différent");
+		}
 		return player;
 	})
 	.then(player=>player.save())

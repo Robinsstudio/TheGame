@@ -33,7 +33,7 @@ app.post('/api/account', function(req, res) {
 	const {jwt : {playerId}} = req;
 	Player.editPlayer(playerId,req.body.login,req.body.mail,req.body.oldPassword,req.body.newPassword)
 	.then(result=>res.status(200).json({login : result.login,mail : result.email}))
-	.catch(err=>{console.log(err);res.sendStatus(404)});
+	.catch(err=>{console.log(err);res.status(404).send(err.message)});
 })
 .delete('/api/account',Player.isAuthenticated,function(req,res){
 	const {jwt : {playerId}} = req;
