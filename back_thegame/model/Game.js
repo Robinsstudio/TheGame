@@ -139,7 +139,7 @@ GameSchema.statics.drawCard = function(game){
 
 //Création d'une nouvelle partie
 GameSchema.statics.createGame = function(){
-	return Card.find({value:{$gte: 2, $lte : 11}})
+	return Card.find(/*{value:{$gte: 2, $lte : 11}}*/)
 	.then(result => {
 		return new Game({
 			deckPile:shuffle(result),

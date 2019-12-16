@@ -6,25 +6,46 @@ import Request from "../../js/request";
 export default class Game extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      gameId : undefined,
+      playerLogin : undefined
+    };
     this.joinGame = this.joinGame.bind(this);
   }
 
   componentDidMount() {
-    this.joinGame(this.props.idGame);
+    let searchParams = window.location.search;
+    let urlSearchParams = new URLSearchParams(searchParams);
+    if(urlSearchParams.has("id")){
+      this.setState({gameId:urlSearchParams.get("id")})
+    }
+  }
+  componentWillUnmount(){
+    clearInterval(this.interval);
+  }
+  componentDidUpdate(){
+    if(this.props.login !== undefined && this.state.playerLogin === undefined){
+      this.setState({playerLogin : this.props.login});
+    }
+    if(this.state.playerLogin !== undefined && this.state.gameId !== undefined){
+      this.joinGame();
+    }
   }
 
-  joinGame(id) {
-    new Request("/api/game/" + id)
+  joinGame() {
+    new Request("/api/game/" + this.state.gameId)
       .put()
       .body({})
       .send()
-      .then(res => res.json(res))
+      .then(res =>{ if(res.ok) return res.json(res); return res.text()})
       .then(res => console.log(res))
-      .then(utils.init())
+      .then(res=> {this.interval = setInterval(() => console.log("coucou"), 1000)})
+      //.then(utils.init())
       .catch(err => console.log(err));
   }
 
   render() {
+    console.log(this.state);
     return (
       <div>
         <Button style={{ fontSize: "20px" }} color="primary" id="buttonEndTurn">

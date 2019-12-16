@@ -70,11 +70,12 @@ app.post('/api/game', Player.isAuthenticated, function(req, res) {
 
 app.put('/api/game/:id', Player.isAuthenticated, function(req, res) {
 	const { params: { id }, jwt: { playerId } } = req;
-	Game.joinGame(id, playerId).then(function() {
+	Game.joinGame(id, playerId)
+	.then(function() {
 		return Game.getActions(id,playerId)
 	})
 	.then(function(result){
-		res.status(204).json(result);
+		res.status(200).json(result);
 	})
 	.catch(function(err) {
 		console.log(err);
@@ -89,7 +90,7 @@ app.put('/api/game/:id', Player.isAuthenticated, function(req, res) {
 	})
 	.catch(function(err) {
 		console.log(err);
-		res.status(404).send(err);
+		res.status(404).send(err.message);
 	});
 });
 
