@@ -2,12 +2,20 @@ import $ from "jquery";
 import cards from "./cards.js";
 
 let deck;
-let ascendantPile1, ascendantPile2, descendantPile1, descendantPile2;
-let hands = [];
+let piles = [];
+let playersHand = [];
 
-export function init() {
+let myHand, upperhandleft, upperhandright, righthand, lefthand;
+let ascendantPile1,
+  ascendantPile2,
+  ascendantPile3,
+  descendantPile1,
+  descendantPile2,
+  descendantPile3;
+
+export function init(ArrayPlayers, ArrayPiles) {
   //Tell the library which element to use for the table
-  cards.init({ table: "#card-table" });
+  cards.init({ table: "#card-table", piles: ArrayPiles.length });
   //Create a new deck of cards
   deck = new cards.Deck();
   //By default it's in the middle of the container, put it slightly to the side
@@ -17,52 +25,177 @@ export function init() {
   //No animation here, just get the deck onto the table.
   deck.render({ immediate: true });
 
-  //Now lets create a couple of hands, one face down, one face up.
-  let upperhand = new cards.Hand({
-    faceUp: false,
-    y: 60
-  });
-  let myHand = new cards.Hand({
-    faceUp: true,
-    y: 400
-  });
-  /* let righthand = new cards.Hand({
-    faceUp: false,
-    y: 400,
-    x: 100
-  }); */
+  switch (ArrayPlayers.length) {
+    case 1:
+      myHand = new cards.Hand({
+        id: "moi",
+        faceUp: true,
+        y: 400
+      });
+      playersHand.push(myHand);
+      break;
+    case 2:
+      upperhandcenter = new cards.Hand({
+        id: "baptiste",
+        faceUp: false,
+        y: 60
+      });
+      myHand = new cards.Hand({
+        id: "moi",
+        faceUp: true,
+        y: 400
+      });
+      playersHand.push(myHand);
+      playersHand.push(upperhandcenter);
+      break;
+    case 3:
+      upperhandright = new cards.Hand({
+        id: "baptiste",
+        faceUp: false,
+        y: 60,
+        x: 900
+      });
+      myHand = new cards.Hand({
+        id: "moi",
+        faceUp: true,
+        y: 400
+      });
+      upperhandleft = new cards.Hand({
+        id: "Clément",
+        faceUp: false,
+        y: 60,
+        x: 300
+      });
+      playersHand.push(myHand);
+      playersHand.push(upperhandright);
+      playersHand.push(upperhandleft);
+      break;
+    case 4:
+      upperhandright = new cards.Hand({
+        id: "baptiste",
+        faceUp: false,
+        y: 60,
+        x: 900
+      });
+      myHand = new cards.Hand({
+        id: "moi",
+        faceUp: true,
+        y: 400
+      });
+      upperhandleft = new cards.Hand({
+        id: "Clément",
+        faceUp: false,
+        y: 60,
+        x: 300
+      });
+      lefthand = new cards.Hand({
+        id: "Dieu",
+        faceUp: false,
+        y: 400,
+        x: 200
+      });
+      playersHand.push(myHand);
+      playersHand.push(upperhandright);
+      playersHand.push(upperhandleft);
+      playersHand.push(lefthand);
+      break;
+    case 5:
+      righthand = new cards.Hand({
+        id: "baptiste",
+        faceUp: false,
+        y: 400,
+        x: 1000
+      });
+      upperhandright = new cards.Hand({
+        id: "tistbap",
+        faceUp: false,
+        y: 60,
+        x: 900
+      });
+      myHand = new cards.Hand({
+        id: "moi",
+        faceUp: true,
+        y: 400
+      });
+      lefthand = new cards.Hand({
+        id: "Clément",
+        faceUp: false,
+        y: 400,
+        x: 200
+      });
+      upperhandleft = new cards.Hand({
+        id: "Dieu",
+        faceUp: false,
+        y: 60,
+        x: 300
+      });
+      playersHand.push(myHand);
+      playersHand.push(righthand);
+      playersHand.push(lefthand);
+      playersHand.push(upperhandleft);
+      playersHand.push(upperhandright);
+      break;
+  }
 
-  // Les piles de cartes
-  ascendantPile1 = new cards.Deck({
-    faceUp: true
-  });
-  ascendantPile2 = new cards.Deck({
-    faceUp: true
-  });
-  descendantPile1 = new cards.Deck({
-    faceUp: true
-  });
-  descendantPile2 = new cards.Deck({
-    faceUp: true
-  });
-  // Le placement des piles de cartes
-  ascendantPile1.x -= 150;
-  ascendantPile2.x -= 250;
-  descendantPile1.x += 50;
-  descendantPile2.x += 150;
+  switch (ArrayPiles.length) {
+    case 2:
+      ascendantPile1 = new cards.Deck({ id: "id1", faceUp: true });
+      descendantPile1 = new cards.Deck({ id: "id2", faceUp: true });
+      ascendantPile1.x -= 150;
+      descendantPile1.x += 50;
+      //
+      piles.unshift(ascendantPile1);
+      piles.unshift(descendantPile1);
+      break;
+    case 4:
+      // Les piles de cartes
+      ascendantPile1 = new cards.Deck({ id: "id1", faceUp: true });
+      ascendantPile2 = new cards.Deck({ id: "id2", faceUp: true });
+      descendantPile1 = new cards.Deck({ id: "id3", faceUp: true });
+      descendantPile2 = new cards.Deck({ id: "id4", faceUp: true });
+      // Le placement des piles de cartes
+      ascendantPile1.x -= 150;
+      ascendantPile2.x -= 250;
+      descendantPile1.x += 50;
+      descendantPile2.x += 150;
+      //
+      piles.unshift(ascendantPile1);
+      piles.unshift(ascendantPile2);
+      piles.unshift(descendantPile1);
+      piles.unshift(descendantPile2);
+      break;
+    case 6:
+      // Les piles de cartes
+      ascendantPile1 = new cards.Deck({ id: "id1", faceUp: true });
+      ascendantPile2 = new cards.Deck({ id: "id2", faceUp: true });
+      ascendantPile3 = new cards.Deck({ id: "id3", faceUp: true });
+      descendantPile1 = new cards.Deck({ id: "id4", faceUp: true });
+      descendantPile2 = new cards.Deck({ id: "id5", faceUp: true });
+      descendantPile3 = new cards.Deck({ id: "id6", faceUp: true });
+      // Le placement des piles de cartes
+      ascendantPile1.x -= 150;
+      ascendantPile2.x -= 250;
+      ascendantPile3.x -= 350;
+      descendantPile1.x += 50;
+      descendantPile2.x += 150;
+      descendantPile3.x += 250;
+      //
+      piles.unshift(ascendantPile1);
+      piles.unshift(ascendantPile2);
+      piles.unshift(ascendantPile3);
+      piles.unshift(descendantPile1);
+      piles.unshift(descendantPile2);
+      piles.unshift(descendantPile3);
+      break;
+  }
 
-  //$("#deal").hide();
-  deck.deal(7, [upperhand, myHand], function() {
-    //This is a callback function, called when the dealing is done
-    descendantPile1.addCard(deck.firstCard());
-    descendantPile1.render();
-    descendantPile2.addCard(deck.firstCard());
-    descendantPile2.render();
-    ascendantPile1.addCard(deck.firstCard());
-    ascendantPile1.render();
-    ascendantPile2.addCard(deck.firstCard());
-    ascendantPile2.render();
+  // Fonction qui initialise les decks et mains des joueurs
+  deck.deal(6, playersHand, function() {
+    piles.forEach(element => {
+      element.addCard(deck.firstCard()), element.render();
+    });
   });
+
   /////////////////////////////////////////////////////////
   // Fonction finir le tour du joueur et piocher des cartes
   $("#buttonEndTurn").click(function() {
@@ -205,24 +338,43 @@ export function init() {
   }
 }
 ////////////////////////////////////////////////////////
-// Fonction pour mettre une carte d'une main  d'un autre joueur sur une pile
-export function playerAddCard(pile, main, carte) {
-  pile.addCard(carte);
-  pile.render();
-  main.render();
+// Fonction pour mettre une carte d'une main sur une pile
+function putCard(idPlayer, cardValue, idPile) {
+  let player;
+  let carte;
+
+  // On cherche la main du joueur à partir de son id
+  playersHand.map(element => {
+    if (element.id === idPlayer) {
+      player = element;
+      if (element[0].column === 1 && element[0].suit === "0") {
+        carte = element[0];
+      } else {
+        element.map(el => {
+          if (el.rank === cardValue) {
+            carte = element;
+          }
+        });
+      }
+    }
+  });
+  // On cherche la pile où mettre la carte
+  piles.map(element => {
+    if (element.id === idPile) {
+      element.addCardPerso(carte, cardValue);
+      element.render();
+    }
+  });
+  player.render();
 }
+
 ////////////////////////////////////////////////////////
-// Fonction pour qu'un autre joueur repioche des cartes à la fin
-export function playerEndTurn(main) {
-  while (main.length < 7) {
-    main.addCard(deck.topCard());
-    main.render();
+// Fonction pour faire piocher un joueur
+function drawCard(idPlayer, cardValue, deck) {
+  if (cardValue === 0) {
   }
 }
 
-function pioche(main, carte) {
-  main.addCard(deck.getCard(carte));
-  main.render();
-}
+console.log(playersHand);
 
-export default { init, playerEndTurn, playerAddCard, pioche };
+export default { init, putCard, drawCard };

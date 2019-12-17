@@ -31,29 +31,41 @@ var cards = (function() {
         }
       }
     }
-    let start = 2;
-    let end = 99;
+
     opt.table = $(opt.table)[0];
-    if ($(opt.table).css("position") === "static") {
+    if ($(opt.table).css("position") == "static") {
       $(opt.table).css("position", "relative");
     }
-    // Création des 4 piles
-    all.unshift(new Card("0", 0, 100, opt.table));
-    all.unshift(new Card("0", 0, 100, opt.table));
-    all.unshift(new Card("0", 1, 1, opt.table));
-    all.unshift(new Card("0", 1, 1, opt.table));
+
+    let nbPiles = options.piles;
+    if (nbPiles === 2) {
+      all.unshift(new Card("0", 0, 100, opt.table));
+      all.unshift(new Card("0", 1, 1, opt.table));
+    }
+    if (nbPiles === 4) {
+      // Création des 4 piles
+      all.unshift(new Card("0", 0, 100, opt.table));
+      all.unshift(new Card("0", 0, 100, opt.table));
+      all.unshift(new Card("0", 1, 1, opt.table));
+      all.unshift(new Card("0", 1, 1, opt.table));
+    }
+    if (nbPiles === 6) {
+      // Création des 4 piles
+      all.unshift(new Card("0", 0, 100, opt.table));
+      all.unshift(new Card("0", 0, 100, opt.table));
+      all.unshift(new Card("0", 0, 100, opt.table));
+      all.unshift(new Card("0", 1, 1, opt.table));
+      all.unshift(new Card("0", 1, 1, opt.table));
+      all.unshift(new Card("0", 1, 1, opt.table));
+    }
+
+    let start = 2;
+    let end = 99;
 
     let line = "0";
-    let temp;
+    let column = 1;
     for (var i = start; i <= end; i++) {
-      if (i > 9) {
-        line = i.toString().substring(0, 1);
-        temp = i % 10;
-      } else {
-        line = "0";
-        temp = i;
-      }
-      all.push(new Card(line, temp, i, opt.table));
+      all.push(new Card(line, column, i, opt.table));
     }
     $(".card").click(mouseEvent);
   }
@@ -156,20 +168,63 @@ var cards = (function() {
       this.addCards([card]);
     },
 
+    addCardPerso: function(card, cardValue) {
+      console.log(card);
+      let line;
+      let column;
+      if (cardValue > 9) {
+        line = cardValue.toString().substring(0, 1);
+        column = cardValue % 10;
+      } else {
+        line = "0";
+        column = cardValue;
+      }
+      card.suit = line;
+      card.column = column;
+      card.rank = cardValue;
+      card.name = "carte" + cardValue;
+
+      console.log(card);
+      this.addCards([card]);
+    },
+
     addCards: function(cards) {
       for (var i = 0; i < cards.length; i++) {
         var card = cards[i];
         if (card.container) {
-          card.container.removeCard(card);
+          card.container.removeCard(card.rank);
         }
         this.push(card);
         card.container = this;
       }
     },
+    // pas utilisé pour le moment
+    setCard: function(cardValue, player) {
+      let line;
+      let column;
+      // On créé une nouvelle carte avec la valeur
+      if (cardValue > 9) {
+        line = cardValue.toString().substring(0, 1);
+        column = cardValue % 10;
+      } else {
+        line = "0";
+        column = cardValue;
+      }
+      let newCard = new Card(line, column, cardValue, opt.table);
+      // On supprime cette carte de la main du joueur
+      player.map(element => {
+        if (element.rank === cardValue) {
+          element.container.removeCard(cardValue);
+          newCard.container = element.container;
+        }
+      });
+      this.push(newCard);
+      newCard.container = this;
+    },
 
-    removeCard: function(card) {
+    removeCard: function(cardValue) {
       for (var i = 0; i < this.length; i++) {
-        if (this[i] === card) {
+        if (this[i].rank === cardValue) {
           this.splice(i, 1);
           return true;
         }
@@ -182,6 +237,7 @@ var cards = (function() {
       this.x = options.x || $(opt.table).width() / 2;
       this.y = options.y || $(opt.table).height() / 2;
       this.faceUp = options.faceUp;
+      this.id = options.id;
     },
 
     click: function(func, context) {
