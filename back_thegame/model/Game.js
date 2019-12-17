@@ -131,6 +131,8 @@ GameSchema.statics.drawCard = function(game){
 	game.players.map(player=>{
 		const numCardsToDraw = 5-player.hand.length;
 		const drawCards = game.deckPile.splice(game.deckPile.length-numCardsToDraw,numCardsToDraw);
+		//a tester
+		drawCards.map(card=>game.actions.push(new Action({type : "drawCard",details:{who : player._id.toString(),card : card}})));
 		player.hand.push(...drawCards);
 	});
 }
@@ -293,9 +295,14 @@ GameSchema.statics.getActions = function(gameId, playerId, version){
 			deckPile : game.deckPile.length,
 			status : game.status
 		};
-
+		//à tester
 		if(version !== undefined)
-			gameInfo.actions = game.actions.slice(version);
+			gameInfo.actions = game.actions.slice(version).map(act=>{
+				if(act.type="drawCard" && act.details.who !== playerId)
+				{ 
+					act.details.card=undefined;
+				} 
+				return act;});
 
 		return gameInfo;
 	});

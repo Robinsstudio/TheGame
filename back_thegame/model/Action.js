@@ -3,7 +3,7 @@ const Card = require('./Card');
 const ActionSchema = new mongoose.Schema({
     type : {
         type : String,
-        enum : [ 'playCard', 'endTurn' , 'ping' ],
+        enum : [ 'playCard', 'endTurn' , 'ping', 'drawCard' ],
         default : 'playCard'
     },
     details : {
