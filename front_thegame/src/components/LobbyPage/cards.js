@@ -169,7 +169,6 @@ var cards = (function() {
     },
 
     addCardPerso: function(card, cardValue) {
-      console.log(card);
       let line;
       let column;
       if (cardValue > 9) {
@@ -184,7 +183,6 @@ var cards = (function() {
       card.rank = cardValue;
       card.name = "carte" + cardValue;
 
-      console.log(card);
       this.addCards([card]);
     },
 

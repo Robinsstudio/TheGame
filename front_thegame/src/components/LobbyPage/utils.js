@@ -340,7 +340,7 @@ export function init(ArrayPlayers, ArrayPiles) {
 }
 ////////////////////////////////////////////////////////
 // Fonction pour mettre une carte d'une main sur une pile
-function putCard(idPlayer, cardValue, idPile) {
+export function putCard(idPlayer, cardValue, idPile) {
   let player;
   let carte;
 
@@ -371,7 +371,7 @@ function putCard(idPlayer, cardValue, idPile) {
 
 ////////////////////////////////////////////////////////
 // Fonction pour faire piocher un joueur
-function drawCard(idPlayer, cardValue) {
+export function drawCard(idPlayer, cardValue) {
   let hand;
 
   playersHand.map(element => {
