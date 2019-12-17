@@ -310,12 +310,11 @@ GameSchema.statics.getActions = function(gameId, playerId, version){
 
 		if(version !== undefined)
 			gameInfo.actions = game.actions.slice(version).map(act=>{
-				if(act.type="drawCard" && act.details.who !== playerId)
+				if(act.type==="drawCard" && act.details.who !== playerId)
 				{ 
 					act.details.card={_id:"0",value:0};
 				} 
 				return act;});
-
 		return gameInfo;
 	});
 }

@@ -120,7 +120,6 @@ export default class Game extends Component {
             utils.putCard(action.details.who,action.details.card.value,action.details.pile);
           }
           else if(action.type==="drawCard"){
-            console.log(action);
             utils.drawCard(action.details.who,action.details.card.value);
           }
         }
