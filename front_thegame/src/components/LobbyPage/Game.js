@@ -19,6 +19,7 @@ export default class Game extends Component {
       ready : undefined,
       joined : false,
       players : [],
+      piles : [],
       game : "waitingPlayers",
       nowPlaying : false,
       version : 0
@@ -56,7 +57,7 @@ export default class Game extends Component {
       this.joinGame();
     }
     if(prevState.game === "waitingPlayers" && this.state.game === "playing"){
-      utils.init()
+      utils.init(this.state.players.map(ele=>ele._id.toString()),this.state.piles);
     }
   }
 
@@ -108,19 +109,20 @@ export default class Game extends Component {
           ready=ready.ready;
         else
           ready = false;
-        this.setState({game:res.status,version : res.version,nowPlaying:res.nowPlaying===this.state.playerId,players: res.players,ready:ready})
+        this.setState({piles:res.piles,game:res.status,version : res.version,nowPlaying:res.nowPlaying===this.state.playerId,players: res.players,ready:ready})
         console.log(res)
         return res;
       })
       .then(res=>{
         for( let action of res.actions){
           console.log(action);
-          /*if(action.type==="playCard"){
+          if(action.type==="playCard"){
             utils.putCard(action.details.who,action.details.card.value,action.details.pile);
           }
           else if(action.type==="drawCard"){
+            console.log(action);
             utils.drawCard(action.details.who,action.details.card.value);
-          }*/
+          }
         }
       })
       //.then(utils.init())

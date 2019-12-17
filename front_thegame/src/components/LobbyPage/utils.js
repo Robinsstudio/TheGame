@@ -24,7 +24,6 @@ export function init(ArrayPlayers, ArrayPiles) {
   deck.addCards(cards.all);
   //No animation here, just get the deck onto the table.
   deck.render({ immediate: true });
-
   switch (ArrayPlayers.length) {
     case 1:
       myHand = new cards.Hand({
@@ -373,7 +372,6 @@ function putCard(idPlayer, cardValue, idPile) {
 // Fonction pour faire piocher un joueur
 function drawCard(idPlayer, cardValue) {
   let hand;
-
   playersHand.map(element => {
     if (element.id === idPlayer) {
       hand = element;
