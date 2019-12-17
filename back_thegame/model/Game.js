@@ -167,8 +167,7 @@ GameSchema.statics.createGame = function(name){
 
 GameSchema.statics.joinGame = function(gameId, playerId){
 	let playerLogin;
-	return Player.findOne({_id: playerId})
-	.then(res=>{playerLogin = res.login;return Game.findOne({_id : gameId});})
+	return Game.findOne({_id : gameId})
 	.then(res=>{
 		if(res===null)
 			throw Error("La partie n'existe pas");
