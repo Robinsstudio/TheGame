@@ -190,12 +190,13 @@ var cards = (function() {
       for (var i = 0; i < cards.length; i++) {
         var card = cards[i];
         if (card.container) {
-          card.container.removeCard(card.rank);
+          card.container.removeCard(card.shortName);
         }
         this.push(card);
         card.container = this;
       }
     },
+    /*
     // pas utilisé pour le moment
     setCard: function(cardValue, player) {
       let line;
@@ -219,10 +220,11 @@ var cards = (function() {
       this.push(newCard);
       newCard.container = this;
     },
+    */
 
     removeCard: function(cardValue) {
       for (var i = 0; i < this.length; i++) {
-        if (this[i].rank === cardValue) {
+        if (this[i].shortName === cardValue) {
           this.splice(i, 1);
           return true;
         }

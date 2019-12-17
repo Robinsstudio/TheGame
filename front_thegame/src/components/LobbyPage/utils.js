@@ -371,16 +371,12 @@ export function putCard(idPlayer, cardValue, idPile) {
 ////////////////////////////////////////////////////////
 // Fonction pour faire piocher un joueur
 export function drawCard(idPlayer, cardValue) {
-  let hand;
   playersHand.map(element => {
     if (element.id === idPlayer) {
-      hand = element;
+      element.addCardPerso(deck.topCard(), cardValue);
+      element.render();
     }
   });
-  hand.addCardPerso(deck.topCard(), cardValue);
-  hand.render();
 }
-
-console.log(playersHand);
 
 export default { init, putCard, drawCard };
