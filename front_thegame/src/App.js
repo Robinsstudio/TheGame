@@ -96,7 +96,7 @@ class App extends Component {
             />
             <PrivateRoute
               test={this.state.id !== undefined}
-              props={{ login: this.state.login, mail: this.state.mail }}
+              props={{ id : this.state.id, login: this.state.login, mail: this.state.mail }}
               component={Game}
               path="/game"
             />

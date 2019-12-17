@@ -8,10 +8,11 @@ export default class Game extends Component {
     super(props);
     this.state = {
       gameId : undefined,
-      playerLogin : undefined,
+      playerId : undefined,
       ready : false,
       joined : false,
       game : "waiting",
+      nowPlaying : false,
       version : 0
     };
     this.joinGame = this.joinGame.bind(this);
@@ -32,10 +33,10 @@ export default class Game extends Component {
   }
 
   componentDidUpdate(prevProps,prevState){
-    if(this.props.login !== undefined && this.state.playerLogin === undefined){
-      this.setState({playerLogin : this.props.login});
+    if(this.props.id !== undefined && this.state.playerId === undefined){
+      this.setState({playerId : this.props.id});
     }
-    if(this.state.playerLogin !== undefined && this.state.gameId !== undefined && !this.state.joined){
+    if(this.state.playerId !== undefined && this.state.gameId !== undefined && !this.state.joined){
       this.joinGame();
     }
     if(prevState.game === "waiting" && this.state.game === "playing"){
@@ -48,11 +49,20 @@ export default class Game extends Component {
       .put()
       .body({})
       .send()
-      .then(res =>{ if(res.ok) return res.json(res); return res.text()})
+      .then(res =>{ if(res.ok) return res.json(res); return res.text().then(err=>{throw new Error(err)})})
       .then(res => console.log(res))
       .then(res=> {this.interval = setInterval(() => this.getGameInfo(), 3000);this.setState({joined:true})})
       //.then(utils.init())
       .catch(err => console.log(err));
+  }
+
+  playerEndTurn(){
+    new Request("/api/game/"+this.state.gameId + "/fintour")
+    .put()
+    .send()
+    .then(res=>{if(res.ok)return res; return res.text().then(err=>{throw new Error(err)})})
+    .then(res=>console.log(res))
+    .catch(err=>console.log(err));
   }
 
   getGameInfo(){
@@ -61,7 +71,7 @@ export default class Game extends Component {
       .send()
       .then(res =>{ if(res.ok) return res.json(res); return res.text()})
       .then(res => {
-        this.setState({game:res.status,version : res.version})
+        this.setState({game:res.status,version : res.version,nowPlaying:res.nowPlaying===this.state.id})
         console.log(res)
       })
       //.then(utils.init())
@@ -80,14 +90,15 @@ export default class Game extends Component {
   render() {
     return (
       <div>
-        <Button style={{ fontSize: "20px" }} color="primary" id="buttonEndTurn">
+        {this.state.nowPlaying && <Button style={{ fontSize: "20px" }} color="primary" onClick={()=>this.playerEndTurn()}>
           Passer mon tour
         </Button>
+        }
         {this.state.ready || <Button style={{ fontSize: "20px" }} color="primary"  onClick={()=>this.playerIsReady()}>
           Prêt ?
         </Button>
         }
-        <div id="card-table"></div>
+        {this.state.game === "waiting" || <div id="card-table"></div>}
       </div>
     );
   }

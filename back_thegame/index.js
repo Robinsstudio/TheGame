@@ -121,8 +121,8 @@ app.put('/api/game/:id/fintour',Player.isAuthenticated,function(req,res){
 });
 
 app.put('/api/game/:id/cartes',Player.isAuthenticated,function(req,res){
-	const { body : { cardId,pileId }, params: { id }, jwt: { playerId } } = req;
-	Game.playCard(id,playerId,cardId,pileId)
+	const { body : { cardValue,pileId }, params: { id }, jwt: { playerId } } = req;
+	Game.playCard(id,playerId,cardValue,pileId)
 	.then(function(){
 		res.sendStatus(200);
 	})

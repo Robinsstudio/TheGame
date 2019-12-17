@@ -44,9 +44,9 @@ GameSchema.statics.getPlayer = function(game, playerId){
 	return player;
 }
 
-GameSchema.statics.getCardFromPlayerHand = function(game, playerId, cardId){
+GameSchema.statics.getCardFromPlayerHand = function(game, playerId, cardValue){
 	let player = Game.getPlayer(game, playerId);
-	let card = player.hand.filter(ele => ele._id == cardId)[0];
+	let card = player.hand.filter(ele => ele.value == cardValue)[0];
 	if(card === undefined){
 		throw Error("La carte n'est pas présente dans le jeu du joueur");
 	}
@@ -225,7 +225,7 @@ GameSchema.statics.leaveGame = function(gameId,playerId){
 }
 
 //Jouer une carte
-GameSchema.statics.playCard = function(gameId, playerId, cardId, pileId){
+GameSchema.statics.playCard = function(gameId, playerId, cardValue, pileId){
 	return Game.findOne({_id : gameId})
 	.then(game => {
 		if(game){
@@ -244,7 +244,7 @@ GameSchema.statics.playCard = function(gameId, playerId, cardId, pileId){
 				throw Error("La pile n'existe pas");
 			}
 			else{
-				let card = Game.getCardFromPlayerHand(game, playerId, cardId);
+				let card = Game.getCardFromPlayerHand(game, playerId, cardValue);
 				Game.putCardOnPile(game, playerId, pile, card);
 				game.actions.push(new Action({type : "playCard", details : {
 					who : playerId, pile : pileId, card : card
