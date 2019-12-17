@@ -128,10 +128,20 @@ GameSchema.statics.playersStillHaveCards = function(game){
 }
 
 GameSchema.statics.drawCard = function(game){
-	game.players.map(player=>{
-		const numCardsToDraw = 5-player.hand.length;
+	let maxCard = 6;
+	switch (game.players.length) {
+		case 1:
+			maxCard = 8;
+			break;
+		case 2:
+			maxCard = 7;
+			break;
+		default:
+			maxCard = 6;
+	}
+	game.players.map(player=>{	  
+		const numCardsToDraw = maxCard-player.hand.length;
 		const drawCards = game.deckPile.splice(game.deckPile.length-numCardsToDraw,numCardsToDraw);
-		//a tester
 		drawCards.map(card=>game.actions.push(new Action({type : "drawCard",details:{who : player._id.toString(),card : card}})));
 		player.hand.push(...drawCards);
 	});
@@ -283,7 +293,7 @@ GameSchema.statics.getActions = function(gameId, playerId, version){
 				if(ele._id != playerId){
 					ele.hand.map(card => {
 							card.value = 0;
-							card._id = 0;
+							card._id="0";
 							return card;
 						})
 				}
@@ -295,12 +305,12 @@ GameSchema.statics.getActions = function(gameId, playerId, version){
 			deckPile : game.deckPile.length,
 			status : game.status
 		};
-		//à tester
+
 		if(version !== undefined)
 			gameInfo.actions = game.actions.slice(version).map(act=>{
 				if(act.type="drawCard" && act.details.who !== playerId)
 				{ 
-					act.details.card=undefined;
+					act.details.card={_id:"0",value:0};
 				} 
 				return act;});
 

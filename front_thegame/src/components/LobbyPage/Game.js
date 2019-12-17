@@ -9,7 +9,10 @@ export default class Game extends Component {
     this.state = {
       gameId : undefined,
       playerLogin : undefined,
-      ready : false
+      ready : false,
+      joined : false,
+      game : "waiting",
+      version : 0
     };
     this.joinGame = this.joinGame.bind(this);
     this.getGameInfo = this.getGameInfo.bind(this);
@@ -28,12 +31,15 @@ export default class Game extends Component {
     clearInterval(this.interval);
   }
 
-  componentDidUpdate(){
+  componentDidUpdate(prevProps,prevState){
     if(this.props.login !== undefined && this.state.playerLogin === undefined){
       this.setState({playerLogin : this.props.login});
     }
-    if(this.state.playerLogin !== undefined && this.state.gameId !== undefined){
+    if(this.state.playerLogin !== undefined && this.state.gameId !== undefined && !this.state.joined){
       this.joinGame();
+    }
+    if(prevState.game === "waiting" && this.state.game === "playing"){
+      utils.init()
     }
   }
 
@@ -44,17 +50,20 @@ export default class Game extends Component {
       .send()
       .then(res =>{ if(res.ok) return res.json(res); return res.text()})
       .then(res => console.log(res))
-      .then(res=> {this.interval = setInterval(() => this.getGameInfo(), 3000)})
+      .then(res=> {this.interval = setInterval(() => this.getGameInfo(), 3000);this.setState({joined:true})})
       //.then(utils.init())
       .catch(err => console.log(err));
   }
 
   getGameInfo(){
-    new Request("/api/game/" + this.state.gameId + "/" )
+    new Request("/api/game/" + this.state.gameId + "/" + this.state.version)
       .get()
       .send()
       .then(res =>{ if(res.ok) return res.json(res); return res.text()})
-      .then(res => console.log(res))
+      .then(res => {
+        this.setState({game:res.status,version : res.version})
+        console.log(res)
+      })
       //.then(utils.init())
       .catch(err => console.log(err));
   }
@@ -69,7 +78,6 @@ export default class Game extends Component {
   }
 
   render() {
-    console.log(this.state);
     return (
       <div>
         <Button style={{ fontSize: "20px" }} color="primary" id="buttonEndTurn">
