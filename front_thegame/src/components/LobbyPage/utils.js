@@ -26,11 +26,11 @@ export function init() {
     faceUp: true,
     y: 400
   });
-  let righthand = new cards.Hand({
+  /* let righthand = new cards.Hand({
     faceUp: false,
     y: 400,
     x: 100
-  });
+  }); */
 
   // Les piles de cartes
   ascendantPile1 = new cards.Deck({
@@ -52,7 +52,7 @@ export function init() {
   descendantPile2.x += 150;
 
   //$("#deal").hide();
-  deck.deal(7, [upperhand, myHand, righthand], function() {
+  deck.deal(7, [upperhand, myHand], function() {
     //This is a callback function, called when the dealing is done
     descendantPile1.addCard(deck.firstCard());
     descendantPile1.render();

@@ -3,14 +3,12 @@
 var cards = (function() {
   //The global options
   var opt = {
-    cardSize: { width: 69, height: 106, padding: 20 },
+    cardSize: { width: 69, height: 106, padding: 40 },
     animationSpeed: 100,
     table: "body",
     cardback: "img/dos.png",
     acesHigh: false,
-    cardsUrl: "img/carteSolo.png",
-    pileAsc: "img/1.png",
-    pileDsc: "img/100.png"
+    cardsUrl: "img/cards.png"
   };
   var zIndexCounter = 100;
   var all = []; //All the cards created.
@@ -40,67 +38,49 @@ var cards = (function() {
       $(opt.table).css("position", "relative");
     }
     // Création des 4 piles
-    all.unshift(new Card("pileDsc1", 100, opt.table));
-    all.unshift(new Card("pileDsc2", 100, opt.table));
-    all.unshift(new Card("pileAsc1", 1, opt.table));
-    all.unshift(new Card("pileAsc2", 1, opt.table));
+    all.unshift(new Card("0", 0, 100, opt.table));
+    all.unshift(new Card("0", 0, 100, opt.table));
+    all.unshift(new Card("0", 1, 1, opt.table));
+    all.unshift(new Card("0", 1, 1, opt.table));
 
-    for (let i = start; i <= end; i++) {
-      all.push(new Card(i, i, opt.table));
+    let line = "0";
+    let temp;
+    for (var i = start; i <= end; i++) {
+      if (i > 9) {
+        line = i.toString().substring(0, 1);
+        temp = i % 10;
+      } else {
+        line = "0";
+        temp = i;
+      }
+      all.push(new Card(line, temp, i, opt.table));
     }
     $(".card").click(mouseEvent);
   }
 
-  function Card(suit, rank, table) {
-    this.init(suit, rank, table);
+  function Card(suit, column, rank, table) {
+    this.init(suit, column, rank, table);
   }
 
   Card.prototype = {
-    init: function(suit, rank, table) {
+    init: function(suit, column, rank, table) {
       this.shortName = rank;
+      this.column = column;
       this.suit = suit;
       this.rank = rank;
       this.name = "carte" + rank;
       this.faceUp = false;
-      if (rank === 100) {
-        this.el = $("<div/>")
-          .css({
-            width: opt.cardSize.width,
-            height: opt.cardSize.height,
-            "background-image": "url(" + opt.pileDsc + ")",
-            position: "absolute",
-            cursor: "pointer"
-          })
-          .addClass("card")
-          .data("card", this)
-          .appendTo($(table));
-      }
-      if (rank === 1) {
-        this.el = $("<div/>")
-          .css({
-            width: opt.cardSize.width,
-            height: opt.cardSize.height,
-            "background-image": "url(" + opt.pileAsc + ")",
-            position: "absolute",
-            cursor: "pointer"
-          })
-          .addClass("card")
-          .data("card", this)
-          .appendTo($(table));
-      }
-      if (rank > 1 && rank < 100) {
+      if (rank >= 0) {
         this.el = $("<div/>")
           .css({
             width: opt.cardSize.width,
             height: opt.cardSize.height,
             "background-image": "url(" + opt.cardsUrl + ")",
             position: "absolute",
-            cursor: "pointer",
-            color: "white"
+            cursor: "pointer"
           })
           .addClass("card")
           .data("card", this)
-          .text(rank)
           .appendTo($(table));
       }
       this.showCard();
@@ -129,8 +109,7 @@ var cards = (function() {
     },
 
     showCard: function() {
-      /*
-      let offsets = {
+      var offsets = {
         "0": 0,
         "1": 1,
         "2": 2,
@@ -142,28 +121,20 @@ var cards = (function() {
         "8": 8,
         "9": 9
       };
-      */
-      //var xpos, ypos;
-      let rank = this.rank;
-      //xpos = -rank * opt.cardSize.width;
-      //ypos = -offsets[this.suit] * opt.cardSize.height;
+      var xpos, ypos;
+      var rank = this.rank;
+      var column = this.column;
+      xpos = -column * opt.cardSize.width;
+      ypos = -offsets[this.suit] * opt.cardSize.height;
       this.rotate(0);
-      if (rank === 100) {
-        $(this.el).css("background-image", "url(" + opt.pileDsc + ")");
-      }
-      if (rank === 1) {
-        $(this.el).css("background-image", "url(" + opt.pileAsc + ")");
-      }
-      if (rank > 1 && rank < 100) {
+      if (rank >= 0) {
         $(this.el).css("background-image", "url(" + opt.cardsUrl + ")");
-        $(this.el).text(rank);
-        //$(this.el).css('background-position', xpos + 'px ' + ypos + 'px');
+        $(this.el).css("background-position", xpos + "px " + ypos + "px");
       }
     },
 
-    hideCard: function(position) {
+    hideCard: function() {
       $(this.el).css("background-image", "url(" + opt.cardback + ")");
-      $(this.el).text("");
       this.rotate(0);
     },
 
