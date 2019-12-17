@@ -112,7 +112,7 @@ export default class Game extends Component {
           <Table style={{maxWidth : "600px",margin : "auto"}}aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Id joueur</TableCell>
+                <TableCell>Joueur</TableCell>
                 <TableCell align="right">Prêts ?</TableCell>
               </TableRow>
             </TableHead>
@@ -120,7 +120,7 @@ export default class Game extends Component {
               {this.state.players.map(player => (
                 <TableRow key={player._id}>
                   <TableCell component="th" scope="row">
-                    {player._id}
+                    {player.login}
                   </TableCell>
                   <TableCell align="right">{player.ready?
                     <DoneIcon fontSize="large" style={{color: "green"}}/>

@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 const Card = require('./Card');
 const Pile = require('./Pile');
 const Action = require('./Action');
-
+const Player = require('./Player.js');
 //-----Schéma du jeu -----//
 
 const GameSchema = new mongoose.Schema({
 	name : String,
 	players : [ {
 		_id : String,
+		login : String,
 		hand : [ Card.schema ],
 		ready : {
 			type : Boolean,
@@ -165,15 +166,17 @@ GameSchema.statics.createGame = function(name){
 }
 
 GameSchema.statics.joinGame = function(gameId, playerId){
-	return Game.findOne({_id : gameId})
+	let playerLogin;
+	return Player.findOne({_id: playerId})
+	.then(res=>{playerLogin = res.login;return Game.findOne({_id : gameId});})
 	.then(res=>{
 		if(res===null)
 			throw Error("La partie n'existe pas");
 		if(res.status === 'waitingPlayers' && res.players === undefined)
-			res.players = [{_id:playerId,hand:[]}];
+			res.players = [{_id:playerId,login:playerLogin,hand:[]}];
 		else{
 			if(res.status === 'waitingPlayers' && res.players.filter(ele=>ele._id.toString()===playerId).length===0)
-				res.players.push({_id:playerId,hand:[]});
+				res.players.push({_id:playerId,login:playerLogin,hand:[]});
 		}
 		return res.save();
 	})

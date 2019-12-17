@@ -21,6 +21,7 @@ app.use(function(req, res, next) {
 	});
 });
 
+
 app.post('/api/account', function(req, res) {
 	const { login, password, email } = req.body;
 	Player.register(login, password, email).then(function() {
