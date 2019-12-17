@@ -116,10 +116,10 @@ export default class Game extends Component {
         for( let action of res.actions){
           console.log(action);
           /*if(action.type==="playCard"){
-            utils.putCard();
+            utils.putCard(action.details.who,action.details.card.value,action.details.pile);
           }
           else if(action.type==="drawCard"){
-            utils.drawCard();
+            utils.drawCard(action.details.who,action.details.card.value);
           }*/
         }
       })
