@@ -6,6 +6,7 @@ const Action = require('./Action');
 //-----Schéma du jeu -----//
 
 const GameSchema = new mongoose.Schema({
+	name : String,
 	players : [ {
 		_id : String,
 		hand : [ Card.schema ],
@@ -138,10 +139,13 @@ GameSchema.statics.drawCard = function(game){
 //------Méthodes statiques de l'objet Game ------//
 
 //Création d'une nouvelle partie
-GameSchema.statics.createGame = function(){
+GameSchema.statics.createGame = function(name){
+	if(name === undefined || name === "")
+		throw new Error("Un nom de partie doit être fourni");
 	return Card.find(/*{value:{$gte: 2, $lte : 11}}*/)
 	.then(result => {
 		return new Game({
+			name : name,
 			deckPile:shuffle(result),
 			piles : [ new Pile({orientation:'down'}),new Pile({orientation : 'down'}),new Pile({}),new Pile({}) ]
 		}).save();

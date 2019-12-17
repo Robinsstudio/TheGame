@@ -65,7 +65,7 @@ app.put('/api/authentication', function(req, res) {
 });
 
 app.post('/api/game', Player.isAuthenticated, function(req, res) {
-	Game.createGame().then(game => res.status(201).json(({ id: game._id })));
+	Game.createGame(req.body.name).then(game => res.status(201).json(({ id: game._id })));
 });
 
 app.put('/api/game/:id', Player.isAuthenticated, function(req, res) {

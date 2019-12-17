@@ -8,9 +8,12 @@ export default class Game extends Component {
     super(props);
     this.state = {
       gameId : undefined,
-      playerLogin : undefined
+      playerLogin : undefined,
+      ready : false
     };
     this.joinGame = this.joinGame.bind(this);
+    this.getGameInfo = this.getGameInfo.bind(this);
+    this.playerIsReady = this.playerIsReady.bind(this);
   }
 
   componentDidMount() {
@@ -56,6 +59,15 @@ export default class Game extends Component {
       .catch(err => console.log(err));
   }
 
+  playerIsReady(){
+      new Request("/api/game/"+this.state.gameId+"/ready")
+      .put()
+      .send()
+      .then(res=>{if(res.ok)return res; return res.text()})
+      .then(res=>this.setState({ready:true}))
+      .catch(err=>console.log(err));
+  }
+
   render() {
     console.log(this.state);
     return (
@@ -63,6 +75,10 @@ export default class Game extends Component {
         <Button style={{ fontSize: "20px" }} color="primary" id="buttonEndTurn">
           Passer mon tour
         </Button>
+        {this.state.ready || <Button style={{ fontSize: "20px" }} color="primary"  onClick={()=>this.playerIsReady()}>
+          Prêt ?
+        </Button>
+        }
         <div id="card-table"></div>
       </div>
     );
