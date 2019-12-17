@@ -371,10 +371,16 @@ function putCard(idPlayer, cardValue, idPile) {
 
 ////////////////////////////////////////////////////////
 // Fonction pour faire piocher un joueur
-function drawCard(idPlayer, cardValue, deck) {
-  playersHand.map(element => {});
-  if (cardValue === 0) {
-  }
+function drawCard(idPlayer, cardValue) {
+  let hand;
+
+  playersHand.map(element => {
+    if (element.id === idPlayer) {
+      hand = element;
+    }
+  });
+  hand.addCardPerso(deck.topCard(), cardValue);
+  hand.render();
 }
 
 console.log(playersHand);
