@@ -28,7 +28,7 @@ export function init(ArrayPlayers, ArrayPiles) {
   switch (ArrayPlayers.length) {
     case 1:
       myHand = new cards.Hand({
-        id: "moi",
+        id: ArrayPlayers[0],
         faceUp: true,
         y: 400
       });
@@ -190,7 +190,7 @@ export function init(ArrayPlayers, ArrayPiles) {
   }
 
   // Fonction qui initialise les decks et mains des joueurs
-  deck.deal(6, playersHand, function() {
+  deck.deal(0, playersHand, function() {
     piles.forEach(element => {
       element.addCard(deck.firstCard());
       element.render();
