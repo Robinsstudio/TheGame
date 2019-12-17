@@ -35,7 +35,7 @@ export function init(ArrayPlayers, ArrayPiles) {
       playersHand.push(myHand);
       break;
     case 2:
-      upperhandcenter = new cards.Hand({
+      upperhandright = new cards.Hand({
         id: "baptiste",
         faceUp: false,
         y: 60
@@ -46,7 +46,7 @@ export function init(ArrayPlayers, ArrayPiles) {
         y: 400
       });
       playersHand.push(myHand);
-      playersHand.push(upperhandcenter);
+      playersHand.push(upperhandright);
       break;
     case 3:
       upperhandright = new cards.Hand({
@@ -371,6 +371,7 @@ function putCard(idPlayer, cardValue, idPile) {
 ////////////////////////////////////////////////////////
 // Fonction pour faire piocher un joueur
 function drawCard(idPlayer, cardValue, deck) {
+  playersHand.map(element => {});
   if (cardValue === 0) {
   }
 }
