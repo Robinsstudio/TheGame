@@ -102,6 +102,12 @@ PlayerSchema.statics.editPlayer = function(playerId,login,mail,oldPass,newPass){
 	.then(player=>player.save())
 }
 
+PlayerSchema.statics.getPlayerLogin = function(id) {
+	if(id===undefined)
+		throw new Error("Un login doit être fourni");
+	return Player.findOne({_id : id}).then(res=>{return {login : res.login}})
+}
+
 PlayerSchema.statics.authenticate = function(login, password) {
 	const model = this.model('Player');
 	return model.find({ login }).then(function(players) {

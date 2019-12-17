@@ -21,6 +21,7 @@ app.use(function(req, res, next) {
 	});
 });
 
+
 app.post('/api/account', function(req, res) {
 	const { login, password, email } = req.body;
 	Player.register(login, password, email).then(function() {
@@ -40,6 +41,12 @@ app.post('/api/account', function(req, res) {
 	Player.deletePlayer(playerId)
 	.then(()=>res.clearCookie(Constants.JWT_COOKIE).status(200).send("Compte supprimé"))
 	.catch(()=>res.status(404).send('Impossible de supprimer le compte'));
+});
+
+app.get('/api/player/:id/login',Player.isAuthenticated,function(req,res){
+	Player.getPlayerLogin(req.params.id)
+	.then(r=>res.status(200).json(r))
+	.then(err=>res.status(404).send(err.message))
 });
 
 app.put('/api/authentication', function(req, res) {
@@ -104,7 +111,7 @@ app.get('/api/game/:id/:version',Player.isAuthenticated,function(req,res){
 	})
 	.catch(function(err) {
 		console.log(err);
-		res.status(404).send(err);
+		res.status(404).send(err.message);
 	});
 });
 
@@ -116,19 +123,19 @@ app.put('/api/game/:id/fintour',Player.isAuthenticated,function(req,res){
 	})
 	.catch(function(err){
 		console.log(err);
-		res.status(404).send(err);
+		res.status(404).send(err.message);
 	})
 });
 
 app.put('/api/game/:id/cartes',Player.isAuthenticated,function(req,res){
-	const { body : { cardId,pileId }, params: { id }, jwt: { playerId } } = req;
-	Game.playCard(id,playerId,cardId,pileId)
+	const { body : { cardValue,pileId }, params: { id }, jwt: { playerId } } = req;
+	Game.playCard(id,playerId,cardValue,pileId)
 	.then(function(){
-		res.sendStatus(200);
+		res.status(200).json({});
 	})
 	.catch(function(err){
 		console.log(err);
-		res.status(404).send(err);
+		res.status(404).send(err.message);
 	})
 })
 
@@ -140,11 +147,11 @@ app.put('/api/game/:id/ready',Player.isAuthenticated,function(req,res){
 	})
 	.catch(function(err){
 		console.log(err);
-		res.status(404).send(err);
+		res.status(404).send(err.message);
 	})
 })
 
-app.get('/api/game/:id/cards/where/:cardValue',Player.isAuthenticated,function(req,res){
+app.get('/api/game/:id/cartes/where/:cardValue',Player.isAuthenticated,function(req,res){
 	const { params: { id,cardValue }, jwt: { playerId } } = req;
 	Game.whereToPlay(id,cardValue,playerId)
 	.then(function(result){
@@ -152,7 +159,7 @@ app.get('/api/game/:id/cards/where/:cardValue',Player.isAuthenticated,function(r
 	})
 	.catch(function(err){
 		console.log(err);
-		res.status(404).send(err);
+		res.status(404).send(err.message);
 	})
 })
 
