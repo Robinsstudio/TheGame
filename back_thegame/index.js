@@ -166,5 +166,5 @@ app.get('/api/game/:id/cartes/where/:cardValue',Player.isAuthenticated,function(
 app.get('/', function(req, res) {
 	res.send('This page is not very interesting at the moment.');
 });
-
+Card.reset();
 app.listen(8080);
