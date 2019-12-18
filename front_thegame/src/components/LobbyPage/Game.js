@@ -143,6 +143,7 @@ export default class Game extends Component {
     new Request("/api/game/" + this.state.gameId + "/" + this.state.version)
       .get()
       .send()
+      .then(res=>{if(res.ok)return res.json(); return res.text().then(err=>{throw new Error(err)})})
       .then(res => {
         let newState = {};
         let ready = res.players.filter(ele=>ele._id.toString() === this.state.playerId)[0];
