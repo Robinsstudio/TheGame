@@ -14,17 +14,6 @@ export default class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-<<<<<<< HEAD
-      gameId: undefined,
-      playerId: undefined,
-      ready: undefined,
-      joined: false,
-      players: [],
-      piles: [],
-      game: "waitingPlayers",
-      nowPlaying: false,
-      version: 0
-=======
       gameId : undefined,
       playerId : undefined,
       ready : undefined,
@@ -33,7 +22,6 @@ export default class Game extends Component {
       game : "waitingPlayers",
       nowPlaying : false,
       version : 0
->>>>>>> 97b985cffbd3c67c9b3a8e1d941e76b6df0667ac
     };
     this.piles=[];
     this.players = {};
@@ -72,16 +60,8 @@ export default class Game extends Component {
     ) {
       this.joinGame();
     }
-<<<<<<< HEAD
-    if (prevState.game === "waitingPlayers" && this.state.game === "playing") {
-      utils.init(
-        this.state.players.map(ele => ele._id.toString()),
-        this.state.piles
-      );
-=======
     if(prevState.game === "waitingPlayers" && this.state.game === "playing"){
       utils.init(this.state.playerId,this.state.players.map(ele=>ele._id.toString()),this.piles);
->>>>>>> 97b985cffbd3c67c9b3a8e1d941e76b6df0667ac
     }
   }
 
@@ -147,9 +127,6 @@ export default class Game extends Component {
       .catch(err => console.log(err));
   }
 
-<<<<<<< HEAD
-  getGameInfo() {
-=======
   runActions(actions){
     for( let action of actions){
       console.log(action);
@@ -163,48 +140,10 @@ export default class Game extends Component {
   }
 
   getGameInfo(){
->>>>>>> 97b985cffbd3c67c9b3a8e1d941e76b6df0667ac
     new Request("/api/game/" + this.state.gameId + "/" + this.state.version)
       .get()
       .send()
       .then(res => {
-<<<<<<< HEAD
-        if (res.ok) return res.json(res);
-        return res.text();
-      })
-      .then(res => {
-        let ready = res.players.filter(
-          ele => ele._id.toString() === this.state.playerId
-        )[0];
-        console.log(ready);
-        if (ready !== undefined) ready = ready.ready;
-        else ready = false;
-        this.setState({
-          piles: res.piles,
-          game: res.status,
-          version: res.version,
-          nowPlaying: res.nowPlaying === this.state.playerId,
-          players: res.players,
-          ready: ready
-        });
-        console.log(res);
-        return res;
-      })
-      .then(res => {
-        for (let action of res.actions) {
-          console.log(action);
-          if (action.type === "playCard") {
-            utils.putCard(
-              action.details.who,
-              action.details.card.value,
-              action.details.pile
-            );
-          } else if (action.type === "drawCard") {
-            utils.drawCard(action.details.who, action.details.card.value);
-          }
-        }
-      })
-=======
         let newState = {};
         let ready = res.players.filter(ele=>ele._id.toString() === this.state.playerId)[0];
         if(ready !== undefined)
@@ -232,7 +171,6 @@ export default class Game extends Component {
         this.runActions(res.actions)
         return res;
       })
->>>>>>> 97b985cffbd3c67c9b3a8e1d941e76b6df0667ac
       //.then(utils.init())
       .catch(err => console.log(err));
   }
