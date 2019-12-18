@@ -13,7 +13,7 @@ let ascendantPile1,
   descendantPile2,
   descendantPile3;
 
-export function init(ArrayPlayers, ArrayPiles) {
+export function init(playerId,ArrayPlayers, ArrayPiles) {
   //Tell the library which element to use for the table
   cards.init({ table: "#card-table", piles: ArrayPiles.length });
   //Create a new deck of cards
@@ -24,118 +24,42 @@ export function init(ArrayPlayers, ArrayPiles) {
   deck.addCards(cards.all);
   //No animation here, just get the deck onto the table.
   deck.render({ immediate: true });
-  switch (ArrayPlayers.length) {
-    case 1:
-      myHand = new cards.Hand({
-        id: ArrayPlayers[0],
-        faceUp: true,
-        y: 400
-      });
-      playersHand.push(myHand);
-      break;
-    case 2:
-      upperhandright = new cards.Hand({
-        id: "baptiste",
-        faceUp: false,
-        y: 60
-      });
-      myHand = new cards.Hand({
-        id: "moi",
-        faceUp: true,
-        y: 400
-      });
-      playersHand.push(myHand);
-      playersHand.push(upperhandright);
-      break;
-    case 3:
-      upperhandright = new cards.Hand({
-        id: "baptiste",
-        faceUp: false,
-        y: 60,
-        x: 900
-      });
-      myHand = new cards.Hand({
-        id: "moi",
-        faceUp: true,
-        y: 400
-      });
-      upperhandleft = new cards.Hand({
-        id: "Clément",
-        faceUp: false,
-        y: 60,
-        x: 300
-      });
-      playersHand.push(myHand);
-      playersHand.push(upperhandright);
-      playersHand.push(upperhandleft);
-      break;
-    case 4:
-      upperhandright = new cards.Hand({
-        id: "baptiste",
-        faceUp: false,
-        y: 60,
-        x: 900
-      });
-      myHand = new cards.Hand({
-        id: "moi",
-        faceUp: true,
-        y: 400
-      });
-      upperhandleft = new cards.Hand({
-        id: "Clément",
-        faceUp: false,
-        y: 60,
-        x: 300
-      });
-      lefthand = new cards.Hand({
-        id: "Dieu",
-        faceUp: false,
-        y: 400,
-        x: 200
-      });
-      playersHand.push(myHand);
-      playersHand.push(upperhandright);
-      playersHand.push(upperhandleft);
-      playersHand.push(lefthand);
-      break;
-    case 5:
-      righthand = new cards.Hand({
-        id: "baptiste",
-        faceUp: false,
-        y: 400,
-        x: 1000
-      });
-      upperhandright = new cards.Hand({
-        id: "tistbap",
-        faceUp: false,
-        y: 60,
-        x: 900
-      });
-      myHand = new cards.Hand({
-        id: "moi",
-        faceUp: true,
-        y: 400
-      });
-      lefthand = new cards.Hand({
-        id: "Clément",
-        faceUp: false,
-        y: 400,
-        x: 200
-      });
-      upperhandleft = new cards.Hand({
-        id: "Dieu",
-        faceUp: false,
-        y: 60,
-        x: 300
-      });
-      playersHand.push(myHand);
-      playersHand.push(righthand);
-      playersHand.push(lefthand);
-      playersHand.push(upperhandleft);
-      playersHand.push(upperhandright);
-      break;
-  }
-
+  ArrayPlayers.filter(ele=>ele===playerId).map(ele=>{
+    myHand = new cards.Hand({
+      id: ele,
+      faceUp: true,
+      y: 400
+    });
+    playersHand.push(myHand);
+  })
+  ArrayPlayers.filter(ele=>ele!==playerId).map((ele,index)=>{
+    let x;
+    let y;
+    switch(index){
+      case 0 : 
+        y=60;
+        break;
+      case 1 : 
+        y=60;
+        x=300;
+        break;
+      case 2 :
+        y=400;
+        x=200;
+        break;
+      case 3 :
+        y=400;
+        x=1000;
+        break;   
+    }
+    let hand = new cards.Hand({
+      id : ele,
+      faceUp : false,
+      y : y,
+      x : x
+    })
+    playersHand.push(hand);
+  })
   switch (ArrayPiles.length) {
     case 2:
       ascendantPile1 = new cards.Deck({ id: "id1", faceUp: true });
@@ -371,8 +295,10 @@ export function putCard(idPlayer, cardValue, idPile) {
 ////////////////////////////////////////////////////////
 // Fonction pour faire piocher un joueur
 export function drawCard(idPlayer, cardValue) {
+  console.log({idPlayer,cardValue});
   playersHand.map(element => {
     if (element.id === idPlayer) {
+      console.log(element);
       element.addCardPerso(deck.topCard(), cardValue);
       element.render();
     }

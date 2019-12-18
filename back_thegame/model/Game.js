@@ -318,36 +318,42 @@ GameSchema.statics.endTurn = function(gameId, playerId) {
 };
 
 //récupérer les actions précédentes et l'état de jeu actuel
-GameSchema.statics.getActions = function(gameId, playerId, version) {
-  return Game.findOne({ _id: gameId }).then(game => {
-    let gameInfo = {
-      players: game.players.map(ele => {
-        if (ele._id != playerId) {
-          ele.hand.map(card => {
-            card.value = 0;
-            card._id = "0";
-            return card;
-          });
-        }
-        return ele;
-      }),
-      piles: game.piles,
-      version: game.actions.length,
-      nowPlaying: game.nowPlaying,
-      deckPile: game.deckPile.length,
-      status: game.status
-    };
+GameSchema.statics.getActions = function(gameId, playerId, version){
+	return Game.findOne({_id : gameId})
+	.then(game=>{
+		let players;
+		if(game.players !== undefined){
+			players = game.players.map(ele=>{
+				if(ele._id != playerId){
+					ele.hand.map(card => {
+							card.value = 0;
+							card._id="0";
+							return card;
+						})
+				}
+				return ele;
+			});
+		}
+		let gameInfo = {
+			players : players,
+			piles : game.piles,
+			version : game.actions.length,
+			nowPlaying : game.nowPlaying,
+			deckPile : game.deckPile.length,
+			status : game.status
+		};
 
-    if (version !== undefined)
-      gameInfo.actions = game.actions.slice(version).map(act => {
-        if (act.type === "drawCard" && act.details.who !== playerId) {
-          act.details.card = { _id: "0", value: 0 };
-        }
-        return act;
-      });
-    return gameInfo;
-  });
-};
+		if(version !== undefined)
+			gameInfo.actions = game.actions.slice(version).map(act=>{
+				if(act.type==="drawCard" && act.details.who !== playerId)
+				{ 
+					act.details.card={_id:"0",value:0};
+				} 
+				return act;});
+		return gameInfo;
+	});
+}
+
 
 //Connaitre les piles sur lesquelles le joueur peut jouer
 GameSchema.statics.whereToPlay = function(gameId, cardValue, playerId) {
