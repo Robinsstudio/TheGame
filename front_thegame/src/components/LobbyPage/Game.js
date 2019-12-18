@@ -19,11 +19,11 @@ export default class Game extends Component {
       ready : undefined,
       joined : false,
       players : [],
-      piles : [],
       game : "waitingPlayers",
       nowPlaying : false,
       version : 0
     };
+    this.piles=[];
     this.players = {};
     this.joinGame = this.joinGame.bind(this);
     this.getGameInfo = this.getGameInfo.bind(this);
@@ -57,7 +57,7 @@ export default class Game extends Component {
       this.joinGame();
     }
     if(prevState.game === "waitingPlayers" && this.state.game === "playing"){
-      utils.init(this.state.players.map(ele=>ele._id.toString()),this.state.piles);
+      utils.init(this.state.playerId,this.state.players.map(ele=>ele._id.toString()),this.piles);
     }
   }
 
@@ -97,32 +97,50 @@ export default class Game extends Component {
     .catch(err=>console.log(err));
   }
 
+  runActions(actions){
+    for( let action of actions){
+      console.log(action);
+      if(action.type==="playCard"){
+        utils.putCard(action.details.who,action.details.card.value,action.details.pile);
+      }
+      else if(action.type==="drawCard"){
+        utils.drawCard(action.details.who,action.details.card.value);
+      }
+    }
+  }
+
   getGameInfo(){
     new Request("/api/game/" + this.state.gameId + "/" + this.state.version)
       .get()
       .send()
       .then(res =>{ if(res.ok) return res.json(res); return res.text()})
       .then(res => {
+        let newState = {};
         let ready = res.players.filter(ele=>ele._id.toString() === this.state.playerId)[0];
-        console.log(ready);
         if(ready !== undefined)
           ready=ready.ready;
         else
           ready = false;
-        this.setState({piles:res.piles,game:res.status,version : res.version,nowPlaying:res.nowPlaying===this.state.playerId,players: res.players,ready:ready})
+        if(ready !== this.state.ready)
+          newState.ready = ready;
+        this.piles=res.piles;
+        if(this.state.game !== res.status)
+          newState.game = res.status;
+        if(this.state.version !== res.version)
+          newState.version = res.version;
+        if(this.state.nowPlaying !== (res.nowPlaying===this.state.playerId))
+          newState.nowPlaying = (res.nowPlaying===this.state.playerId);
+        if(this.state.game === "waitingPlayers")
+          newState.players = res.players;
+        if(this.state.ready !== ready)
+          newState.ready = ready;
+        if(Object.keys(newState).length > 0)
+          this.setState(newState);
+        //if(this.state.piles !== res.piles || this.state.game !== res.status || this.state.version !== res.version || this.state.nowPlaying !== (res.nowPlaying===this.state.playerId) || this.state.players !== res.players || this.state.ready !== res.ready)
+        //  this.setState({piles:res.piles,game:res.status,version : res.version,nowPlaying:res.nowPlaying===this.state.playerId,players: res.players,ready:ready})
         console.log(res)
+        this.runActions(res.actions)
         return res;
-      })
-      .then(res=>{
-        for( let action of res.actions){
-          console.log(action);
-          if(action.type==="playCard"){
-            utils.putCard(action.details.who,action.details.card.value,action.details.pile);
-          }
-          else if(action.type==="drawCard"){
-            utils.drawCard(action.details.who,action.details.card.value);
-          }
-        }
       })
       //.then(utils.init())
       .catch(err => console.log(err));

@@ -290,8 +290,9 @@ GameSchema.statics.endTurn = function(gameId, playerId){
 GameSchema.statics.getActions = function(gameId, playerId, version){
 	return Game.findOne({_id : gameId})
 	.then(game=>{
-		let gameInfo = {
-			players : game.players.map(ele=>{
+		let players;
+		if(game.players !== undefined){
+			players = game.players.map(ele=>{
 				if(ele._id != playerId){
 					ele.hand.map(card => {
 							card.value = 0;
@@ -300,7 +301,10 @@ GameSchema.statics.getActions = function(gameId, playerId, version){
 						})
 				}
 				return ele;
-			}),
+			});
+		}
+		let gameInfo = {
+			players : players,
 			piles : game.piles,
 			version : game.actions.length,
 			nowPlaying : game.nowPlaying,
