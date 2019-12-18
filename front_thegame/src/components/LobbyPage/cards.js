@@ -25,7 +25,7 @@ var cards = (function() {
 
   function init(options) {
     if (options) {
-      for (var i in options) {
+      for (let i in options) {
         if (opt.hasOwnProperty(i)) {
           opt[i] = options[i];
         }
@@ -33,7 +33,7 @@ var cards = (function() {
     }
 
     opt.table = $(opt.table)[0];
-    if ($(opt.table).css("position") == "static") {
+    if ($(opt.table).css("position") === "static") {
       $(opt.table).css("position", "relative");
     }
 

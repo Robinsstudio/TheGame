@@ -188,7 +188,7 @@ export function init(ArrayPlayers, ArrayPiles) {
       break;
   }
 
-  // Fonction qui initialise les decks et mains des joueurs
+  // Fonction qui initialise les piles et mains des joueurs
   deck.deal(0, playersHand, function() {
     piles.forEach(element => {
       element.addCard(deck.firstCard());
