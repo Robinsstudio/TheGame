@@ -36,8 +36,14 @@ var cards = (function() {
     if ($(opt.table).css("position") === "static") {
       $(opt.table).css("position", "relative");
     }
-
-    let nbPiles = options.piles;
+    let piles = options.piles;
+    for(let pile of piles){
+      if(pile.orientation==="down")
+        all.unshift(new Card("0", 0, 100, opt.table));
+      else
+        all.unshift(new Card("0", 1, 1, opt.table));
+    }
+    /* let nbPiles = options.piles;
     if (nbPiles === 2) {
       all.unshift(new Card("0", 0, 100, opt.table));
       all.unshift(new Card("0", 1, 1, opt.table));
@@ -57,7 +63,7 @@ var cards = (function() {
       all.unshift(new Card("0", 1, 1, opt.table));
       all.unshift(new Card("0", 1, 1, opt.table));
       all.unshift(new Card("0", 1, 1, opt.table));
-    }
+    } */
 
     let start = 2;
     let end = 99;
