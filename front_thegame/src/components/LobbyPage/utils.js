@@ -5,17 +5,15 @@ let deck;
 let piles = [];
 let playersHand = [];
 
-let myHand, upperhandleft, upperhandright, righthand, lefthand;
-let ascendantPile1,
-  ascendantPile2,
-  ascendantPile3,
-  descendantPile1,
-  descendantPile2,
-  descendantPile3;
-
-export function init(playerId,ArrayPlayers, ArrayPiles) {
+let myHand;
+let askWhichColumn;
+let putCardOnPile;
+export function init(playerId,ArrayPlayers, ArrayPiles,callbackAskColumn, callbackPutCardOnPile) {
+  askWhichColumn=callbackAskColumn;
+  putCardOnPile=callbackPutCardOnPile;
   //Tell the library which element to use for the table
-  cards.init({ table: "#card-table", piles: ArrayPiles.length });
+  //cards.init({ table: "#card-table", piles: ArrayPiles.length });
+  cards.init({ table: "#card-table", piles: ArrayPiles });
   //Create a new deck of cards
   deck = new cards.Deck();
   //By default it's in the middle of the container, put it slightly to the side
@@ -60,62 +58,40 @@ export function init(playerId,ArrayPlayers, ArrayPiles) {
     })
     playersHand.push(hand);
   })
-  switch (ArrayPiles.length) {
-    case 2:
-      ascendantPile1 = new cards.Deck({ id: "id1", faceUp: true });
-      descendantPile1 = new cards.Deck({ id: "id2", faceUp: true });
-      ascendantPile1.x -= 150;
-      descendantPile1.x += 50;
-      //
-      piles.unshift(ascendantPile1);
-      piles.unshift(descendantPile1);
-      break;
-    case 4:
-      // Les piles de cartes
-      ascendantPile1 = new cards.Deck({ id: "id1", faceUp: true });
-      ascendantPile2 = new cards.Deck({ id: "id2", faceUp: true });
-      descendantPile1 = new cards.Deck({ id: "id3", faceUp: true });
-      descendantPile2 = new cards.Deck({ id: "id4", faceUp: true });
-      // Le placement des piles de cartes
-      ascendantPile1.x -= 150;
-      ascendantPile2.x -= 250;
-      descendantPile1.x += 50;
-      descendantPile2.x += 150;
-      //
-      piles.unshift(ascendantPile1);
-      piles.unshift(ascendantPile2);
-      piles.unshift(descendantPile1);
-      piles.unshift(descendantPile2);
-      break;
-    case 6:
-      // Les piles de cartes
-      ascendantPile1 = new cards.Deck({ id: "id1", faceUp: true });
-      ascendantPile2 = new cards.Deck({ id: "id2", faceUp: true });
-      ascendantPile3 = new cards.Deck({ id: "id3", faceUp: true });
-      descendantPile1 = new cards.Deck({ id: "id4", faceUp: true });
-      descendantPile2 = new cards.Deck({ id: "id5", faceUp: true });
-      descendantPile3 = new cards.Deck({ id: "id6", faceUp: true });
-      // Le placement des piles de cartes
-      ascendantPile1.x -= 150;
-      ascendantPile2.x -= 250;
-      ascendantPile3.x -= 350;
-      descendantPile1.x += 50;
-      descendantPile2.x += 150;
-      descendantPile3.x += 250;
-      //
-      piles.unshift(ascendantPile1);
-      piles.unshift(ascendantPile2);
-      piles.unshift(ascendantPile3);
-      piles.unshift(descendantPile1);
-      piles.unshift(descendantPile2);
-      piles.unshift(descendantPile3);
-      break;
+  let nbAsc = 0;
+  let nbDesc = 0;
+  console.log(deck);
+  for(let pile of ArrayPiles){
+      let p = new cards.Deck({id : pile._id,faceUp : true});
+      if(pile.orientation === "up"){
+        p.x += 50 +100*nbDesc++;
+        p.addCardPerso(deck.topCard(),1);
+      }
+      else if(pile.orientation === "down"){
+        p.x -= 150 +100*nbAsc++;
+        p.addCardPerso(deck.topCard(),0);
+      }
+      p.click(function() {
+        const ind = p.length - 1;
+        if (p[ind].el.hasClass("borderPile")) {
+          const cardSelected = getCardSelected(myHand);
+          // On retire les bordures
+          deleteBorderPiles();
+          deleteBorderCards();
+          putCardOnPile(cardSelected.rank,p.id);
+          //p.addCard(cardSelected);
+          //p.render();
+          //myHand.render();
+        }
+      });
+      piles.unshift(p);
+      console.log(piles);
   }
 
   // Fonction qui initialise les piles et mains des joueurs
   deck.deal(0, playersHand, function() {
     piles.forEach(element => {
-      element.addCard(deck.firstCard());
+      //element.addCard(deck.firstCard());
       element.render();
     });
   });
@@ -146,40 +122,13 @@ export function init(playerId,ArrayPlayers, ArrayPiles) {
     let cardValue = card.rank;
     // On regarde si la carte était déjà sélectionnée
     if (isSelected === false) {
-      addBorderPilesAsc(ascendantPile1, cardValue);
-      addBorderPilesAsc(ascendantPile2, cardValue);
-      addBorderPilesDesc(descendantPile1, cardValue);
-      addBorderPilesDesc(descendantPile2, cardValue);
-
+      askWhichColumn(cardValue)
+      .then(res=>{
+        piles.filter(pile=>res.includes(pile.id)).map(pile=>pile.borderChange(true));
+      });
       myHand.borderChange(card, true);
     }
   });
-  ////////////////////////////////////////////////////////////
-  // Fonction pour savoir si met des bordures à la pile ascendante
-  function addBorderPilesAsc(pile, rankCard) {
-    const ind = pile.length - 1;
-    const rankPile = pile[ind].rank;
-    const tenDiff = pile[ind].rank + 10;
-    if (rankPile > rankCard) {
-      pile.borderChange(true);
-    }
-    if (tenDiff === rankCard) {
-      pile.borderChange(true);
-    }
-  }
-  ////////////////////////////////////////////////////////////
-  // Fonction pour savoir si met des bordures à la pile descendante
-  function addBorderPilesDesc(pile, rankCard) {
-    const ind = pile.length - 1;
-    const rankPile = pile[ind].rank;
-    const tenDiff = pile[ind].rank - 10;
-    if (rankPile < rankCard) {
-      pile.borderChange(true);
-    }
-    if (tenDiff === rankCard) {
-      pile.borderChange(true);
-    }
-  }
   ///////////////////////////////////////////////////////////
   // Fonction pour supprimer les bordures des cartes
   function deleteBorderCards() {
@@ -190,65 +139,9 @@ export function init(playerId,ArrayPlayers, ArrayPiles) {
   ////////////////////////////////////////////////////
   // Fonction pour supprimer les bordures des piles
   function deleteBorderPiles() {
-    ascendantPile1.borderChange(false);
-    ascendantPile2.borderChange(false);
-    descendantPile1.borderChange(false);
-    descendantPile2.borderChange(false);
+    piles.map(pile=>pile.borderChange(false));
   }
-  /////////////////////////////////////////////////////////
-  // Fonction pour mettre la carte sélectionné sur la pile
-  ascendantPile1.click(function() {
-    const ind = ascendantPile1.length - 1;
-    if (ascendantPile1[ind].el.hasClass("borderPile")) {
-      const cardSelected = getCardSelected(myHand);
-      // On retire les bordures
-      deleteBorderPiles();
-      deleteBorderCards();
 
-      ascendantPile1.addCard(cardSelected);
-      ascendantPile1.render();
-      myHand.render();
-    }
-  });
-  ascendantPile2.click(function() {
-    const ind = ascendantPile2.length - 1;
-    if (ascendantPile2[ind].el.hasClass("borderPile")) {
-      const cardSelected = getCardSelected(myHand);
-      // On retire les bordures
-      deleteBorderPiles();
-      deleteBorderCards();
-
-      ascendantPile2.addCard(cardSelected);
-      ascendantPile2.render();
-      myHand.render();
-    }
-  });
-  descendantPile1.click(function() {
-    const ind = descendantPile1.length - 1;
-    if (descendantPile1[ind].el.hasClass("borderPile")) {
-      const cardSelected = getCardSelected(myHand);
-      // On retire les bordures
-      deleteBorderPiles();
-      deleteBorderCards();
-
-      descendantPile1.addCard(cardSelected);
-      descendantPile1.render();
-      myHand.render();
-    }
-  });
-  descendantPile2.click(function() {
-    const ind = descendantPile2.length - 1;
-    if (descendantPile2[ind].el.hasClass("borderPile")) {
-      const cardSelected = getCardSelected(myHand);
-      // On retire les bordures
-      deleteBorderPiles();
-      deleteBorderCards();
-
-      descendantPile2.addCard(cardSelected);
-      descendantPile2.render();
-      myHand.render();
-    }
-  });
   ///////////////////////////////////////////////////////
   // Fonction pour récupérer la carte sélectionnée
   function getCardSelected(myHand) {
@@ -266,22 +159,31 @@ export function init(playerId,ArrayPlayers, ArrayPiles) {
 export function putCard(idPlayer, cardValue, idPile) {
   let player;
   let carte;
-
+  //console.log(playersHand);
   // On cherche la main du joueur à partir de son id
   playersHand.map(element => {
     if (element.id === idPlayer) {
       player = element;
-      if (element[0].column === 1 && element[0].suit === "0") {
+      /* if (element[0].column === 1 && element[0].suit === "0") {
         carte = element[0];
-      } else {
+      } else { */
+        if(myHand.id!==idPlayer && element[0]!==undefined)
+        {
+          carte=element[0];
+        }
+        else{
         element.map(el => {
           if (el.rank === cardValue) {
-            carte = element;
+            carte = el;
           }
         });
-      }
+      }        
+      //}
     }
   });
+  console.log(carte);
+  console.log(player);
+  console.log({idPlayer,cardValue,idPile});
   // On cherche la pile où mettre la carte
   piles.map(element => {
     if (element.id === idPile) {
@@ -298,7 +200,6 @@ export function drawCard(idPlayer, cardValue) {
   console.log({idPlayer,cardValue});
   playersHand.map(element => {
     if (element.id === idPlayer) {
-      console.log(element);
       element.addCardPerso(deck.topCard(), cardValue);
       element.render();
     }

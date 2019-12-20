@@ -79,15 +79,19 @@ GameSchema.statics.canBePlaced = function(pile, card) {
   return (
     (pile.orientation === "down" &&
       pile.cards[pile.cards.length - 1].value > card.value) ||
+      (pile.orientation === "down" &&
+      pile.cards[pile.cards.length - 1].value+10 === card.value) ||
     (pile.orientation === "up" &&
-      pile.cards[pile.cards.length - 1].value < card.value)
+      pile.cards[pile.cards.length - 1].value < card.value) ||
+      (pile.orientation === "up" &&
+      pile.cards[pile.cards.length - 1].value-10 === card.value)
   );
 };
 
 GameSchema.statics.canBePlacedOnAtLeastOne = function(piles, card) {
   if (piles === undefined) throw Error("Il n'y a pas de piles");
   return piles.reduce(
-    (prev, pile) => prev || Game.canBePlaced(pile, card),
+    (prev, pile) => prev || (pile.cards.length===0 || Game.canBePlaced(pile, card)),
     false
   );
 };
@@ -113,7 +117,7 @@ GameSchema.statics.hasToPlayAgain = function(game, playerId) {
 };
 
 GameSchema.statics.countCardPlayable = function(game, hand) {
-  return hand.filter(card => Game.canBePlacedOnAtLeastOne(game.piles, card))
+  return hand.filter(card => {return Game.canBePlacedOnAtLeastOne(game.piles, card)})
     .length;
 };
 
@@ -124,7 +128,7 @@ GameSchema.statics.canPlayAgain = function(game, playerId) {
   let player = Game.getPlayer(game, playerId);
   return !(
     player.hand.length === 0 ||
-    Game.countCardPlayable(game, player.hand).length === 0
+    Game.countCardPlayable(game, player.hand) === 0
   );
 };
 
@@ -313,6 +317,13 @@ GameSchema.statics.endTurn = function(gameId, playerId) {
     game.actions.push(
       new Action({ type: "endTurn", details: { who: playerId } })
     );
+    if (
+      Game.hasToPlayAgain(game, game.nowPlaying) &&
+      !Game.canPlayAgain(game, game.nowPlaying)
+    )
+      game.status = "game over";
+    if (game.deckPile.length === 0 && !Game.playersStillHaveCards(game))
+      game.status = "won";
     return game.save();
   });
 };
@@ -363,12 +374,15 @@ GameSchema.statics.whereToPlay = function(gameId, cardValue, playerId) {
     if (game.piles !== undefined) {
       return game.piles
         .filter(
-          pile =>
-            pile.cards.length === 0 ||
+          pile =>pile.cards.length === 0 ||
             (pile.orientation === "up" &&
               cardValue > pile.cards[pile.cards.length - 1].value) ||
+              (pile.orientation === "up" &&
+              ( pile.cards[pile.cards.length - 1].value-10==cardValue)) ||
             (pile.orientation === "down" &&
-              cardValue < pile.cards[pile.cards.length - 1].value)
+              cardValue < pile.cards[pile.cards.length - 1].value) ||
+              (pile.orientation === "down" &&
+              ( pile.cards[pile.cards.length - 1].value+10==cardValue))
         )
         .map(pile => pile._id);
     }
