@@ -146,8 +146,9 @@ class Profile extends React.Component {
           <Grid item xs={3}></Grid>
           <Grid item xs={6} className="boxShadowProfile">
             <h3 className="h3Profile">Mes Informations :</h3>
+            <Divider />
 
-            <FormControl className="inputMarginProfile">
+            <FormControl className="inputMarginProfile formMarginTop">
               <InputLabel
                 htmlFor="pseudo"
                 className="bigSizeProfile"
@@ -213,6 +214,8 @@ class Profile extends React.Component {
               Supprimer mon compte
             </Button>
             <div></div>
+            <Divider />
+
             <Link to={"/"} className="linkHome HomeTypo">
               <Button className="bigSizeProfile buttonMarginProfile">
                 Retour
