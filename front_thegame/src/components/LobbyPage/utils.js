@@ -8,6 +8,19 @@ let playersHand = [];
 let myHand;
 let askWhichColumn;
 let putCardOnPile;
+///////////////////////////////////////////////////////////
+  // Fonction pour supprimer les bordures des cartes
+  function deleteBorderCards() {
+    myHand.forEach(function(card) {
+      myHand.borderChange(card, false);
+    });
+  }
+  ////////////////////////////////////////////////////
+  // Fonction pour supprimer les bordures des piles
+  function deleteBorderPiles() {
+    piles.map(pile=>pile.borderChange(false));
+  }
+
 export function init(playerId,ArrayPlayers, ArrayPiles,callbackAskColumn, callbackPutCardOnPile) {
   askWhichColumn=callbackAskColumn;
   putCardOnPile=callbackPutCardOnPile;
@@ -96,17 +109,6 @@ export function init(playerId,ArrayPlayers, ArrayPiles,callbackAskColumn, callba
     });
   });
 
-  /////////////////////////////////////////////////////////
-  // Fonction finir le tour du joueur et piocher des cartes
-  $("#buttonEndTurn").click(function() {
-    // On retire toutes les bordures
-    deleteBorderCards();
-    deleteBorderPiles();
-    while (myHand.length < 7) {
-      myHand.addCard(deck.topCard());
-      myHand.render();
-    }
-  });
   ////////////////////////////////////////////////////
   // Fonction pour sélectionner une carte dans notre main
   myHand.click(function(card) {
@@ -129,18 +131,6 @@ export function init(playerId,ArrayPlayers, ArrayPiles,callbackAskColumn, callba
       myHand.borderChange(card, true);
     }
   });
-  ///////////////////////////////////////////////////////////
-  // Fonction pour supprimer les bordures des cartes
-  function deleteBorderCards() {
-    myHand.forEach(function(card) {
-      myHand.borderChange(card, false);
-    });
-  }
-  ////////////////////////////////////////////////////
-  // Fonction pour supprimer les bordures des piles
-  function deleteBorderPiles() {
-    piles.map(pile=>pile.borderChange(false));
-  }
 
   ///////////////////////////////////////////////////////
   // Fonction pour récupérer la carte sélectionnée
@@ -175,16 +165,16 @@ export function putCard(idPlayer, cardValue, idPile) {
         element.map(el => {
           if (el.rank === cardValue) {
             carte = el;
+            deleteBorderPiles();
+            deleteBorderCards();
           }
         });
       }        
       //}
     }
   });
-  console.log(carte);
-  console.log(player);
-  console.log({idPlayer,cardValue,idPile});
   // On cherche la pile où mettre la carte
+
   piles.map(element => {
     if (element.id === idPile) {
       element.addCardPerso(carte, cardValue);
