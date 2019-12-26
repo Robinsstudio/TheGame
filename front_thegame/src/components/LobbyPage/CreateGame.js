@@ -1,44 +1,140 @@
 import React, { Component } from "react";
-import Button from "@material-ui/core/Button";
 import Request from "../../js/request";
-import {
-  Redirect
-} from "react-router-dom";
-export default class CreateGame extends Component {
+import { Redirect } from "react-router-dom";
+import { withSnackbar } from "notistack";
+// Container and button
+import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
+import Button from "@material-ui/core/Button";
+// Input
+import Input from "@material-ui/core/Input";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
+import Divider from "@material-ui/core/Divider";
+// CSS
+import "./CreateGame.css";
+
+const choixNbPiles = [
+  {
+    value: 2,
+    label: "2 piles"
+  },
+  {
+    value: 4,
+    label: "4 piles"
+  },
+  {
+    value: 6,
+    label: "6 piles"
+  }
+];
+
+class CreateGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      idGame: undefined
+      idGame: undefined,
+      nameGame: "Partie de The Game",
+      nbPiles: 4
     };
     this.createGame = this.createGame.bind(this);
+    this.nameChange = this.nameChange.bind(this);
+    this.pilesChange = this.pilesChange.bind(this);
   }
 
   createGame() {
     new Request("/api/game")
       .post()
-      .body({name:"Jeu"})
+      .body({ name: this.state.nameGame })
       .send()
       .then(res => res.json(res))
       .then(res => this.setState({ idGame: res.id }))
       .catch(err => console.log(err));
   }
 
+  nameChange(name) {
+    this.setState({
+      nameGame: name
+    });
+  }
+
+  pilesChange(piles) {
+    this.setState({
+      nbPiles: piles
+    });
+  }
+
   render() {
     let redirect;
-    if(this.state.idGame!==undefined)
-      redirect=(<Redirect to={'/game?id='+this.state.idGame}/>)
+    if (this.state.idGame !== undefined)
+      redirect = <Redirect to={"/game?id=" + this.state.idGame} />;
     return (
-      <div>
-        {redirect}
-        <Button
-          id="deal"
-          style={{ fontSize: "20px" }}
-          color="primary"
-          onClick={this.createGame}
-        >
-          Commencer la partie
-        </Button>
-      </div>
+      <Container maxWidth="lg">
+        <Grid container spacing={3} className="gridProfile">
+          <Grid item xs={3}></Grid>
+          <Grid item xs={6} className="boxShadowProfile">
+            <h3 className="h3Profile">Création d'une partie :</h3>
+
+            <Divider />
+            <form noValidate autoComplete="off" className="formMarginTop">
+              <FormControl className="inputMarginCreate">
+                <InputLabel
+                  htmlFor="nom"
+                  className="bigSizeProfile"
+                  color="primary"
+                >
+                  Nom de la partie
+                </InputLabel>
+                <Input
+                  id="nom"
+                  className="bigSizeProfile widthInputProfile"
+                  type="text"
+                  value={this.state.nameGame}
+                  color="primary"
+                  onChange={evt => this.nameChange(evt.target.value)}
+                />
+              </FormControl>
+              <div></div>
+
+              <TextField
+                id="select-piles"
+                select
+                label="Nombre de piles :"
+                className="widthInputProfile inputMarginCreate"
+                color="primary"
+                value={this.state.nbPiles}
+                onChange={evt => this.pilesChange(evt.target.value)}
+              >
+                {choixNbPiles.map(option => (
+                  <MenuItem
+                    key={option.value}
+                    value={option.value}
+                    className="bigSizeProfile widthInputProfile"
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <div></div>
+              <Divider style={{ marginBottom: "0.5em" }} />
+
+              {redirect}
+              <Button
+                style={{ fontSize: "20px", marginTop: "12px" }}
+                color="primary"
+                onClick={this.createGame}
+              >
+                Créer la partie
+              </Button>
+            </form>
+          </Grid>
+          <Grid item xs={3}></Grid>
+        </Grid>
+      </Container>
     );
   }
 }
+
+export default withSnackbar(CreateGame);

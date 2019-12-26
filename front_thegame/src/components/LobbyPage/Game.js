@@ -61,7 +61,7 @@ export default class Game extends Component {
       this.joinGame();
     }
     if(prevState.game === "waitingPlayers" && this.state.game === "playing"){
-      utils.init(this.state.playerId,this.state.players.map(ele=>ele._id.toString()),this.piles);
+      utils.init(this.state.playerId,this.state.players.map(ele=>ele._id.toString()),this.piles,this.whereToPlayCard,this.playCard);
     }
   }
 
@@ -89,7 +89,8 @@ export default class Game extends Component {
         return res.text().then(err => {
           throw new Error(err);
         });
-      });
+      })
+      .then(res=>{if(res.result===undefined)return [];return res.result});
   }
 
   joinGame() {
@@ -105,7 +106,7 @@ export default class Game extends Component {
       })
       .then(res => console.log(res))
       .then(res => {
-        this.interval = setInterval(() => this.getGameInfo(), 3000);
+        this.interval = setInterval(() => this.getGameInfo(), 2000);
         this.setState({ joined: true });
         this.getGameInfo();
       })
