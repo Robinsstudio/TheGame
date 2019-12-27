@@ -15,3 +15,11 @@
 .MuiTableHead-root {
   background-color: silver;
 }
+
+.MuiButton-root.Mui-disabled {
+  background-color: silver !important;
+}
+
+.hiddenCell {
+  display: none !important;
+}

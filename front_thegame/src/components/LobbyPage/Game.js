@@ -14,16 +14,16 @@ export default class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      gameId : undefined,
-      playerId : undefined,
-      ready : undefined,
-      joined : false,
-      players : [],
-      game : "waitingPlayers",
-      nowPlaying : false,
-      version : 0
+      gameId: undefined,
+      playerId: undefined,
+      ready: undefined,
+      joined: false,
+      players: [],
+      game: "waitingPlayers",
+      nowPlaying: false,
+      version: 0
     };
-    this.piles=[];
+    this.piles = [];
     this.players = {};
     this.joinGame = this.joinGame.bind(this);
     this.getGameInfo = this.getGameInfo.bind(this);
@@ -60,8 +60,14 @@ export default class Game extends Component {
     ) {
       this.joinGame();
     }
-    if(prevState.game === "waitingPlayers" && this.state.game === "playing"){
-      utils.init(this.state.playerId,this.state.players.map(ele=>ele._id.toString()),this.piles,this.whereToPlayCard,this.playCard);
+    if (prevState.game === "waitingPlayers" && this.state.game === "playing") {
+      utils.init(
+        this.state.playerId,
+        this.state.players.map(ele => ele._id.toString()),
+        this.piles,
+        this.whereToPlayCard,
+        this.playCard
+      );
     }
   }
 
@@ -90,7 +96,10 @@ export default class Game extends Component {
           throw new Error(err);
         });
       })
-      .then(res=>{if(res.result===undefined)return [];return res.result});
+      .then(res => {
+        if (res.result === undefined) return [];
+        return res.result;
+      });
   }
 
   joinGame() {
@@ -128,49 +137,52 @@ export default class Game extends Component {
       .catch(err => console.log(err));
   }
 
-  runActions(actions){
-    for( let action of actions){
+  runActions(actions) {
+    for (let action of actions) {
       console.log(action);
-      if(action.type==="playCard"){
-        utils.putCard(action.details.who,action.details.card.value,action.details.pile);
-      }
-      else if(action.type==="drawCard"){
-        utils.drawCard(action.details.who,action.details.card.value);
+      if (action.type === "playCard") {
+        utils.putCard(
+          action.details.who,
+          action.details.card.value,
+          action.details.pile
+        );
+      } else if (action.type === "drawCard") {
+        utils.drawCard(action.details.who, action.details.card.value);
       }
     }
   }
 
-  getGameInfo(){
+  getGameInfo() {
     new Request("/api/game/" + this.state.gameId + "/" + this.state.version)
       .get()
       .send()
-      .then(res=>{if(res.ok)return res.json(); return res.text().then(err=>{throw new Error(err)})})
+      .then(res => {
+        if (res.ok) return res.json();
+        return res.text().then(err => {
+          throw new Error(err);
+        });
+      })
       .then(res => {
         let newState = {};
-        let ready = res.players.filter(ele=>ele._id.toString() === this.state.playerId)[0];
-        if(ready !== undefined)
-          ready=ready.ready;
-        else
-          ready = false;
-        if(ready !== this.state.ready)
-          newState.ready = ready;
-        this.piles=res.piles;
-        if(this.state.game !== res.status)
-          newState.game = res.status;
-        if(this.state.version !== res.version)
-          newState.version = res.version;
-        if(this.state.nowPlaying !== (res.nowPlaying===this.state.playerId))
-          newState.nowPlaying = (res.nowPlaying===this.state.playerId);
-        if(this.state.game === "waitingPlayers")
+        let ready = res.players.filter(
+          ele => ele._id.toString() === this.state.playerId
+        )[0];
+        if (ready !== undefined) ready = ready.ready;
+        else ready = false;
+        if (ready !== this.state.ready) newState.ready = ready;
+        this.piles = res.piles;
+        if (this.state.game !== res.status) newState.game = res.status;
+        if (this.state.version !== res.version) newState.version = res.version;
+        if (this.state.nowPlaying !== (res.nowPlaying === this.state.playerId))
+          newState.nowPlaying = res.nowPlaying === this.state.playerId;
+        if (this.state.game === "waitingPlayers")
           newState.players = res.players;
-        if(this.state.ready !== ready)
-          newState.ready = ready;
-        if(Object.keys(newState).length > 0)
-          this.setState(newState);
+        if (this.state.ready !== ready) newState.ready = ready;
+        if (Object.keys(newState).length > 0) this.setState(newState);
         //if(this.state.piles !== res.piles || this.state.game !== res.status || this.state.version !== res.version || this.state.nowPlaying !== (res.nowPlaying===this.state.playerId) || this.state.players !== res.players || this.state.ready !== res.ready)
         //  this.setState({piles:res.piles,game:res.status,version : res.version,nowPlaying:res.nowPlaying===this.state.playerId,players: res.players,ready:ready})
-        console.log(res)
-        this.runActions(res.actions)
+        console.log(res);
+        this.runActions(res.actions);
         return res;
       })
       //.then(utils.init())
@@ -223,7 +235,7 @@ export default class Game extends Component {
             color="primary"
             onClick={() => this.playerIsReady()}
           >
-            Prêt ?
+            Prêt
           </Button>
         )}
         {this.state.game === "waitingPlayers" || <div id="card-table"></div>}
@@ -234,8 +246,8 @@ export default class Game extends Component {
           >
             <TableHead>
               <TableRow>
-                <TableCell>Joueur</TableCell>
-                <TableCell align="right">Prêts ?</TableCell>
+                <TableCell>Joueur(s)</TableCell>
+                <TableCell align="right">Prêt(s)</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

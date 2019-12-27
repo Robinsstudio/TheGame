@@ -12,7 +12,10 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
+// Divider & Switch
 import Divider from "@material-ui/core/Divider";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 // CSS
 import "./CreateGame.css";
 
@@ -37,13 +40,15 @@ class CreateGame extends Component {
     this.state = {
       idGame: undefined,
       nameGame: "Partie de The Game",
-      nbPiles: 4
+      nbPiles: 4,
+      publicGame: true
     };
     this.createGame = this.createGame.bind(this);
     this.nameChange = this.nameChange.bind(this);
     this.pilesChange = this.pilesChange.bind(this);
+    this.changeSwitch = this.changeSwitch.bind(this);
   }
-
+  // Fonction qui créé la partie en faisant la requête au back
   createGame() {
     new Request("/api/game")
       .post()
@@ -53,16 +58,22 @@ class CreateGame extends Component {
       .then(res => this.setState({ idGame: res.id }))
       .catch(err => console.log(err));
   }
-
+  // Change le nom de la partie
   nameChange(name) {
     this.setState({
       nameGame: name
     });
   }
-
+  // Change le nombre de piles de la partie
   pilesChange(piles) {
     this.setState({
       nbPiles: piles
+    });
+  }
+  // Définit si la partie sera publique ou privée
+  changeSwitch() {
+    this.setState({
+      publicGame: !this.state.publicGame
     });
   }
 
@@ -117,6 +128,24 @@ class CreateGame extends Component {
                   </MenuItem>
                 ))}
               </TextField>
+              <div></div>
+
+              <FormControlLabel
+                className="inputMarginCreate bigSizeProfile"
+                control={
+                  <Switch
+                    checked={this.state.publicGame}
+                    onChange={this.changeSwitch}
+                    value="public"
+                    color="primary"
+                  />
+                }
+                label={
+                  this.state.publicGame === true
+                    ? "Partie publique"
+                    : "Partie privée"
+                }
+              />
               <div></div>
               <Divider style={{ marginBottom: "0.5em" }} />
 
