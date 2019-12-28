@@ -396,7 +396,13 @@ GameSchema.statics.whereToPlay = function(gameId, cardValue, playerId) {
 };
 
 GameSchema.statics.getGamePlayerCanJoin = function(playerId){
-  return [];
+  return Game.find({$or: [{status: "playing","players._id":playerId}, {status: "waitingPlayers",public : true}]})
+  .then(res=>res.map(ele=>{return {status : ele.status,id:ele._id,name : ele.name,version : ele.actions.length, piles : ele.piles.length, players : ele.players.length}}))
+}
+
+GameSchema.statics.getEndedGamePlayerPlayed = function(playerId){
+  return Game.find({$or: [{status: "won"}, {status: "game over"}],"players._id":playerId})
+  .then(res=>res.map(ele=>{return {status : ele.status,id:ele._id,name : ele.name,version : ele.actions.length, piles : ele.piles.length, players : ele.players.length}}))
 }
 
 const Game = mongoose.model("Game", GameSchema);

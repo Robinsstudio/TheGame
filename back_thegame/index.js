@@ -85,6 +85,17 @@ app.post('/api/game', Player.isAuthenticated, function(req, res) {
 	})
 });
 
+app.get('/api/endedgame',Player.isAuthenticated,function(req,res){
+	const { jwt: { playerId } } = req;
+	Game.getEndedGamePlayerPlayed(playerId)
+	.then(function(result){
+		res.status(200).json(result);
+	})
+	.catch(function(err){
+		res.status(404).send(err.message);
+	})
+});
+
 app.put('/api/game/:id', Player.isAuthenticated, function(req, res) {
 	const { params: { id }, jwt: { playerId } } = req;
 	Game.joinGame(id, playerId)

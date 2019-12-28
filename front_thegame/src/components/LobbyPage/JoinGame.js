@@ -19,7 +19,7 @@ import { lighten } from "@material-ui/core/styles/colorManipulator";
 function createData(id, name, players, piles, version) {
   return { id, name, players, piles, version };
 }
-const rows = [
+const rows=[
   createData("5e0602f3c0d41b1ec4d34899", "Cupcake", 3, 4, 0),
   createData("5e0607bac0d41b1ec4d34d72", "Donut", 1, 4, 51),
   createData("5e061b9fc0d41b1ec4d34ddd", "Eclair", 2, 6, 24),
