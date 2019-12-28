@@ -401,7 +401,7 @@ GameSchema.statics.getGamePlayerCanJoin = function(playerId){
 }
 
 GameSchema.statics.getEndedGamePlayerPlayed = function(playerId){
-  return Game.find({$or: [{status:"playing"},{status: "won"}, {status: "game over"}],"players._id":playerId})
+  return Game.find({$or: [{status:"waitingPlayers"},{status:"playing"},{status: "won"}, {status: "game over"}],"players._id":playerId})
   .then(res=>res.map(ele=>{return {status : ele.status,id:ele._id,name : ele.name,version : ele.actions.length, piles : ele.piles.length, players : ele.players.length}}))
 }
 
