@@ -72,7 +72,17 @@ app.put('/api/authentication', function(req, res) {
 });
 
 app.post('/api/game', Player.isAuthenticated, function(req, res) {
-	Game.createGame(req.body.name).then(game => res.status(201).json(({ id: game._id })));
+	Game.createGame(req.body.name,req.body.public,req.body.nbPile).then(game => res.status(201).json(({ id: game._id })));
+})
+.get('/api/game',Player.isAuthenticated,function(req,res){
+	const { jwt: { playerId } } = req;
+	Game.getGamePlayerCanJoin(playerId)
+	.then(function(result){
+		res.status(200).json(result);
+	})
+	.catch(function(err){
+		res.status(404).send(err.message);
+	})
 });
 
 app.put('/api/game/:id', Player.isAuthenticated, function(req, res) {

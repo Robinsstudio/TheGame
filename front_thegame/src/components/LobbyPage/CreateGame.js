@@ -52,7 +52,7 @@ class CreateGame extends Component {
   createGame() {
     new Request("/api/game")
       .post()
-      .body({ name: this.state.nameGame })
+      .body({ name: this.state.nameGame ,public : this.state.publicGame,nbPile : this.state.nbPiles})
       .send()
       .then(res => res.json(res))
       .then(res => this.setState({ idGame: res.id }))

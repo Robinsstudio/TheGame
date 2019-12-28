@@ -22,6 +22,10 @@ const GameSchema = new mongoose.Schema({
   piles: [Pile.schema],
   nowPlaying: String, //Le joueur du tour
   actions: [Action.schema],
+  public : {
+    type : Boolean,
+    default : true
+  },
   status: {
     type: String,
     enum: ["playing", "waitingPlayers", "ended", "won", "game over"],
@@ -181,19 +185,20 @@ GameSchema.statics.drawCard = function(game) {
 //------Méthodes statiques de l'objet Game ------//
 
 //Création d'une nouvelle partie
-GameSchema.statics.createGame = function(name) {
+GameSchema.statics.createGame = function(name,public=true,nbPile=4) {
   if (name === undefined || name === "")
     throw new Error("Un nom de partie doit être fourni");
+  if( public !== true && public !== false)
+    throw new Error("Paramètre public invalide");
+  if(isNaN(nbPile))
+    throw new Error("Paramètre nbPile invalide");
+  let piles = Array.from({length:nbPile},(v,k)=>(k%2===0)?new Pile({orientation : "down"}):new Pile({orientation:"up"}));
   return Card.find(/*{value:{$gte: 2, $lte : 11}}*/).then(result => {
     return new Game({
       name: name,
       deckPile: shuffle(result),
-      piles: [
-        new Pile({ orientation: "down" }),
-        new Pile({ orientation: "down" }),
-        new Pile({}),
-        new Pile({})
-      ]
+      public : public,
+      piles: piles,
     }).save();
   });
 };
@@ -389,6 +394,10 @@ GameSchema.statics.whereToPlay = function(gameId, cardValue, playerId) {
     return [];
   });
 };
+
+GameSchema.statics.getGamePlayerCanJoin = function(playerId){
+  return [];
+}
 
 const Game = mongoose.model("Game", GameSchema);
 
