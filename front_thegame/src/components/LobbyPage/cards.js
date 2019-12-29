@@ -4,7 +4,7 @@ var cards = (function() {
   //The global options
   var opt = {
     cardSize: { width: 69, height: 106, padding: 40 },
-    animationSpeed: 100,
+    animationSpeed: 500,
     table: "body",
     cardback: "img/dos.png",
     acesHigh: false,
@@ -37,11 +37,10 @@ var cards = (function() {
       $(opt.table).css("position", "relative");
     }
     let piles = options.piles;
-    for(let pile of piles){
-      if(pile.orientation==="down")
+    for (let pile of piles) {
+      if (pile.orientation === "down")
         all.unshift(new Card("0", 0, 100, opt.table));
-      else
-        all.unshift(new Card("0", 1, 1, opt.table));
+      else all.unshift(new Card("0", 1, 1, opt.table));
     }
     /* let nbPiles = options.piles;
     if (nbPiles === 2) {

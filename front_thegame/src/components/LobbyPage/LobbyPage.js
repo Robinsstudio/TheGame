@@ -13,19 +13,47 @@ export default class LobbyPage extends Component {
     this.state = {
       idGame: undefined,
       gameSelected: false,
-      data : undefined
+      JoinGame: [],
+      JoinGameLoad: false,
+      HistoryGame: [],
+      HistoryGameLoad: false
     };
     this.selectGame = this.selectGame.bind(this);
     this.selectIdGame = this.selectIdGame.bind(this);
   }
-  componentDidMount(){
+  componentDidMount() {
     new Request("/api/game/")
-    .get()
-    .send()
-    .then(res=>{if(res.ok)return res.json();return res.text().then(err=>{throw new Error(err)})})
-    .then(res=>this.setState({data:res},console.log(res)))
-    .catch(err=>console.log(err));
+      .get()
+      .send()
+      .then(res => {
+        if (res.ok) return res.json();
+        return res.text().then(err => {
+          throw new Error(err);
+        });
+      })
+      .then(res =>
+        this.setState({ JoinGame: res, JoinGameLoad: true }, console.log(res))
+      )
+      .catch(err => console.log(err));
+
+    new Request("/api/endedgame/")
+      .get()
+      .send()
+      .then(res => {
+        if (res.ok) return res.json();
+        return res.text().then(err => {
+          throw new Error(err);
+        });
+      })
+      .then(res =>
+        this.setState(
+          { HistoryGame: res, HistoryGameLoad: true },
+          console.log(res)
+        )
+      )
+      .catch(err => console.log(err));
   }
+
   selectGame(bool) {
     this.setState({
       gameSelected: bool
@@ -39,7 +67,28 @@ export default class LobbyPage extends Component {
   }
 
   render() {
-    console.log(this.state)
+    let JoinGameComponent;
+    let HistoryGameComponent;
+
+    if (this.state.JoinGameLoad === true) {
+      JoinGameComponent = (
+        <JoinGame
+          data={this.state.JoinGame}
+          selectGame={bool => this.selectGame(bool)}
+          selectIdGame={id => this.selectIdGame(id)}
+        ></JoinGame>
+      );
+    }
+
+    if (this.state.HistoryGameLoad === true) {
+      HistoryGameComponent = (
+        <HistoryGame
+          data={this.state.HistoryGame}
+          selectGame={bool => this.selectGame(bool)}
+          selectIdGame={id => this.selectIdGame(id)}
+        ></HistoryGame>
+      );
+    }
     return (
       <Container maxWidth="lg">
         <Grid container spacing={3}>
@@ -51,18 +100,11 @@ export default class LobbyPage extends Component {
           </Grid>
           <Grid item xs={12} sm={6}>
             <h3>Parties en attente :</h3>
-            <JoinGame
-              data={this.state.data}
-              selectGame={bool => this.selectGame(bool)}
-              selectIdGame={id => this.selectIdGame(id)}
-            ></JoinGame>
+            {JoinGameComponent}
           </Grid>
           <Grid item xs={12} sm={6}>
             <h3>Votre historique de parties :</h3>
-            <HistoryGame
-              selectGame={bool => this.selectGame(bool)}
-              selectIdGame={id => this.selectIdGame(id)}
-            ></HistoryGame>
+            {HistoryGameComponent}
           </Grid>
         </Grid>
       </Container>

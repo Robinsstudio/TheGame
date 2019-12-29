@@ -15,19 +15,10 @@ import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 
-// Exemple du jeu de données de test
 function createData(id, name, players, piles, version) {
   return { id, name, players, piles, version };
 }
-const rows=[
-  createData("5e0602f3c0d41b1ec4d34899", "Cupcake", 3, 4, 0),
-  createData("5e0607bac0d41b1ec4d34d72", "Donut", 1, 4, 51),
-  createData("5e061b9fc0d41b1ec4d34ddd", "Eclair", 2, 6, 24),
-  createData("5e061ba4c0d41b1ec4d34e48", "Frozen yoghurt", 1, 6, 24),
-  createData("5e062273c0d41b1ec4d35001", "Gingerbread", 3, 4, 49),
-  createData("5e062270c0d41b1ec4d34f96", "Honeycomb", 4, 4, 87),
-  createData("5e06226fc0d41b1ec4d34f2b", "Ice cream sandwich", 7, 2, 6)
-];
+
 const headRows = [
   {
     id: "id"
@@ -325,10 +316,17 @@ function MyTable() {
 }
 
 let props;
+let rows = [];
 
 export default class JoinGame extends Component {
   componentDidMount() {
     props = this.props;
+    rows = [];
+    props.data.forEach(game => {
+      rows.push(
+        createData(game.id, game.name, game.players, game.piles, game.version)
+      );
+    });
   }
 
   render() {
