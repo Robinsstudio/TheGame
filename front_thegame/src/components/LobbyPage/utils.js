@@ -4,7 +4,11 @@ let deck;
 let piles = [];
 let playersHand = [];
 
-let myHand;
+let myHand = new cards.Hand({
+  id: "",
+  faceUp: true,
+  y: 400
+});
 let askWhichColumn;
 let putCardOnPile;
 ///////////////////////////////////////////////////////////
@@ -20,6 +24,144 @@ function deleteBorderPiles() {
   piles.map(pile => pile.borderChange(false));
 }
 
+export function init(
+  ArrayPiles,
+  callbackAskColumn,
+  callbackPutCardOnPile
+){
+  askWhichColumn = callbackAskColumn;
+  putCardOnPile = callbackPutCardOnPile;
+  //Tell the library which element to use for the table
+  //cards.init({ table: "#card-table", piles: ArrayPiles.length });
+  cards.init({ table: "#card-table", piles: ArrayPiles });
+  //Create a new deck of cards
+  deck = new cards.Deck();
+  //By default it's in the middle of the container, put it slightly to the side
+  deck.x -= 50;
+  //cards.all contains all cards, put them all in the deck
+  deck.addCards(cards.all);
+  //No animation here, just get the deck onto the table.
+  console.log(deck);
+  deck.render({ immediate: true });
+  let nbAsc = 0;
+  let nbDesc = 0;
+  for (let pile of ArrayPiles) {
+    let p = new cards.Deck({ id: pile._id, faceUp: true });
+    if (pile.orientation === "up") {
+      p.x += 50 + 100 * nbDesc++;
+      p.addCardPerso(deck.topCard(), 1);
+    } else if (pile.orientation === "down") {
+      p.x -= 150 + 100 * nbAsc++;
+      p.addCardPerso(deck.topCard(), 0);
+    }
+    p.click(function() {
+      const ind = p.length - 1;
+      if (p[ind].el.hasClass("borderPile")) {
+        const cardSelected = getCardSelected(myHand);
+        // On retire les bordures
+        deleteBorderPiles();
+        deleteBorderCards();
+        putCardOnPile(cardSelected.rank, p.id);
+      }
+    });
+    piles.unshift(p);
+  }
+  piles.forEach(element=>element.render());
+  // Fonction qui initialise les piles et mains des joueurs
+  deck.deal(0, playersHand, function() {
+    piles.forEach(element => {
+      //element.addCard(deck.firstCard());
+      element.render();
+    });
+  });
+  ///////////////////////////////////////////////////////
+  // Fonction pour récupérer la carte sélectionnée
+  function getCardSelected(myHand) {
+    let cardSelected = "";
+    myHand.forEach(function(card) {
+      if (card.el.hasClass("borderCard")) {
+        cardSelected = card;
+      }
+    });
+    return cardSelected;
+  }
+}
+
+export function start(
+  playerId,
+  ArrayPlayers
+){
+  ArrayPlayers.filter(ele => ele === playerId).map(ele => {
+    myHand = new cards.Hand({
+      id: ele,
+      faceUp: true,
+      y: 400
+    });
+    playersHand.push(myHand);
+     ////////////////////////////////////////////////////
+    // Fonction pour sélectionner une carte dans notre main
+    myHand.click(function(card) {
+      let isSelected = false;
+      // On regarde si la carte était déjà sélectionnée
+      if (card.el.hasClass("borderCard")) {
+        isSelected = true;
+      }
+      // On retire toutes les bordures
+      deleteBorderCards();
+      deleteBorderPiles();
+  
+      let cardValue = card.rank;
+      // On regarde si la carte était déjà sélectionnée
+      if (isSelected === false) {
+        askWhichColumn(cardValue).then(res => {
+          piles
+            .filter(pile => res.includes(pile.id))
+            .map(pile => pile.borderChange(true));
+        });
+        myHand.borderChange(card, true);
+      }
+    });
+    return null;
+  });
+  ArrayPlayers.filter(ele => ele !== playerId).map((ele, index) => {
+    let x;
+    let y;
+    switch (index) {
+      case 0:
+        y = 60;
+        break;
+      case 1:
+        y = 60;
+        x = 300;
+        break;
+      case 2:
+        y = 400;
+        x = 200;
+        break;
+      case 3:
+        y = 400;
+        x = 1000;
+        break;
+      default:
+        break;
+    }
+    let hand = new cards.Hand({
+      id: ele,
+      faceUp: false,
+      y: y,
+      x: x
+    });
+    playersHand.push(hand);
+    return null;
+  });
+  deck.deal(0, playersHand, function() {
+    piles.forEach(element => {
+      //element.addCard(deck.firstCard());
+      element.render();
+    });
+  });
+}
+/*
 export function init(
   playerId,
   ArrayPlayers,
@@ -47,6 +189,29 @@ export function init(
       y: 400
     });
     playersHand.push(myHand);
+     ////////////////////////////////////////////////////
+    // Fonction pour sélectionner une carte dans notre main
+    myHand.click(function(card) {
+      let isSelected = false;
+      // On regarde si la carte était déjà sélectionnée
+      if (card.el.hasClass("borderCard")) {
+        isSelected = true;
+      }
+      // On retire toutes les bordures
+      deleteBorderCards();
+      deleteBorderPiles();
+  
+      let cardValue = card.rank;
+      // On regarde si la carte était déjà sélectionnée
+      if (isSelected === false) {
+        askWhichColumn(cardValue).then(res => {
+          piles
+            .filter(pile => res.includes(pile.id))
+            .map(pile => pile.borderChange(true));
+        });
+        myHand.borderChange(card, true);
+      }
+    });
     return null;
   });
   ArrayPlayers.filter(ele => ele !== playerId).map((ele, index) => {
@@ -82,7 +247,6 @@ export function init(
   });
   let nbAsc = 0;
   let nbDesc = 0;
-  console.log(deck);
   for (let pile of ArrayPiles) {
     let p = new cards.Deck({ id: pile._id, faceUp: true });
     if (pile.orientation === "up") {
@@ -114,30 +278,6 @@ export function init(
     });
   });
 
-  ////////////////////////////////////////////////////
-  // Fonction pour sélectionner une carte dans notre main
-  myHand.click(function(card) {
-    let isSelected = false;
-    // On regarde si la carte était déjà sélectionnée
-    if (card.el.hasClass("borderCard")) {
-      isSelected = true;
-    }
-    // On retire toutes les bordures
-    deleteBorderCards();
-    deleteBorderPiles();
-
-    let cardValue = card.rank;
-    // On regarde si la carte était déjà sélectionnée
-    if (isSelected === false) {
-      askWhichColumn(cardValue).then(res => {
-        piles
-          .filter(pile => res.includes(pile.id))
-          .map(pile => pile.borderChange(true));
-      });
-      myHand.borderChange(card, true);
-    }
-  });
-
   ///////////////////////////////////////////////////////
   // Fonction pour récupérer la carte sélectionnée
   function getCardSelected(myHand) {
@@ -149,7 +289,7 @@ export function init(
     });
     return cardSelected;
   }
-}
+}*/
 ////////////////////////////////////////////////////////
 // Fonction pour mettre une carte d'une main sur une pile
 export function putCard(idPlayer, cardValue, idPile) {
@@ -176,7 +316,6 @@ export function putCard(idPlayer, cardValue, idPile) {
     return null;
   });
   // On cherche la pile où mettre la carte
-
   piles.map(element => {
     if (element.id === idPile) {
       element.addCardPerso(carte, cardValue);
@@ -200,4 +339,4 @@ export function drawCard(idPlayer, cardValue) {
   });
 }
 
-export default { init, putCard, drawCard };
+export default { init, start, putCard, drawCard };

@@ -60,14 +60,22 @@ export default class Game extends Component {
     ) {
       this.joinGame();
     }
-    if (prevState.game === "waitingPlayers" && this.state.game === "playing") {
+    if(!prevState.joined && this.state.joined){
       utils.init(
+        this.piles,
+        this.whereToPlayCard,
+        this.playCard
+      );  
+    }
+    if (prevState.game === "waitingPlayers" && this.state.game === "playing") {
+      /*utils.init(
         this.state.playerId,
         this.state.players.map(ele => ele._id.toString()),
         this.piles,
         this.whereToPlayCard,
         this.playCard
-      );
+      );*/
+      utils.start(this.state.playerId, this.state.players.map(ele => ele._id.toString()));
     }
   }
 
@@ -113,11 +121,19 @@ export default class Game extends Component {
           throw new Error(err);
         });
       })
-      .then(res => console.log(res))
       .then(res => {
+        console.log(res);
         this.interval = setInterval(() => this.getGameInfo(), 2000);
-        this.setState({ joined: true });
-        this.getGameInfo();
+        if(res.piles !== undefined)
+          this.piles=res.piles;
+          this.setState({ players:res.players,joined: true });
+        /*utils.init(
+          undefined,
+          undefined,
+          this.piles,
+          this.whereToPlayCard,
+          this.playCard
+        );*/
       })
       //.then(utils.init())
       .catch(err => console.log(err));
@@ -238,7 +254,6 @@ export default class Game extends Component {
             Prêt
           </Button>
         )}
-        {this.state.game === "waitingPlayers" || <div id="card-table"></div>}
         {this.state.game === "waitingPlayers" && (
           <Table
             style={{ maxWidth: "600px", margin: "auto" }}
@@ -270,6 +285,7 @@ export default class Game extends Component {
             </TableBody>
           </Table>
         )}
+        <div key="game" id="card-table"></div>
       </div>
     );
   }

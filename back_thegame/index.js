@@ -85,7 +85,7 @@ app.post('/api/game', Player.isAuthenticated, function(req, res) {
 	})
 });
 
-app.get('/api/endedgame',Player.isAuthenticated,function(req,res){
+app.get('/api/playedgame',Player.isAuthenticated,function(req,res){
 	const { jwt: { playerId } } = req;
 	Game.getEndedGamePlayerPlayed(playerId)
 	.then(function(result){

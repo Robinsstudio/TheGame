@@ -36,7 +36,7 @@ export default class LobbyPage extends Component {
       )
       .catch(err => console.log(err));
 
-    new Request("/api/endedgame/")
+    new Request("/api/playedgame/")
       .get()
       .send()
       .then(res => {
