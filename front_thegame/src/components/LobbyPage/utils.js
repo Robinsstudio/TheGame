@@ -1,5 +1,6 @@
 import cards from "./cards.js";
 
+
 let deck;
 let piles = [];
 let playersHand = [];
@@ -29,6 +30,11 @@ export function init(
   callbackAskColumn,
   callbackPutCardOnPile
 ){
+  console.log(piles);
+  while(piles.length>0)
+    piles.pop();
+  while(playersHand.length>0)
+    playersHand.pop();
   askWhichColumn = callbackAskColumn;
   putCardOnPile = callbackPutCardOnPile;
   //Tell the library which element to use for the table

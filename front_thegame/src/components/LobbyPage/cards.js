@@ -24,6 +24,8 @@ var cards = (function() {
   }
 
   function init(options) {
+    while(all.length!==0)
+      all.pop();
     if (options) {
       for (let i in options) {
         if (opt.hasOwnProperty(i)) {
