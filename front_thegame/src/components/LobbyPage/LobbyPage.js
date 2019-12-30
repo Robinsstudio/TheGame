@@ -20,8 +20,16 @@ export default class LobbyPage extends Component {
     };
     this.selectGame = this.selectGame.bind(this);
     this.selectIdGame = this.selectIdGame.bind(this);
+    this.fetchMyGames = this.fetchMyGames.bind(this);
+    this.fetchPublicGames = this.fetchPublicGames.bind(this);
   }
   componentDidMount() {
+    this.fetchMyGames();
+    this.fetchPublicGames();
+  }
+  //////////////////////////////////////////////////////////////////////
+  // Fonction pour faire une requête pour récupérer les parties en publiques
+  fetchPublicGames() {
     new Request("/api/game/")
       .get()
       .send()
@@ -35,7 +43,11 @@ export default class LobbyPage extends Component {
         this.setState({ JoinGame: res, JoinGameLoad: true }, console.log(res))
       )
       .catch(err => console.log(err));
-
+  }
+  //////////////////////////////////////////////////////////////////////
+  // Fonction pour faire une réqûete et récupérer l'historique des parties du joueur
+  fetchMyGames() {
+    this.setState({ HistoryGame: [] });
     new Request("/api/playedgame/")
       .get()
       .send()
@@ -53,13 +65,15 @@ export default class LobbyPage extends Component {
       )
       .catch(err => console.log(err));
   }
-
+  //////////////////////////////////////////////////////////////////////
+  // fonction pour dire si une partie a été sélectionnée dans le tableau
   selectGame(bool) {
     this.setState({
       gameSelected: bool
     });
   }
-
+  //////////////////////////////////////////////////////////////////////
+  // fonction pour modifier l'id d'une game sélectionnée dans un tableau
   selectIdGame(id) {
     this.setState({
       idGame: id
@@ -70,25 +84,29 @@ export default class LobbyPage extends Component {
     let JoinGameComponent;
     let HistoryGameComponent;
 
-    if (this.state.JoinGameLoad === true) {
-      JoinGameComponent = (
-        <JoinGame
-          data={this.state.JoinGame}
-          selectGame={bool => this.selectGame(bool)}
-          selectIdGame={id => this.selectIdGame(id)}
-        ></JoinGame>
-      );
-    }
-
     if (this.state.HistoryGameLoad === true) {
       HistoryGameComponent = (
         <HistoryGame
           data={this.state.HistoryGame}
           selectGame={bool => this.selectGame(bool)}
           selectIdGame={id => this.selectIdGame(id)}
+          fetch={() => this.fetchMyGames()}
         ></HistoryGame>
       );
     }
+
+    if (this.state.JoinGameLoad === true) {
+      console.log(this.state);
+      JoinGameComponent = (
+        <JoinGame
+          data={this.state.JoinGame}
+          selectGame={bool => this.selectGame(bool)}
+          selectIdGame={id => this.selectIdGame(id)}
+          fetch={() => this.fetchPublicGames()}
+        ></JoinGame>
+      );
+    }
+
     return (
       <Container maxWidth="lg">
         <Grid container spacing={3}>

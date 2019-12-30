@@ -14,6 +14,9 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
 
 function createData(id, name, players, piles, version) {
   return { id, name, players, piles, version };
@@ -165,12 +168,22 @@ const EnhancedTableToolbar = props => {
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
-            Matchmaking ouvert
+            Matchmaking Ouvert
           </Typography>
         )}
       </div>
       <div className={classes.spacer} />
-      <div className={classes.actions}></div>
+      <div className={classes.actions}>
+        {numSelected > 0 ? (
+          <div></div>
+        ) : (
+          <Tooltip title={<span className="tooltipPerso">Actualiser</span>}>
+            <IconButton onClick={() => MyProps.fetch()}>
+              <RefreshIcon fontSize="large"></RefreshIcon>
+            </IconButton>
+          </Tooltip>
+        )}
+      </div>
     </Toolbar>
   );
 };
@@ -198,7 +211,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function MyTable() {
+function MyTableJoin() {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("players");
@@ -218,12 +231,12 @@ function MyTable() {
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat([], row.id);
-      props.selectGame(true);
-      props.selectIdGame(row.id);
+      MyProps.selectGame(true);
+      MyProps.selectIdGame(row.id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
-      props.selectGame(false);
-      props.selectIdGame(undefined);
+      MyProps.selectGame(false);
+      MyProps.selectIdGame(undefined);
     }
 
     setSelected(newSelected);
@@ -296,10 +309,11 @@ function MyTable() {
           </Table>
         </div>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 15, 20]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
+          labelRowsPerPage={"Parties par page :"}
           page={page}
           backIconButtonProps={{
             "aria-label": "Page Précédente"
@@ -315,21 +329,28 @@ function MyTable() {
   );
 }
 
-let props;
+let MyProps;
 let rows = [];
 
 export default class JoinGame extends Component {
   componentDidMount() {
-    props = this.props;
+    MyProps = this.props;
     rows = [];
-    props.data.forEach(game => {
-      rows.push(
-        createData(game.id, game.name, game.players, game.piles, game.version)
-      );
-    });
+    console.log(MyProps);
+    if (MyProps.data.length === 0) {
+      console.log("fetchons car aucune donnée");
+      MyProps.fetch();
+    } else {
+      MyProps.data.forEach(game => {
+        rows.push(
+          createData(game.id, game.name, game.players, game.piles, game.version)
+        );
+        console.log(rows);
+      });
+    }
   }
 
   render() {
-    return <MyTable></MyTable>;
+    return <MyTableJoin></MyTableJoin>;
   }
 }

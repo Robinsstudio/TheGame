@@ -60,12 +60,8 @@ export default class Game extends Component {
     ) {
       this.joinGame();
     }
-    if(!prevState.joined && this.state.joined){
-      utils.init(
-        this.piles,
-        this.whereToPlayCard,
-        this.playCard
-      );  
+    if (!prevState.joined && this.state.joined) {
+      utils.init(this.piles, this.whereToPlayCard, this.playCard);
     }
     if (prevState.game === "waitingPlayers" && this.state.game === "playing") {
       /*utils.init(
@@ -75,7 +71,10 @@ export default class Game extends Component {
         this.whereToPlayCard,
         this.playCard
       );*/
-      utils.start(this.state.playerId, this.state.players.map(ele => ele._id.toString()));
+      utils.start(
+        this.state.playerId,
+        this.state.players.map(ele => ele._id.toString())
+      );
     }
   }
 
@@ -124,9 +123,8 @@ export default class Game extends Component {
       .then(res => {
         console.log(res);
         this.interval = setInterval(() => this.getGameInfo(), 2000);
-        if(res.piles !== undefined)
-          this.piles=res.piles;
-          this.setState({ players:res.players,joined: true });
+        if (res.piles !== undefined) this.piles = res.piles;
+        this.setState({ players: res.players, joined: true });
         /*utils.init(
           undefined,
           undefined,
@@ -252,6 +250,15 @@ export default class Game extends Component {
             onClick={() => this.playerIsReady()}
           >
             Prêt
+          </Button>
+        )}
+        {this.state.ready === true && this.state.game === "waitingPlayers" && (
+          <Button
+            style={{ fontSize: "20px" }}
+            color="primary"
+            onClick={() => this.playerIsReady()}
+          >
+            Pas Prêt
           </Button>
         )}
         {this.state.game === "waitingPlayers" && (
