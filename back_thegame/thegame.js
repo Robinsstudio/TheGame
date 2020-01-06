@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'production') {
 		});
 	});
 
-	console.log('The Game is running.')
+	console.log('The Game is running.');
 }
 
 module.exports = router;
