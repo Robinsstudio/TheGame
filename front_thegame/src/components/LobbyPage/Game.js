@@ -46,9 +46,8 @@ class Game extends Component {
 
   ////////////////////////////////////////////////////////////
   ///// Fonction pour ouvrir les snackbars
-  changeSnackbar(message, options) {
-    this.props.closeSnackbar();
-    this.props.enqueueSnackbar(message, { variant: options });
+  changeSnackbar(message, snackType = "info", duration = 5000) {
+    this.props.enqueueSnackbar(message, { variant: snackType, autoHideDuration : duration});
   }
 
   // Exemple de Snackbar
@@ -106,7 +105,8 @@ class Game extends Component {
         return res.text().then(err => {
           throw new Error(err);
         });
-      });
+      })
+      .catch(err=>this.changeSnackbar(err.message,"error"));
   }
 
   whereToPlayCard(cardValue) {
@@ -124,7 +124,8 @@ class Game extends Component {
       .then(res => {
         if (res.result === undefined) return [];
         return res.result;
-      });
+      })
+      .catch(err=>this.changeSnackbar(err.message,"error"));
   }
 
   joinGame() {
@@ -152,7 +153,7 @@ class Game extends Component {
         );*/
       })
       //.then(utils.init())
-      .catch(err => console.log(err));
+      .catch(err =>this.changeSnackbar(err.message,"error"));
   }
 
   playerEndTurn() {
@@ -166,7 +167,7 @@ class Game extends Component {
         });
       })
       .then(res => console.log(res))
-      .catch(err => console.log(err));
+      .catch(err => this.changeSnackbar(err.message,"error"));
   }
 
   runActions(actions) {
