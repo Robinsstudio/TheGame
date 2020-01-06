@@ -18,8 +18,8 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 
-function createData(id, name, players, piles, version) {
-  return { id, name, players, piles, version };
+function createData(id, name, players, piles, resultat) {
+  return { id, name, players, piles, resultat };
 }
 
 const headRows = [
@@ -35,10 +35,10 @@ const headRows = [
   { id: "players", numeric: false, disablePadding: false, label: "Joueurs" },
   { id: "piles", numeric: false, disablePadding: false, label: "Piles" },
   {
-    id: "version",
+    id: "resultat",
     numeric: false,
     disablePadding: false,
-    label: "Version de la partie"
+    label: "Résultat de la partie"
   }
 ];
 
@@ -163,9 +163,7 @@ const EnhancedTableToolbar = props => {
     >
       <div className={classes.title}>
         {numSelected > 0 ? (
-          <Typography color="inherit" variant="h6">
-            {numSelected} partie sélectionnée
-          </Typography>
+          <div></div>
         ) : (
           <Typography variant="h6" id="tableTitle">
             Votre Historique
@@ -178,7 +176,7 @@ const EnhancedTableToolbar = props => {
           <div></div>
         ) : (
           <Tooltip title={<span className="tooltipPerso">Actualiser</span>}>
-            <IconButton onClick={() => MyProps.fetch()}>
+            <IconButton onClick={() => MyHistoryProps.fetch()}>
               <RefreshIcon fontSize="large"></RefreshIcon>
             </IconButton>
           </Tooltip>
@@ -204,14 +202,14 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2)
   },
   table: {
-    minWidth: 750
+    minWidth: 500
   },
   tableWrapper: {
     overflowX: "auto"
   }
 }));
 
-function MyTable() {
+function MyHistoryTable() {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("players");
@@ -225,23 +223,6 @@ function MyTable() {
     setOrderBy(property);
   }
 
-  function handleClick(event, row) {
-    const selectedIndex = selected.indexOf(row.id);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat([], row.id);
-      MyProps.selectGame(true);
-      MyProps.selectIdGame(row.id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-      MyProps.selectGame(false);
-      MyProps.selectIdGame(undefined);
-    }
-
-    setSelected(newSelected);
-  }
-
   function handleChangePage(event, newPage) {
     setPage(newPage);
   }
@@ -253,7 +234,8 @@ function MyTable() {
   const isSelected = name => selected.indexOf(name) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    rowsPerPage -
+    Math.min(rowsPerPage, rowsHistory.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
@@ -270,33 +252,23 @@ function MyTable() {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={rowsHistory.length}
             />
             <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
+              {stableSort(rowsHistory, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => {
                   const isItemSelected = isSelected(row.id);
                   return (
-                    <TableRow
-                      hover
-                      onClick={event => handleClick(event, row)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox checked={isItemSelected} />
-                      </TableCell>
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                      <TableCell padding="checkbox"></TableCell>
                       <TableCell className="hiddenCell">{row.id}</TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {row.name}
                       </TableCell>
                       <TableCell align="left">{row.players}</TableCell>
                       <TableCell align="left">{row.piles}</TableCell>
-                      <TableCell align="left">{row.version}</TableCell>
+                      <TableCell align="left">{row.resultat}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -311,7 +283,7 @@ function MyTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 15, 20]}
           component="div"
-          count={rows.length}
+          count={rowsHistory.length}
           rowsPerPage={rowsPerPage}
           labelRowsPerPage={"Parties par page :"}
           page={page}
@@ -329,27 +301,21 @@ function MyTable() {
   );
 }
 
-let MyProps;
-let rows = [];
+let MyHistoryProps;
+let rowsHistory = [];
 
 export default class HistoryGame extends Component {
   componentDidMount() {
-    MyProps = this.props;
-    rows = [];
-    console.log(MyProps);
-    if (MyProps.data.length === 0) {
-      console.log("fetchons car aucune donnée");
-      MyProps.fetch();
-    } else {
-      MyProps.data.forEach(game => {
-        rows.push(
-          createData(game.id, game.name, game.players, game.piles, game.version)
-        );
-      });
-    }
+    MyHistoryProps = this.props;
+    rowsHistory = [];
+    MyHistoryProps.data.forEach(game => {
+      rowsHistory.push(
+        createData(game.id, game.name, game.players, game.piles, game.version)
+      );
+    });
   }
 
   render() {
-    return <MyTable></MyTable>;
+    return <MyHistoryTable></MyHistoryTable>;
   }
 }

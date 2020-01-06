@@ -204,7 +204,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2)
   },
   table: {
-    minWidth: 750
+    minWidth: 500
   },
   tableWrapper: {
     overflowX: "auto"
@@ -253,7 +253,7 @@ function MyTableJoin() {
   const isSelected = name => selected.indexOf(name) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, rowsJoin.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
@@ -270,10 +270,10 @@ function MyTableJoin() {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={rowsJoin.length}
             />
             <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
+              {stableSort(rowsJoin, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => {
                   const isItemSelected = isSelected(row.id);
@@ -311,7 +311,7 @@ function MyTableJoin() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 15, 20]}
           component="div"
-          count={rows.length}
+          count={rowsJoin.length}
           rowsPerPage={rowsPerPage}
           labelRowsPerPage={"Parties par page :"}
           page={page}
@@ -330,24 +330,17 @@ function MyTableJoin() {
 }
 
 let MyProps;
-let rows = [];
+let rowsJoin = [];
 
 export default class JoinGame extends Component {
   componentDidMount() {
     MyProps = this.props;
-    rows = [];
-    console.log(MyProps);
-    if (MyProps.data.length === 0) {
-      console.log("fetchons car aucune donnée");
-      MyProps.fetch();
-    } else {
-      MyProps.data.forEach(game => {
-        rows.push(
-          createData(game.id, game.name, game.players, game.piles, game.version)
-        );
-        console.log(rows);
-      });
-    }
+    rowsJoin = [];
+    MyProps.data.forEach(game => {
+      rowsJoin.push(
+        createData(game.id, game.name, game.players, game.piles, game.version)
+      );
+    });
   }
 
   render() {
