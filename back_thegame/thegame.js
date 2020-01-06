@@ -10,6 +10,8 @@ if (process.env.NODE_ENV === 'production') {
 			res.sendFile(__dirname + '/build/index.html');
 		});
 	});
+
+	console.log('The Game is running.')
 }
 
 module.exports = router;
