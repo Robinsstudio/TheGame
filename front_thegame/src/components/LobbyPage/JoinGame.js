@@ -18,11 +18,11 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 
-function createData(id, name, players, piles, version) {
+function createDataJoin(id, name, players, piles, version) {
   return { id, name, players, piles, version };
 }
 
-const headRows = [
+const headRowsJoin = [
   {
     id: "id"
   },
@@ -75,7 +75,7 @@ function getSorting(order, orderBy) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Début du Header de la Table
-function EnhancedTableHead(props) {
+function EnhancedTableHeadJoin(props) {
   const { order, orderBy, onRequestSort } = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
@@ -85,7 +85,7 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         <TableCell></TableCell>
-        {headRows.map(row => {
+        {headRowsJoin.map(row => {
           if (row.id === "id") {
             return (
               <TableCell key={row.id} className="hiddenCell">
@@ -116,7 +116,7 @@ function EnhancedTableHead(props) {
   );
 }
 
-EnhancedTableHead.propTypes = {
+EnhancedTableHeadJoin.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.string.isRequired,
@@ -151,7 +151,7 @@ const useToolbarStyles = makeStyles(theme => ({
   }
 }));
 
-const EnhancedTableToolbar = props => {
+const EnhancedTableToolbarJoin = props => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
 
@@ -188,7 +188,7 @@ const EnhancedTableToolbar = props => {
   );
 };
 
-EnhancedTableToolbar.propTypes = {
+EnhancedTableToolbarJoin.propTypes = {
   numSelected: PropTypes.number.isRequired
 };
 /// Fin de la Toolbar de la Table
@@ -204,7 +204,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2)
   },
   table: {
-    minWidth: 500
+    minWidth: 400
   },
   tableWrapper: {
     overflowX: "auto"
@@ -258,14 +258,14 @@ function MyTableJoin() {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbarJoin numSelected={selected.length} />
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
             size={"medium"}
           >
-            <EnhancedTableHead
+            <EnhancedTableHeadJoin
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
@@ -331,14 +331,25 @@ function MyTableJoin() {
 
 let MyProps;
 let rowsJoin = [];
+let startFetch = false;
 
 export default class JoinGame extends Component {
   componentDidMount() {
     MyProps = this.props;
     rowsJoin = [];
+    if (startFetch === false) {
+      startFetch = true;
+      this.props.fetch();
+    }
     MyProps.data.forEach(game => {
       rowsJoin.push(
-        createData(game.id, game.name, game.players, game.piles, game.version)
+        createDataJoin(
+          game.id,
+          game.name,
+          game.players,
+          game.piles,
+          game.version
+        )
       );
     });
   }

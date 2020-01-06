@@ -25,6 +25,7 @@ export default class Section extends Component {
             </div>
           </div>
         </section>
+
         <section id="description" className="section-padding">
           <div className="container">
             <div className="row">
@@ -204,106 +205,7 @@ export default class Section extends Component {
             </div>
           </div>
         </section>
-        <section id="developer-team" className="section-padding">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-12">
-                <h2 className="ser-title">Our Team Developers</h2>
-                <hr className="botm-line" />
-              </div>
-              <div className="col-md-4 col-sm-3 col-xs-6">
-                <div className="thumbnail">
-                  <img
-                    src="img/DamienDonnadieu.jpg"
-                    alt="..."
-                    className="team-img"
-                  />
-                  <div className="caption">
-                    <h3>Damien Donnadieu</h3>
-                    <p>Designer</p>
-                    <ul className="list-inline">
-                      <li>
-                        <a href="#banner">
-                          <i className="fa fa-facebook"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#banner">
-                          <i className="fa fa-twitter"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#banner">
-                          <i className="fa fa-google-plus"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4 col-sm-3 col-xs-6">
-                <div className="thumbnail">
-                  <img
-                    src="img/RobinDosAnjos.png"
-                    alt="..."
-                    className="team-img"
-                  />
-                  <div className="caption">
-                    <h3>Robin Dos Anjos</h3>
-                    <p>Full stack developer</p>
-                    <ul className="list-inline">
-                      <li>
-                        <a href="#banner">
-                          <i className="fa fa-facebook"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#banner">
-                          <i className="fa fa-twitter"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#banner">
-                          <i className="fa fa-google-plus"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4 col-sm-3 col-xs-6">
-                <div className="thumbnail">
-                  <img
-                    src="img/BaptisteGallais.jpg"
-                    alt="..."
-                    className="team-img"
-                  />
-                  <div className="caption">
-                    <h3>Baptiste Gallais</h3>
-                    <p>Back-end developer</p>
-                    <ul className="list-inline">
-                      <li>
-                        <a href="#banner">
-                          <i className="fa fa-facebook"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#banner">
-                          <i className="fa fa-twitter"></i>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#banner">
-                          <i className="fa fa-google-plus"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+
         <section id="testimonial" className="section-padding">
           <div className="container">
             <div className="row">
@@ -369,29 +271,6 @@ export default class Section extends Component {
                   </h3>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="words" className="section-padding">
-          <div className="container">
-            <div className=" row">
-              <div className="col-md-2"></div>
-              <div className="text-right-md col-md-4 col-sm-4">
-                <h2 className="section-title white lg-line">
-                  « A few words
-                  <br /> about us »
-                </h2>
-              </div>
-              <div className="col-md-4 col-sm-5">
-                "Ce projet nous tenait très à coeur car premièrement c'était
-                notre premier jeu en ligne et deuxièmement nous voulions rendre
-                hommage à notre jeu préféré."
-                <p className="text-right text-primary-template">
-                  <i>— Les créateurs</i>
-                </p>
-              </div>
-              <div className="col-md-2"></div>
             </div>
           </div>
         </section>

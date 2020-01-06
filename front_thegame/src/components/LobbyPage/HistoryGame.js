@@ -12,17 +12,16 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 
-function createData(id, name, players, piles, resultat) {
+function createDataHistory(id, name, players, piles, resultat) {
   return { id, name, players, piles, resultat };
 }
 
-const headRows = [
+const headRowsHistory = [
   {
     id: "id"
   },
@@ -85,7 +84,7 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         <TableCell></TableCell>
-        {headRows.map(row => {
+        {headRowsHistory.map(row => {
           if (row.id === "id") {
             return (
               <TableCell key={row.id} className="hiddenCell">
@@ -202,7 +201,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2)
   },
   table: {
-    minWidth: 500
+    minWidth: 400
   },
   tableWrapper: {
     overflowX: "auto"
@@ -213,7 +212,6 @@ function MyHistoryTable() {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("players");
-  const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -231,8 +229,6 @@ function MyHistoryTable() {
     setRowsPerPage(+event.target.value);
   }
 
-  const isSelected = name => selected.indexOf(name) !== -1;
-
   const emptyRows =
     rowsPerPage -
     Math.min(rowsPerPage, rowsHistory.length - page * rowsPerPage);
@@ -240,7 +236,7 @@ function MyHistoryTable() {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={0} />
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -248,7 +244,7 @@ function MyHistoryTable() {
             size={"medium"}
           >
             <EnhancedTableHead
-              numSelected={selected.length}
+              numSelected={0}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
@@ -258,7 +254,6 @@ function MyHistoryTable() {
               {stableSort(rowsHistory, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => {
-                  const isItemSelected = isSelected(row.id);
                   return (
                     <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                       <TableCell padding="checkbox"></TableCell>
@@ -310,7 +305,13 @@ export default class HistoryGame extends Component {
     rowsHistory = [];
     MyHistoryProps.data.forEach(game => {
       rowsHistory.push(
-        createData(game.id, game.name, game.players, game.piles, game.version)
+        createDataHistory(
+          game.id,
+          game.name,
+          game.players,
+          game.piles,
+          game.version
+        )
       );
     });
   }
