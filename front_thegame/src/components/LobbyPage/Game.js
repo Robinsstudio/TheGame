@@ -10,7 +10,9 @@ import TableRow from "@material-ui/core/TableRow";
 import DoneIcon from "@material-ui/icons/Done";
 import CloseIcon from "@material-ui/icons/Close";
 import CircularProgress from "@material-ui/core/CircularProgress";
-export default class Game extends Component {
+import { withSnackbar } from "notistack";
+
+class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -277,7 +279,7 @@ export default class Game extends Component {
                 <TableRow key={player._id}>
                   <TableCell component="th" scope="row">
                     {this.players[`${player._id}`]
-                      ? this.players[`${player._id}`]
+                      ? this.players[`${player._id}`] + " (hote)"
                       : this.addPlayerLogin(player._id)}
                   </TableCell>
                   <TableCell align="right">
@@ -292,8 +294,10 @@ export default class Game extends Component {
             </TableBody>
           </Table>
         )}
-        <div key="game" id="card-table"></div>
+        <div key="game" id="card-table" className="tableVisible"></div>
       </div>
     );
   }
 }
+
+export default withSnackbar(Game);

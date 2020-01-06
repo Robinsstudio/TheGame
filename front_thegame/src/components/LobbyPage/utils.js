@@ -1,6 +1,5 @@
 import cards from "./cards.js";
 
-
 let deck;
 let piles = [];
 let playersHand = [];
@@ -25,16 +24,9 @@ function deleteBorderPiles() {
   piles.map(pile => pile.borderChange(false));
 }
 
-export function init(
-  ArrayPiles,
-  callbackAskColumn,
-  callbackPutCardOnPile
-){
-  console.log(piles);
-  while(piles.length>0)
-    piles.pop();
-  while(playersHand.length>0)
-    playersHand.pop();
+export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
+  while (piles.length > 0) piles.pop();
+  while (playersHand.length > 0) playersHand.pop();
   askWhichColumn = callbackAskColumn;
   putCardOnPile = callbackPutCardOnPile;
   //Tell the library which element to use for the table
@@ -47,7 +39,6 @@ export function init(
   //cards.all contains all cards, put them all in the deck
   deck.addCards(cards.all);
   //No animation here, just get the deck onto the table.
-  console.log(deck);
   deck.render({ immediate: true });
   let nbAsc = 0;
   let nbDesc = 0;
@@ -72,7 +63,7 @@ export function init(
     });
     piles.unshift(p);
   }
-  piles.forEach(element=>element.render());
+  piles.forEach(element => element.render());
   // Fonction qui initialise les piles et mains des joueurs
   deck.deal(0, playersHand, function() {
     piles.forEach(element => {
@@ -93,10 +84,7 @@ export function init(
   }
 }
 
-export function start(
-  playerId,
-  ArrayPlayers
-){
+export function start(playerId, ArrayPlayers) {
   ArrayPlayers.filter(ele => ele === playerId).map(ele => {
     myHand = new cards.Hand({
       id: ele,
@@ -104,7 +92,7 @@ export function start(
       y: 400
     });
     playersHand.push(myHand);
-     ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
     // Fonction pour sélectionner une carte dans notre main
     myHand.click(function(card) {
       let isSelected = false;
@@ -115,7 +103,7 @@ export function start(
       // On retire toutes les bordures
       deleteBorderCards();
       deleteBorderPiles();
-  
+
       let cardValue = card.rank;
       // On regarde si la carte était déjà sélectionnée
       if (isSelected === false) {
