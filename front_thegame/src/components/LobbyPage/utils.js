@@ -43,7 +43,10 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
   let nbAsc = 0;
   let nbDesc = 0;
   for (let pile of ArrayPiles) {
-    let p = new cards.Deck({ id: pile._id, faceUp: true });
+    let p = new cards.Deck({
+      id: pile._id,
+      faceUp: true
+    });
     if (pile.orientation === "up") {
       p.x += 50 + 100 * nbDesc++;
       p.addCardPerso(deck.topCard(), 1);
@@ -51,6 +54,7 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
       p.x -= 150 + 100 * nbAsc++;
       p.addCardPerso(deck.topCard(), 0);
     }
+    // eslint-disable-next-line
     p.click(function() {
       const ind = p.length - 1;
       if (p[ind].el.hasClass("borderPile")) {

@@ -320,10 +320,10 @@ export default class HistoryGame extends Component {
     MyHistoryProps = this.props;
     rowsHistory = [];
     MyHistoryProps.data.forEach(game => {
-      let resultatPartie = "Partie Perdue";
+      let resultatPartie = "Perdue (" + game.remaining + " cartes restantes)";
       let background = "loseGame";
       if (game.status === "won") {
-        resultatPartie = "Partie Gagnée";
+        resultatPartie = "Gagnée";
         background = "winGame";
       }
       rowsHistory.push(
