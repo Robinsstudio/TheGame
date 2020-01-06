@@ -43,6 +43,19 @@ let shuffle = function(a) {
   return a;
 };
 
+GameSchema.statics.checkGameOver = function(game, playerId){
+  if (
+    Game.hasToPlayAgain(game, playerId) &&
+    !Game.canPlayAgain(game, playerId)
+  )
+    game.status = "game over";
+}
+
+GameSchema.statics.checkGameWon = function(game){
+  if (game.deckPile.length === 0 && !Game.playersStillHaveCards(game))
+    game.status = "won";
+}
+
 GameSchema.statics.getPlayer = function(game, playerId) {
   let player = game.players.filter(ele => ele._id === playerId)[0];
   if (player === undefined) {
@@ -289,11 +302,8 @@ GameSchema.statics.playCard = function(gameId, playerId, cardValue, pileId) {
             }
           })
         );
-        if (
-          Game.hasToPlayAgain(game, playerId) &&
-          !Game.canPlayAgain(game, playerId)
-        )
-          game.status = "game over";
+        Game.checkGameOver(game,playerId);
+        Game.checkGameWon(game);
         if (game.deckPile.length === 0 && !Game.playersStillHaveCards(game))
           game.status = "won";
       }
@@ -322,13 +332,8 @@ GameSchema.statics.endTurn = function(gameId, playerId) {
     game.actions.push(
       new Action({ type: "endTurn", details: { who: playerId } })
     );
-    if (
-      Game.hasToPlayAgain(game, game.nowPlaying) &&
-      !Game.canPlayAgain(game, game.nowPlaying)
-    )
-      game.status = "game over";
-    if (game.deckPile.length === 0 && !Game.playersStillHaveCards(game))
-      game.status = "won";
+    Game.checkGameOver(game,game.nowPlaying);
+    Game.checkGameWon(game);
     return game.save();
   });
 };
@@ -396,12 +401,12 @@ GameSchema.statics.whereToPlay = function(gameId, cardValue, playerId) {
 };
 
 GameSchema.statics.getGamePlayerCanJoin = function(playerId){
-  return Game.find({status: "waitingPlayers",public : true})
+  return Game.find({$or: [{status: "waitingPlayers",public : true},{status : "waitingPlayers","players._id":playerId},{status: "playing","players._id":playerId}]})
   .then(res=>res.map(ele=>{return {status : ele.status,id:ele._id,name : ele.name,version : ele.actions.length, piles : ele.piles.length, players : ele.players.length}}))
 }
 
 GameSchema.statics.getEndedGamePlayerPlayed = function(playerId){
-  return Game.find({$or: [{status:"waitingPlayers"},{status:"playing"},{status: "won"}, {status: "game over"}],"players._id":playerId})
+  return Game.find({$or: [{status: "won"}, {status: "game over"}],"players._id":playerId})
   .then(res=>res.map(ele=>{return {status : ele.status,id:ele._id,name : ele.name,version : ele.actions.length, piles : ele.piles.length, players : ele.players.length}}))
 }
 
