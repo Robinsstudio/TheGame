@@ -79,7 +79,7 @@ class Navbar extends Component {
                     Jouer
                 </Button>
               </Link>
-              <Account disconnect={this.disconnect}/>
+              <Account login={this.props.login} disconnect={this.disconnect}/>
             </Toolbar>
           </AppBar>
         </div>
