@@ -63,7 +63,7 @@ export default class Game extends Component {
     if (!prevState.joined && this.state.joined) {
       utils.init(this.piles, this.whereToPlayCard, this.playCard);
     }
-    if (prevState.game === "waitingPlayers" && this.state.game === "playing") {
+    if (prevState.game === "waitingPlayers" && this.state.game !== "waitingPlayers") {
       /*utils.init(
         this.state.playerId,
         this.state.players.map(ele => ele._id.toString()),
