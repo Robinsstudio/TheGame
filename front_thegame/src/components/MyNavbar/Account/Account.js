@@ -6,8 +6,9 @@ import Popover from "@material-ui/core/Popover";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
+import { withSnackbar } from "notistack";
 
-export default function Account({login,disconnect}) {
+function Account({ login, disconnect, snackbar }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = event => {
@@ -16,6 +17,7 @@ export default function Account({login,disconnect}) {
 
   const handleClose = () => {
     setAnchorEl(null);
+    snackbar();
   };
 
   const open = Boolean(anchorEl);
@@ -29,7 +31,7 @@ export default function Account({login,disconnect}) {
         onClick={handleClick}
         className="linkNavbar"
       >
-        <i className="material-icons">account_circle</i> {login ||"account"}
+        <i className="material-icons">account_circle</i> {login || "account"}
       </Button>
       <Popover
         id={id}
@@ -54,10 +56,19 @@ export default function Account({login,disconnect}) {
               <MenuItem onClick={handleClose}>Paramètres</MenuItem>
             </Link>
             <div className="dropdown-divider"></div>
-            <MenuItem onClick={()=>{handleClose();disconnect();}}>Déconnexion</MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                disconnect();
+              }}
+            >
+              Déconnexion
+            </MenuItem>
           </MenuList>
         </Paper>
       </Popover>
     </div>
   );
 }
+
+export default withSnackbar(Account);

@@ -7,18 +7,29 @@ import { Link, withRouter } from "react-router-dom";
 import "./Navbar.css";
 import Account from "./Account/Account";
 import Request from "../../js/request.js";
+import { withSnackbar } from "notistack";
 
 class Navbar extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.disconnect = this.disconnect.bind(this);
+    this.changeSnackbar = this.changeSnackbar.bind(this);
   }
 
-  disconnect(){
-    new Request('/api/authentication')
-    .delete()
-    .send()
-    .then(res=>{if(this.props.onDisconnect!==undefined)this.props.onDisconnect(res);});
+  ////////////////////////////////////////////////////////////
+  ///// Fonction pour ouvrir les snackbars
+  changeSnackbar() {
+    this.props.closeSnackbar();
+    this.props.enqueueSnackbar("Déconnexion réussie.", { variant: "success" });
+  }
+
+  disconnect() {
+    new Request("/api/authentication")
+      .delete()
+      .send()
+      .then(res => {
+        if (this.props.onDisconnect !== undefined) this.props.onDisconnect(res);
+      });
   }
 
   render() {
@@ -37,7 +48,10 @@ class Navbar extends Component {
         </div>
       );
     }
-    if (this.props.location.pathname === "/" && this.props.login === undefined) {
+    if (
+      this.props.location.pathname === "/" &&
+      this.props.login === undefined
+    ) {
       return (
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarDark">
@@ -47,24 +61,24 @@ class Navbar extends Component {
                   The Game
                 </Typography>
               </Link>
-                <div>
-                  <Link to={"/login"} className="linkHome">
-                    <Button color="inherit" className="HomeButton">
-                      Connexion
-                    </Button>
-                  </Link>
-                  <Link to={"/login"} className="linkHome" visible="false">
-                    <Button color="inherit" className="HomeButton">
-                      Inscription
-                    </Button>
-                  </Link>
-                </div>
+              <div>
+                <Link to={"/login"} className="linkHome">
+                  <Button color="inherit" className="HomeButton">
+                    Connexion
+                  </Button>
+                </Link>
+                <Link to={"/login"} className="linkHome" visible="false">
+                  <Button color="inherit" className="HomeButton">
+                    Inscription
+                  </Button>
+                </Link>
+              </div>
             </Toolbar>
           </AppBar>
         </div>
       );
     }
-    if (this.props.login !== undefined ) {
+    if (this.props.login !== undefined) {
       return (
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarDark">
@@ -76,10 +90,14 @@ class Navbar extends Component {
               </Link>
               <Link to={"/lobby"} className="linkHome" visible="false">
                 <Button color="inherit" className="HomeButton">
-                    Jouer
+                  Jouer
                 </Button>
               </Link>
-              <Account login={this.props.login} disconnect={this.disconnect}/>
+              <Account
+                login={this.props.login}
+                disconnect={this.disconnect}
+                snackbar={this.changeSnackbar}
+              />
             </Toolbar>
           </AppBar>
         </div>
@@ -102,4 +120,4 @@ class Navbar extends Component {
   }
 }
 
-export default withRouter(Navbar);
+export default withRouter(withSnackbar(Navbar));

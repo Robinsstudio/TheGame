@@ -4,6 +4,7 @@ const util = require('util');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
+const db = require('../db');
 const Constants = require('./../Constants');
 
 const randomBytesAsync = util.promisify(crypto.randomBytes);
@@ -157,6 +158,6 @@ PlayerSchema.statics.deletePlayer = function(playerId){
 	return Player.deleteOne({_id : playerId});
 }
 
-const Player = mongoose.model('Player', PlayerSchema);
+const Player = db.model('Player', PlayerSchema);
 
 module.exports = Player;
