@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const db = require('../db');
 
 const CardSchema = new mongoose.Schema({
 	value: Number
@@ -11,6 +12,6 @@ CardSchema.statics.reset = function() {
 	});
 }
 
-const Card = mongoose.model('Card', CardSchema);
+const Card = db.model('Card', CardSchema);
 
 module.exports = Card;

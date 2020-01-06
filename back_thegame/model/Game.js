@@ -1,8 +1,9 @@
-const mongoose = require("mongoose");
-const Card = require("./Card");
-const Pile = require("./Pile");
-const Action = require("./Action");
-const Player = require("./Player.js");
+const mongoose = require('mongoose');
+const db = require('../db');
+const Card = require('./Card');
+const Pile = require('./Pile');
+const Action = require('./Action');
+const Player = require('./Player.js');
 //-----Schéma du jeu -----//
 
 const GameSchema = new mongoose.Schema({
@@ -410,6 +411,6 @@ GameSchema.statics.getEndedGamePlayerPlayed = function(playerId){
   .then(res=>res.map(ele=>{return {status : ele.status,id:ele._id,name : ele.name,remaining:ele.players.reduce((prev,player)=> prev+player.hand.length,ele.deckPile.length), piles : ele.piles.length, players : ele.players.length}}))
 }
 
-const Game = mongoose.model("Game", GameSchema);
+const Game = db.model("Game", GameSchema);
 
 module.exports = Game;
