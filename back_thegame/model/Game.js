@@ -407,7 +407,7 @@ GameSchema.statics.getGamePlayerCanJoin = function(playerId){
 
 GameSchema.statics.getEndedGamePlayerPlayed = function(playerId){
   return Game.find({$or: [{status: "won"}, {status: "game over"}],"players._id":playerId})
-  .then(res=>res.map(ele=>{return {status : ele.status,id:ele._id,name : ele.name,version : ele.actions.length, piles : ele.piles.length, players : ele.players.length}}))
+  .then(res=>res.map(ele=>{return {status : ele.status,id:ele._id,name : ele.name,remaining:ele.players.reduce((prev,player)=> prev+player.hand.length,ele.deckPile.length), piles : ele.piles.length, players : ele.players.length}}))
 }
 
 const Game = mongoose.model("Game", GameSchema);
