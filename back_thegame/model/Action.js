@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const db = require('../db');
 const Card = require('./Card');
 const ActionSchema = new mongoose.Schema({
     type : {
@@ -12,6 +13,6 @@ const ActionSchema = new mongoose.Schema({
         card : Card.schema
     }
 });
-const Action = mongoose.model('Action',ActionSchema);
+const Action = db.model('Action',ActionSchema);
 
 module.exports = Action;

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const db = require('../db');
 const Card = require('./Card');
 const PileSchema = new mongoose.Schema({
 	orientation : {
@@ -8,6 +9,6 @@ const PileSchema = new mongoose.Schema({
 	},
 	cards : [ Card.schema ]
 });
-const Pile = mongoose.model('Pile',PileSchema);
+const Pile = db.model('Pile',PileSchema);
 
 module.exports = Pile;
