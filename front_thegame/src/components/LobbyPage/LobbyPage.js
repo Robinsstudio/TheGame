@@ -88,15 +88,12 @@ export default class LobbyPage extends Component {
       HistoryGameComponent = (
         <HistoryGame
           data={this.state.HistoryGame}
-          selectGame={bool => this.selectGame(bool)}
-          selectIdGame={id => this.selectIdGame(id)}
           fetch={() => this.fetchMyGames()}
         ></HistoryGame>
       );
     }
 
     if (this.state.JoinGameLoad === true) {
-      console.log(this.state);
       JoinGameComponent = (
         <JoinGame
           data={this.state.JoinGame}
