@@ -7,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
 
-export default function Account({disconnect}) {
+export default function Account({login,disconnect}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = event => {
@@ -29,7 +29,7 @@ export default function Account({disconnect}) {
         onClick={handleClick}
         className="linkNavbar"
       >
-        <i className="material-icons">account_circle</i> Account
+        <i className="material-icons">account_circle</i> {login ||"account"}
       </Button>
       <Popover
         id={id}
