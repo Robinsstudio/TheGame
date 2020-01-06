@@ -6,6 +6,7 @@ import ButtonSection from "./ButtonSection";
 import JoinGame from "./JoinGame";
 import HistoryGame from "./HistoryGame";
 import Request from "./../../js/request.js";
+
 export default class LobbyPage extends Component {
   constructor(props) {
     super(props);
@@ -39,9 +40,7 @@ export default class LobbyPage extends Component {
           throw new Error(err);
         });
       })
-      .then(res =>
-        this.setState({ JoinGame: res, JoinGameLoad: true }, console.log(res))
-      )
+      .then(res => this.setState({ JoinGame: res, JoinGameLoad: true }))
       .catch(err => console.log(err));
   }
   //////////////////////////////////////////////////////////////////////
@@ -57,12 +56,7 @@ export default class LobbyPage extends Component {
           throw new Error(err);
         });
       })
-      .then(res =>
-        this.setState(
-          { HistoryGame: res, HistoryGameLoad: true },
-          console.log(res)
-        )
-      )
+      .then(res => this.setState({ HistoryGame: res, HistoryGameLoad: true }))
       .catch(err => console.log(err));
   }
   //////////////////////////////////////////////////////////////////////

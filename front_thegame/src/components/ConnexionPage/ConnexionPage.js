@@ -64,13 +64,7 @@ class ConnexionPage extends Component {
   ///////////////////////////////////////////////////////////////////
   // Fonction regex pour valider le pseudo
   validatePseudo() {
-    return "[a-zA-Z0-9]{1,}";
-  }
-  /////////////////////////////////////////////
-  // fonction pour vérifier le format du mail
-  validateEmail(email) {
-    const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return regex.test(String(email).toLowerCase());
+    return "[a-zA-Z0-9]{5,}";
   }
   ////////////////////////////////////////////////////////////
   ///// Fonction pour ouvrir les snackbars
@@ -233,10 +227,7 @@ class ConnexionPage extends Component {
                 <label>Confirmation</label>
               </div>
               <div className="submit">
-                <button
-                  type="submit"
-                  className="dark" /*disabled={!this.state.validForm}*/
-                >
+                <button type="submit" className="dark">
                   S'inscrire
                 </button>
               </div>

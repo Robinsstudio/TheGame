@@ -33,6 +33,7 @@ class Game extends Component {
     this.addPlayerLogin = this.addPlayerLogin.bind(this);
     this.whereToPlayCard = this.whereToPlayCard.bind(this);
     this.playCard = this.playCard.bind(this);
+    this.changeSnackbar = this.changeSnackbar.bind(this);
   }
 
   componentDidMount() {
@@ -42,6 +43,18 @@ class Game extends Component {
       this.setState({ gameId: urlSearchParams.get("id") });
     }
   }
+
+  ////////////////////////////////////////////////////////////
+  ///// Fonction pour ouvrir les snackbars
+  changeSnackbar(message, options) {
+    this.props.closeSnackbar();
+    this.props.enqueueSnackbar(message, { variant: options });
+  }
+
+  // Exemple de Snackbar
+  // this.changeSnackbar("Connexion en cours...", "info");
+  // this.changeSnackbar("Connexion en cours...", "error");
+  // this.changeSnackbar("Connexion en cours...", "success");
 
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -65,7 +78,10 @@ class Game extends Component {
     if (!prevState.joined && this.state.joined) {
       utils.init(this.piles, this.whereToPlayCard, this.playCard);
     }
-    if (prevState.game === "waitingPlayers" && this.state.game !== "waitingPlayers") {
+    if (
+      prevState.game === "waitingPlayers" &&
+      this.state.game !== "waitingPlayers"
+    ) {
       /*utils.init(
         this.state.playerId,
         this.state.players.map(ele => ele._id.toString()),
