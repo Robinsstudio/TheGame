@@ -6,6 +6,7 @@ import Popover from "@material-ui/core/Popover";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
+import RouteBuilder from "../../../js/RouteBuilder";
 
 export default function Account({login,disconnect}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -47,10 +48,10 @@ export default function Account({login,disconnect}) {
       >
         <Paper id="menu-list-grow">
           <MenuList autoFocusItem={open}>
-            <Link to={"/profile"} className="linkMenu">
+            <Link to={RouteBuilder.get("/profile")} className="linkMenu">
               <MenuItem onClick={handleClose}>Mon Profil</MenuItem>
             </Link>
-            <Link to={"/settings"} className="linkMenu">
+            <Link to={RouteBuilder.get("/settings")} className="linkMenu">
               <MenuItem onClick={handleClose}>Paramètres</MenuItem>
             </Link>
             <div className="dropdown-divider"></div>

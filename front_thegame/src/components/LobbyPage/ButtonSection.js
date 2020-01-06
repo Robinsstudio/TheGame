@@ -6,6 +6,7 @@ import "./ButtonSection.css";
 import { Link } from "react-router-dom";
 // Icons
 import InputIcon from "@material-ui/icons/Input";
+import RouteBuilder from "../../js/RouteBuilder";
 
 let props;
 
@@ -16,7 +17,7 @@ class ButtonSection extends Component {
 
   joinGame(id) {
     if (id !== undefined) {
-      let path = "/game?id=" + id;
+      let path = RouteBuilder.get("/game?id=" + id);
       props.history.push(path);
     }
   }
@@ -24,7 +25,7 @@ class ButtonSection extends Component {
   render() {
     return (
       <div>
-        <Link to={"/createGame"} className="linkMenu">
+        <Link to={RouteBuilder.get("/createGame")} className="linkMenu">
           <Button className="lobbyButton">
             <AddCircleIcon className="lobbyIcon"></AddCircleIcon> Créer une
             partie

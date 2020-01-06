@@ -25,6 +25,7 @@ import Divider from "@material-ui/core/Divider";
 import { withSnackbar } from "notistack";
 import "./Profile.css";
 import Request from "../../../../js/request.js";
+import RouteBuilder from "../../../../js/RouteBuilder";
 
 class Profile extends React.Component {
   constructor(props) {
@@ -216,7 +217,7 @@ class Profile extends React.Component {
             <div></div>
             <Divider />
 
-            <Link to={"/"} className="linkHome HomeTypo">
+            <Link to={RouteBuilder.get("/")} className="linkHome HomeTypo">
               <Button className="bigSizeProfile buttonMarginProfile">
                 Retour
               </Button>

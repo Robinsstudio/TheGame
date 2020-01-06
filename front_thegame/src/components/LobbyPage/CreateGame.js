@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Request from "../../js/request";
+import RouteBuilder from "../../js/RouteBuilder";
 import { Redirect } from "react-router-dom";
 import { withSnackbar } from "notistack";
 // Container and button
@@ -80,7 +81,7 @@ class CreateGame extends Component {
   render() {
     let redirect;
     if (this.state.idGame !== undefined)
-      redirect = <Redirect to={"/game?id=" + this.state.idGame} />;
+      redirect = <Redirect to={RouteBuilder.get("/game?id=" + this.state.idGame)} />;
     return (
       <Container maxWidth="lg">
         <Grid container spacing={3} className="gridProfile">

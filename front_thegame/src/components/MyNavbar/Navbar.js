@@ -7,6 +7,7 @@ import { Link, withRouter } from "react-router-dom";
 import "./Navbar.css";
 import Account from "./Account/Account";
 import Request from "../../js/request.js";
+import RouteBuilder from "../../js/RouteBuilder";
 
 class Navbar extends Component {
   constructor(props){
@@ -22,12 +23,12 @@ class Navbar extends Component {
   }
 
   render() {
-    if (this.props.location.pathname === "/login") {
+    if (this.props.location.pathname === RouteBuilder.get("/login")) {
       return (
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarSilver" id="myNavbar">
             <Toolbar>
-              <Link to={"/"} className="linkHome ConnexionTypo">
+              <Link to={RouteBuilder.get("/")} className="linkHome ConnexionTypo">
                 <Typography variant="h6" className="ConnexionTypo">
                   The Game
                 </Typography>
@@ -37,23 +38,23 @@ class Navbar extends Component {
         </div>
       );
     }
-    if (this.props.location.pathname === "/" && this.props.login === undefined) {
+    if (this.props.location.pathname === RouteBuilder.get("/") && this.props.login === undefined) {
       return (
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarDark">
             <Toolbar>
-              <Link to={"/"} className="linkHome HomeTypo">
+              <Link to={RouteBuilder.get("/")} className="linkHome HomeTypo">
                 <Typography variant="h6" className="HomeTypo">
                   The Game
                 </Typography>
               </Link>
                 <div>
-                  <Link to={"/login"} className="linkHome">
+                  <Link to={RouteBuilder.get("/login")} className="linkHome">
                     <Button color="inherit" className="HomeButton">
                       Connexion
                     </Button>
                   </Link>
-                  <Link to={"/login"} className="linkHome" visible="false">
+                  <Link to={RouteBuilder.get("/login")} className="linkHome" visible="false">
                     <Button color="inherit" className="HomeButton">
                       Inscription
                     </Button>
@@ -69,12 +70,12 @@ class Navbar extends Component {
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarDark">
             <Toolbar>
-              <Link to={"/"} className="linkHome HomeTypo">
+              <Link to={RouteBuilder.get("/")} className="linkHome HomeTypo">
                 <Typography variant="h6" className="HomeTypo">
                   The Game
                 </Typography>
               </Link>
-              <Link to={"/lobby"} className="linkHome" visible="false">
+              <Link to={RouteBuilder.get("/lobby")} className="linkHome" visible="false">
                 <Button color="inherit" className="HomeButton">
                     Jouer
                 </Button>
@@ -89,7 +90,7 @@ class Navbar extends Component {
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarDark">
             <Toolbar>
-              <Link to={"/"} className="linkHome ConnexionTypo">
+              <Link to={RouteBuilder.get("/")} className="linkHome ConnexionTypo">
                 <Typography variant="h6" className="ConnexionTypo">
                   The Game
                 </Typography>

@@ -1,3 +1,5 @@
+import RouteBuilder from "./RouteBuilder";
+
 export default class Request {
   constructor(url) {
     this.url = url;
@@ -39,6 +41,6 @@ export default class Request {
       options.body = JSON.stringify(this.json);
     }
 
-    return fetch(this.url, options);
+    return fetch(RouteBuilder.get(this.url), options);
   }
 }
