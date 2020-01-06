@@ -23,3 +23,18 @@
 .hiddenCell {
   display: none !important;
 }
+
+.MuiTableCell-root {
+  font-weight: 500 !important;
+}
+
+.loseGame {
+  background-color: #ffd2d2;
+
+  color: #d8000c !important;
+}
+
+.winGame {
+  background-color: #dff2bf;
+  color: #270 !important;
+}

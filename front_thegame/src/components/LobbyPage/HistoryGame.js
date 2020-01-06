@@ -17,8 +17,8 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 
-function createDataHistory(id, name, players, piles, resultat) {
-  return { id, name, players, piles, resultat };
+function createDataHistory(id, name, players, piles, resultat, background) {
+  return { id, name, players, piles, resultat, background };
 }
 
 const headRowsHistory = [
@@ -255,15 +255,31 @@ function MyHistoryTable() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => {
                   return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                    <TableRow
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.id}
+                      className={row.background}
+                    >
                       <TableCell padding="checkbox"></TableCell>
                       <TableCell className="hiddenCell">{row.id}</TableCell>
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        padding="none"
+                        className={row.background}
+                      >
                         {row.name}
                       </TableCell>
-                      <TableCell align="left">{row.players}</TableCell>
-                      <TableCell align="left">{row.piles}</TableCell>
-                      <TableCell align="left">{row.resultat}</TableCell>
+                      <TableCell align="left" className={row.background}>
+                        {row.players}
+                      </TableCell>
+                      <TableCell align="left" className={row.background}>
+                        {row.piles}
+                      </TableCell>
+                      <TableCell align="left" className={row.background}>
+                        {row.resultat}
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -304,13 +320,20 @@ export default class HistoryGame extends Component {
     MyHistoryProps = this.props;
     rowsHistory = [];
     MyHistoryProps.data.forEach(game => {
+      let resultatPartie = "Partie Perdue";
+      let background = "loseGame";
+      if (game.status === "won") {
+        resultatPartie = "Partie Gagnée";
+        background = "winGame";
+      }
       rowsHistory.push(
         createDataHistory(
           game.id,
           game.name,
           game.players,
           game.piles,
-          game.version
+          resultatPartie,
+          background
         )
       );
     });
