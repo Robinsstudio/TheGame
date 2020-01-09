@@ -22,7 +22,7 @@ class Game extends Component {
       joined: false,
       players: [],
       game: "waitingPlayers",
-      nowPlaying: false,
+      nowPlaying: undefined,
       version: 0
     };
     this.piles = [];
@@ -67,6 +67,9 @@ class Game extends Component {
     if (this.props.id !== "" && this.state.playerId === undefined) {
       this.setState({ playerId: this.props.id });
     }
+    if(prevState.nowPlaying !== undefined && prevState.nowPlaying !== this.state.nowPlaying){
+      this.changeSnackbar(`Fin de tour de ${this.players[`${prevState.nowPlaying}`]}`,"info",2000);
+    }
     if (
       this.state.playerId !== undefined &&
       this.state.gameId !== undefined &&
@@ -94,7 +97,6 @@ class Game extends Component {
       );
     }
   }
-
   playCard(cardValue, pileId) {
     return new Request("/api/game/" + this.state.gameId + "/cartes")
       .put()
@@ -167,7 +169,7 @@ class Game extends Component {
         });
       })
       .then(res => console.log(res))
-      .catch(err => this.changeSnackbar(err.message,"error"));
+      .catch(err => this.changeSnackbar("Ce n'est pas votre tour","error"));
   }
 
   runActions(actions) {
@@ -181,6 +183,10 @@ class Game extends Component {
         );
       } else if (action.type === "drawCard") {
         utils.drawCard(action.details.who, action.details.card.value);
+      } else if(action.type === "game over") {
+        this.changeSnackbar("Partie perdue","warning");
+      } else if(action.type === "game won") {
+        this.changeSnackbar("Partie gagnée","success");
       }
     }
   }
@@ -258,15 +264,16 @@ class Game extends Component {
     console.log(this.state);
     return (
       <div>
-        {this.state.nowPlaying && (
+          {(this.state.game==="playing") &&(
+          <div>{(this.state.nowPlaying===this.state.playerId)?"Votre tour":`Tour de ${this.players[`${this.state.nowPlaying}`]}`}</div>)}
+          {(this.state.game==="playing") && (
           <Button
             style={{ fontSize: "20px" }}
             color="primary"
             onClick={() => this.playerEndTurn()}
           >
             Passer mon tour
-          </Button>
-        )}
+          </Button>)}
         {this.state.ready === false && this.state.game === "waitingPlayers" && (
           <Button
             style={{ fontSize: "20px" }}

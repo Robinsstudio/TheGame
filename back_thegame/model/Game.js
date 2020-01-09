@@ -48,13 +48,17 @@ GameSchema.statics.checkGameOver = function(game, playerId){
   if (
     Game.hasToPlayAgain(game, playerId) &&
     !Game.canPlayAgain(game, playerId)
-  )
+  ){
     game.status = "game over";
+    game.actions.push(new Action({type:"game over"}))
+  }
 }
 
 GameSchema.statics.checkGameWon = function(game){
-  if (game.deckPile.length === 0 && !Game.playersStillHaveCards(game))
+  if (game.deckPile.length === 0 && !Game.playersStillHaveCards(game)){
     game.status = "won";
+    game.actions.push(new Action({type:"game won"}))
+  }
 }
 
 GameSchema.statics.getPlayer = function(game, playerId) {
