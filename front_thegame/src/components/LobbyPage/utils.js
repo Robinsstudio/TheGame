@@ -49,10 +49,10 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
     });
     if (pile.orientation === "up") {
       p.x += 50 + 100 * nbDesc++;
-      p.addCardPerso(deck.topCard(), 1);
+      p.addCardPerso(deck.firstCard(), 1);
     } else if (pile.orientation === "down") {
       p.x -= 150 + 100 * nbAsc++;
-      p.addCardPerso(deck.topCard(), 0);
+      p.addCardPerso(deck.firstCard(), 0);
     }
     // eslint-disable-next-line
     p.click(function() {

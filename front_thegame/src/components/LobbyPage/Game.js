@@ -202,20 +202,25 @@ class Game extends Component {
         )[0];
         if (ready !== undefined) ready = ready.ready;
         else ready = false;
-        if (ready !== this.state.ready) newState.ready = ready;
-        this.piles = res.piles;
-        if (this.state.game !== res.status) newState.game = res.status;
-        if (this.state.version !== res.version) newState.version = res.version;
-        if (this.state.nowPlaying !== (res.nowPlaying === this.state.playerId))
-          newState.nowPlaying = res.nowPlaying === this.state.playerId;
-        if (this.state.game === "waitingPlayers")
+        if (ready !== this.state.ready){
+          newState.ready = ready;
+        }
+        if (this.state.game === "waitingPlayers"){
           newState.players = res.players;
-        if (this.state.ready !== ready) newState.ready = ready;
+        }
+        if(this.state.version !== res.version){
+          this.piles = res.piles;
+          newState.game = res.status;
+          newState.version = res.version;
+          newState.nowPlaying = res.nowPlaying
+          newState.ready = ready;
+          this.setState({ready : ready, game : res.status, version : res.version, nomPlaying : res.nowPlaying});
+        }
+        this.runActions(res.actions);
         if (Object.keys(newState).length > 0) this.setState(newState);
         //if(this.state.piles !== res.piles || this.state.game !== res.status || this.state.version !== res.version || this.state.nowPlaying !== (res.nowPlaying===this.state.playerId) || this.state.players !== res.players || this.state.ready !== res.ready)
         //  this.setState({piles:res.piles,game:res.status,version : res.version,nowPlaying:res.nowPlaying===this.state.playerId,players: res.players,ready:ready})
         console.log(res);
-        this.runActions(res.actions);
         return res;
       })
       //.then(utils.init())
