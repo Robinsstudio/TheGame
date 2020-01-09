@@ -17,6 +17,7 @@ import Game from "./components/LobbyPage/Game";
 import CreateGame from "./components/LobbyPage/CreateGame";
 
 import Request from "./js/request.js";
+import RouteBuilder from "./js/RouteBuilder";
 
 class App extends Component {
   constructor(props) {
@@ -56,7 +57,7 @@ class App extends Component {
             login={this.state.login}
           ></NavBar>
           <Switch>
-            <Route exact path="/" component={Home} />
+            <Route exact path={RouteBuilder.get("/")} component={Home} />
             <PrivateRoute
               test={this.state.id === undefined}
               props={{
@@ -64,10 +65,10 @@ class App extends Component {
                   this.setState({ id: id, login: login, mail: mail })
               }}
               component={Connexion}
-              path="/login"
+              path={RouteBuilder.get("/login")}
             />
             <PrivateRoute
-              path="/lobby"
+              path={RouteBuilder.get("/lobby")}
               test={this.state.id !== undefined}
               component={Lobby}
             />
@@ -81,24 +82,24 @@ class App extends Component {
                 mail: this.state.mail
               }}
               component={Profile}
-              path="/profile"
+              path={RouteBuilder.get("/profile")}
             />
             <PrivateRoute
               test={this.state.id !== undefined}
               component={Settings}
-              path="/settings"
+              path={RouteBuilder.get("/settings")}
             />
             <PrivateRoute
               test={this.state.id !== undefined}
               props={{ login: this.state.login, mail: this.state.mail }}
               component={CreateGame}
-              path="/createGame"
+              path={RouteBuilder.get("/createGame")}
             />
             <PrivateRoute
               test={this.state.id !== undefined}
               props={{ id : this.state.id, login: this.state.login, mail: this.state.mail }}
               component={Game}
-              path="/game"
+              path={RouteBuilder.get("/game")}
             />
           </Switch>
         </div>
@@ -111,7 +112,7 @@ const PrivateRoute = ({ component: Component, props, test, ...rest }) => {
   return test ? (
     <Route {...rest} render={() => <Component {...props} />} />
   ) : (
-    <Redirect to="/" />
+    <Redirect to={RouteBuilder.get("/")} />
   );
 };
 
