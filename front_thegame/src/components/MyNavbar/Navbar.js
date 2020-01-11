@@ -39,7 +39,10 @@ class Navbar extends Component {
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarSilver" id="myNavbar">
             <Toolbar>
-              <Link to={RouteBuilder.get("/")} className="linkHome ConnexionTypo">
+              <Link
+                to={RouteBuilder.get("/")}
+                className="linkHome ConnexionTypo"
+              >
                 <Typography variant="h6" className="ConnexionTypo">
                   The Game
                 </Typography>
@@ -63,12 +66,21 @@ class Navbar extends Component {
                 </Typography>
               </Link>
               <div>
-                <Link to={RouteBuilder.get("/login")} className="linkHome">
+                <Link
+                  to={RouteBuilder.get("/login")}
+                  className="linkHome"
+                  onClick={bool => this.props.changeInscription(false)}
+                >
                   <Button color="inherit" className="HomeButton">
                     Connexion
                   </Button>
                 </Link>
-                <Link to={RouteBuilder.get("/login")} className="linkHome" visible="false">
+                <Link
+                  to={RouteBuilder.get("/login")}
+                  className="linkHome"
+                  visible="false"
+                  onClick={bool => this.props.changeInscription(true)}
+                >
                   <Button color="inherit" className="HomeButton">
                     Inscription
                   </Button>
@@ -89,7 +101,11 @@ class Navbar extends Component {
                   The Game
                 </Typography>
               </Link>
-              <Link to={RouteBuilder.get("/lobby")} className="linkHome" visible="false">
+              <Link
+                to={RouteBuilder.get("/lobby")}
+                className="linkHome"
+                visible="false"
+              >
                 <Button color="inherit" className="HomeButton">
                   Jouer
                 </Button>
@@ -108,7 +124,10 @@ class Navbar extends Component {
         <div className="HomeTypo" id="myNavbarDark">
           <AppBar position="static" className="myNavbarDark">
             <Toolbar>
-              <Link to={RouteBuilder.get("/")} className="linkHome ConnexionTypo">
+              <Link
+                to={RouteBuilder.get("/")}
+                className="linkHome ConnexionTypo"
+              >
                 <Typography variant="h6" className="ConnexionTypo">
                   The Game
                 </Typography>

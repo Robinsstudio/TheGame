@@ -25,8 +25,11 @@ class App extends Component {
     this.state = {
       id: "",
       login: undefined,
-      mail: undefined
+      mail: undefined,
+      inscription: false
     };
+    this.disconnect = this.disconnect.bind(this);
+    this.changeInscription = this.changeInscription.bind(this);
   }
 
   componentDidMount() {
@@ -43,6 +46,12 @@ class App extends Component {
       .catch(err => this.setState({ id: undefined }));
   }
 
+  changeInscription(bool) {
+    this.setState({
+      inscription: bool
+    });
+  }
+
   disconnect() {
     this.setState({ login: undefined, id: undefined, mail: undefined });
   }
@@ -55,12 +64,14 @@ class App extends Component {
           <NavBar
             onDisconnect={() => this.disconnect()}
             login={this.state.login}
+            changeInscription={bool => this.changeInscription(bool)}
           ></NavBar>
           <Switch>
             <Route exact path={RouteBuilder.get("/")} component={Home} />
             <PrivateRoute
               test={this.state.id === undefined}
               props={{
+                inscription: this.state.inscription,
                 onRequestReceived: ({ id, login, mail }) =>
                   this.setState({ id: id, login: login, mail: mail })
               }}
@@ -97,7 +108,11 @@ class App extends Component {
             />
             <PrivateRoute
               test={this.state.id !== undefined}
-              props={{ id : this.state.id, login: this.state.login, mail: this.state.mail }}
+              props={{
+                id: this.state.id,
+                login: this.state.login,
+                mail: this.state.mail
+              }}
               component={Game}
               path={RouteBuilder.get("/game")}
             />

@@ -5,6 +5,8 @@ import { withRouter } from "react-router-dom";
 import Request from "../../js/request.js";
 import { withSnackbar } from "notistack";
 
+let MyProps;
+
 class ConnexionPage extends Component {
   constructor(props) {
     super(props);
@@ -28,6 +30,8 @@ class ConnexionPage extends Component {
   /////////////////////////////////////////////////////////////////////////////////////////////
   // Fonction qui se lance à la création du composant pour pouvoir utiliser le jQuery
   componentDidMount() {
+    MyProps = this.props;
+
     $(document).ready(function() {
       $(".veen .rgstr-btn button").click(function() {
         $(".veen .wrapper").addClass("move");
@@ -45,6 +49,9 @@ class ConnexionPage extends Component {
         $(".veen .rgstr-btn button").removeClass("active");
         $(this).addClass("active");
       });
+      if (MyProps.inscription === true) {
+        $(".veen .rgstr-btn button").click();
+      }
     });
   }
   //////////////////////////////////////////////////////
@@ -69,8 +76,8 @@ class ConnexionPage extends Component {
   ////////////////////////////////////////////////////////////
   ///// Fonction pour ouvrir les snackbars
   changeSnackbar(message, options) {
-    this.props.closeSnackbar();
-    this.props.enqueueSnackbar(message, { variant: options });
+    MyProps.closeSnackbar();
+    MyProps.enqueueSnackbar(message, { variant: options });
   }
   connect() {
     this.changeSnackbar("Connexion en cours...", "info");
@@ -91,8 +98,8 @@ class ConnexionPage extends Component {
       })
       .then(res => {
         this.changeSnackbar("Connexion réussie.", "success");
-        if (this.props.onRequestReceived !== undefined)
-          this.props.onRequestReceived(res);
+        if (MyProps.onRequestReceived !== undefined)
+          MyProps.onRequestReceived(res);
       })
       .catch(err => console.log(err));
   }
