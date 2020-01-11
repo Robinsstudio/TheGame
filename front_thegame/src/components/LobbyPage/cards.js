@@ -24,8 +24,7 @@ var cards = (function() {
   }
 
   function init(options) {
-    while(all.length!==0)
-      all.pop();
+    while (all.length !== 0) all.pop();
     if (options) {
       for (let i in options) {
         if (opt.hasOwnProperty(i)) {
@@ -44,27 +43,6 @@ var cards = (function() {
         all.unshift(new Card("0", 0, 100, opt.table));
       else all.unshift(new Card("0", 1, 1, opt.table));
     }
-    /* let nbPiles = options.piles;
-    if (nbPiles === 2) {
-      all.unshift(new Card("0", 0, 100, opt.table));
-      all.unshift(new Card("0", 1, 1, opt.table));
-    }
-    if (nbPiles === 4) {
-      // Création des 4 piles
-      all.unshift(new Card("0", 0, 100, opt.table));
-      all.unshift(new Card("0", 0, 100, opt.table));
-      all.unshift(new Card("0", 1, 1, opt.table));
-      all.unshift(new Card("0", 1, 1, opt.table));
-    }
-    if (nbPiles === 6) {
-      // Création des 4 piles
-      all.unshift(new Card("0", 0, 100, opt.table));
-      all.unshift(new Card("0", 0, 100, opt.table));
-      all.unshift(new Card("0", 0, 100, opt.table));
-      all.unshift(new Card("0", 1, 1, opt.table));
-      all.unshift(new Card("0", 1, 1, opt.table));
-      all.unshift(new Card("0", 1, 1, opt.table));
-    } */
 
     let start = 2;
     let end = 99;
@@ -203,31 +181,6 @@ var cards = (function() {
         card.container = this;
       }
     },
-    /*
-    // pas utilisé pour le moment
-    setCard: function(cardValue, player) {
-      let line;
-      let column;
-      // On créé une nouvelle carte avec la valeur
-      if (cardValue > 9) {
-        line = cardValue.toString().substring(0, 1);
-        column = cardValue % 10;
-      } else {
-        line = "0";
-        column = cardValue;
-      }
-      let newCard = new Card(line, column, cardValue, opt.table);
-      // On supprime cette carte de la main du joueur
-      player.map(element => {
-        if (element.rank === cardValue) {
-          element.container.removeCard(cardValue);
-          newCard.container = element.container;
-        }
-      });
-      this.push(newCard);
-      newCard.container = this;
-    },
-    */
 
     removeCard: function(cardValue) {
       for (var i = 0; i < this.length; i++) {

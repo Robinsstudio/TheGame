@@ -2,12 +2,13 @@
   background: #555555;
   transition: all 0.5s;
   padding: 1px;
+  height: 100%;
 }
 .veen {
   width: 70%;
   margin: 60px auto;
   background: rgba(255, 255, 255, 0.5);
-  height: 400px;
+  height: 500px;
   display: table;
   position: relative;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
@@ -60,7 +61,6 @@
 }
 .veen .wrapper > form {
   padding: 15px 30px 30px;
-  width: 100%;
   transition: all 0.5s;
   background: #fff;
   width: 100%;
@@ -86,7 +86,7 @@
 }
 .veen .wrapper > form > div {
   position: relative;
-  margin-bottom: 15px;
+  margin-bottom: 1.5em;
 }
 .veen .wrapper label {
   position: absolute;
@@ -101,13 +101,7 @@
   pointer-events: none;
 }
 .veen .wrapper h3 {
-  margin-bottom: 25px;
-}
-.veen .wrapper input {
-  height: 40px;
-  padding: 5px 15px;
-  width: 100%;
-  border: solid 1px #999;
+  margin-bottom: 2em;
 }
 .veen .wrapper input {
   height: 40px;
@@ -264,4 +258,7 @@ label {
   max-width: 100%;
   margin-bottom: 5px;
   font-weight: 700;
+}
+.submit {
+  margin-top: 2em;
 }

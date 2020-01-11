@@ -47,28 +47,29 @@ class Game extends Component {
   ////////////////////////////////////////////////////////////
   ///// Fonction pour ouvrir les snackbars
   changeSnackbar(message, snackType = "info", duration = 5000) {
-    this.props.enqueueSnackbar(message, { variant: snackType, autoHideDuration : duration});
+    this.props.enqueueSnackbar(message, {
+      variant: snackType,
+      autoHideDuration: duration
+    });
   }
-
-  // Exemple de Snackbar
-  // this.changeSnackbar("Connexion en cours...", "info");
-  // this.changeSnackbar("Connexion en cours...", "error");
-  // this.changeSnackbar("Connexion en cours...", "success");
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  /*   shouldComponentUpdate(nextProps, nextState) {
-    return this.state!==nextState && this.props !== nextProps;
-  } */
-
   componentDidUpdate(prevProps, prevState) {
     if (this.props.id !== "" && this.state.playerId === undefined) {
       this.setState({ playerId: this.props.id });
     }
-    if(prevState.nowPlaying !== undefined && prevState.nowPlaying !== this.state.nowPlaying){
-      this.changeSnackbar(`Fin de tour de ${this.players[`${prevState.nowPlaying}`]}`,"info",2000);
+    if (
+      prevState.nowPlaying !== undefined &&
+      prevState.nowPlaying !== this.state.nowPlaying
+    ) {
+      this.changeSnackbar(
+        `Fin de tour de ${this.players[`${prevState.nowPlaying}`]}`,
+        "info",
+        2000
+      );
     }
     if (
       this.state.playerId !== undefined &&
@@ -84,13 +85,6 @@ class Game extends Component {
       prevState.game === "waitingPlayers" &&
       this.state.game !== "waitingPlayers"
     ) {
-      /*utils.init(
-        this.state.playerId,
-        this.state.players.map(ele => ele._id.toString()),
-        this.piles,
-        this.whereToPlayCard,
-        this.playCard
-      );*/
       utils.start(
         this.state.playerId,
         this.state.players.map(ele => ele._id.toString())
@@ -108,7 +102,7 @@ class Game extends Component {
           throw new Error(err);
         });
       })
-      .catch(err=>this.changeSnackbar(err.message,"error"));
+      .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
   whereToPlayCard(cardValue) {
@@ -127,7 +121,7 @@ class Game extends Component {
         if (res.result === undefined) return [];
         return res.result;
       })
-      .catch(err=>this.changeSnackbar(err.message,"error"));
+      .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
   joinGame() {
@@ -146,16 +140,8 @@ class Game extends Component {
         this.interval = setInterval(() => this.getGameInfo(), 2000);
         if (res.piles !== undefined) this.piles = res.piles;
         this.setState({ players: res.players, joined: true });
-        /*utils.init(
-          undefined,
-          undefined,
-          this.piles,
-          this.whereToPlayCard,
-          this.playCard
-        );*/
       })
-      //.then(utils.init())
-      .catch(err =>this.changeSnackbar(err.message,"error"));
+      .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
   playerEndTurn() {
@@ -169,7 +155,7 @@ class Game extends Component {
         });
       })
       .then(res => console.log(res))
-      .catch(err => this.changeSnackbar("Ce n'est pas votre tour","error"));
+      .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
   runActions(actions) {
@@ -183,10 +169,10 @@ class Game extends Component {
         );
       } else if (action.type === "drawCard") {
         utils.drawCard(action.details.who, action.details.card.value);
-      } else if(action.type === "game over") {
-        this.changeSnackbar("Partie perdue","warning");
-      } else if(action.type === "game won") {
-        this.changeSnackbar("Partie gagnée","success");
+      } else if (action.type === "game over") {
+        this.changeSnackbar("La partie est perdue !", "warning");
+      } else if (action.type === "game won") {
+        this.changeSnackbar("La partie est gagnée !", "success");
       }
     }
   }
@@ -208,28 +194,30 @@ class Game extends Component {
         )[0];
         if (ready !== undefined) ready = ready.ready;
         else ready = false;
-        if (ready !== this.state.ready){
+        if (ready !== this.state.ready) {
           newState.ready = ready;
         }
-        if (this.state.game === "waitingPlayers"){
+        if (this.state.game === "waitingPlayers") {
           newState.players = res.players;
         }
-        if(this.state.version !== res.version){
+        if (this.state.version !== res.version) {
           this.piles = res.piles;
           newState.game = res.status;
           newState.version = res.version;
-          newState.nowPlaying = res.nowPlaying
+          newState.nowPlaying = res.nowPlaying;
           newState.ready = ready;
-          this.setState({ready : ready, game : res.status, version : res.version, nomPlaying : res.nowPlaying});
+          this.setState({
+            ready: ready,
+            game: res.status,
+            version: res.version,
+            nomPlaying: res.nowPlaying
+          });
         }
         this.runActions(res.actions);
         if (Object.keys(newState).length > 0) this.setState(newState);
-        //if(this.state.piles !== res.piles || this.state.game !== res.status || this.state.version !== res.version || this.state.nowPlaying !== (res.nowPlaying===this.state.playerId) || this.state.players !== res.players || this.state.ready !== res.ready)
-        //  this.setState({piles:res.piles,game:res.status,version : res.version,nowPlaying:res.nowPlaying===this.state.playerId,players: res.players,ready:ready})
         console.log(res);
         return res;
       })
-      //.then(utils.init())
       .catch(err => console.log(err));
   }
   addPlayerLogin(id) {
@@ -264,16 +252,22 @@ class Game extends Component {
     console.log(this.state);
     return (
       <div>
-          {(this.state.game==="playing") &&(
-          <div>{(this.state.nowPlaying===this.state.playerId)?"Votre tour":`Tour de ${this.players[`${this.state.nowPlaying}`]}`}</div>)}
-          {(this.state.game==="playing") && (
+        {this.state.game === "playing" && (
+          <div>
+            {this.state.nowPlaying === this.state.playerId
+              ? "Votre tour"
+              : `Tour de ${this.players[`${this.state.nowPlaying}`]}`}
+          </div>
+        )}
+        {this.state.game === "playing" && (
           <Button
             style={{ fontSize: "20px" }}
             color="primary"
             onClick={() => this.playerEndTurn()}
           >
-            Passer mon tour
-          </Button>)}
+            Finir mon tour
+          </Button>
+        )}
         {this.state.ready === false && this.state.game === "waitingPlayers" && (
           <Button
             style={{ fontSize: "20px" }}
