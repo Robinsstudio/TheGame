@@ -57,24 +57,353 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 * **Success Response:**
   
 
-  * **Code:** 201 <br />
+  * **Code:** 201 
     **Content:** ` `
  
 * **Error Response:**
 
-  <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
-
-  * **Code:** 409 <br />
+  * **Code:** 409 
     **Content:** `"Pseudo déjà utilisé"`
 
-* **Sample Call:**
 
-  <_Just a sample call to your endpoint in a runnable format ($.ajax call or a curl request) - this makes life easier and more predictable._> 
+**Modifier ses informations de comptes**
+----
+    Permet de modifier les champs login, email ou password.
+* **URL**
 
-* **Notes:**
+    /api/account
 
-  <_This is where all uncertainties, commentary, discussion etc. can go. I recommend timestamping and identifying oneself when leaving comments here._> 
-
-
-
+* **Method:**
+    `PUT`
   
+* **URL Params**
+
+* **Query Params**
+
+* **Data Params**
+
+    `login=[String]`
+    `oldPassword=[String]`
+    `newPassword=[String]`
+    `email=[String]`
+
+   **Optional:**
+ 
+    `login=[String]`
+    `oldPassword=[String]`
+    `newPassword=[String]`
+    `email=[String]`
+
+
+* **Success Response:**
+  
+
+  * **Code:** 200 
+    **Content:** ` `
+ 
+* **Error Response:**
+
+  * **Code:** 409 
+    **Content:** `"Pseudo déjà utilisé"`
+
+    OR
+ * **Code:** 401 
+    **Content:** `""`
+
+**Supprimer son compte**
+----
+* **URL**
+
+    /api/account
+
+* **Method:**
+    `DELETE`
+  
+* **URL Params**
+
+* **Query Params**
+
+* **Data Params**
+
+* **Success Response:**
+  
+
+  * **Code:** 200 
+    **Content:** ` `
+ 
+* **Error Response:**
+
+  * **Code:** 500 
+    **Content:** `"Pseudo déjà utilisé"`
+
+**Obtenir le pseudo d'un joueur à partir de son id**
+----
+* **URL**
+
+    /api/player/:id/login
+
+* **Method:**
+    `PUT`
+  
+* **URL Params**
+    `id=[String]`
+    ** Required ** 
+    `id=[String]`
+* **Query Params**
+
+* **Data Params**
+
+
+* **Success Response:**
+  
+
+  * **Code:** 200 
+    **Content:** `userLogin`
+ 
+* **Error Response:**
+
+  * **Code:** 412 
+    **Content:** `"Un login doit être fourni"`
+
+**S'identifier par token**
+----
+    Permet de s'identifier à partir d'un token stocké dans les cookies
+* **URL**
+
+    /api/authentication
+
+* **Method:**
+    `GET`
+  
+* **URL Params**
+
+* **Query Params**
+
+* **Data Params**
+
+* **Success Response:**
+  
+
+  * **Code:** 200 
+    **Content:** `{id : [String], login : [String], email : [String]} `
+ 
+* **Error Response:**
+
+  * **Code:** 403 
+    **Content:** `"Mot de passe incorrect"`
+
+**Se connecter par login et mot de passe**
+----
+
+* **URL**
+
+    /api/authenticate
+
+* **Method:**
+    `PUT`
+  
+* **URL Params**
+
+* **Query Params**
+
+* **Data Params**
+
+    `login=[String]`
+    `password=[String]`
+
+   **Optional:**
+ 
+    `login=[String]`
+    `password=[String]`
+
+
+* **Success Response:**
+  
+
+  * **Code:** 200 
+    **Content:** `{id : [String], login : [String], email :[String]} `
+ 
+* **Error Response:**
+
+ * **Code:** 403 
+    **Content:** `"Login ou mot de passe incorrect"`
+
+**Se déconnecter**
+----
+
+* **URL**
+
+    /api/authenticate
+
+* **Method:**
+    `DELETE`
+  
+* **URL Params**
+
+* **Query Params**
+
+* **Data Params**
+
+* **Success Response:**
+  
+
+  * **Code:** 204 
+    **Content:** ` `
+ 
+* **Error Response:**
+
+  * **Code:** 401 
+    **Content:** `""`
+
+**Créer une partie**
+----
+* **URL**
+
+    /api/game
+
+* **Method:**
+    `POST`
+  
+* **URL Params**
+
+* **Query Params**
+
+* **Data Params**
+
+    `name=[String]`
+    `public=[Boolean]`
+    `nbPile=[Integer]`
+
+   **Optional:**
+ 
+    `name=[String]`
+    `public=[Boolean]`
+    `nbPile=[Integer]`
+
+
+* **Success Response:**
+  
+
+  * **Code:** 201 
+    **Content:** ` {id:[String]} `
+ 
+* **Error Response:**
+
+  * **Code:** 500 
+    **Content:** `""`
+
+**Récupérer les actions**
+----
+    Permet de récupérer les actions manquées depuis le dernier rafraichissement.
+    Le query Param version permet de récupérer en plus de l'état de la partie actuel les dernières actions ayant mené à cet état depuis version.
+* **URL**
+
+    /api/game/:id/actions
+
+* **Method:**
+    `GET`
+  
+* **URL Params**
+    `id=[String]`
+
+    **Required**
+    `id=[String]`
+
+* **Query Params**
+    `version=[Integer]`
+    **Optional**
+    `version=[Integer]`
+
+* **Data Params**
+
+
+* **Success Response:**
+  
+
+  * **Code:** 200 
+    **Content:** `Objet contenant toutes les informations sur la partie `
+ 
+* **Error Response:**
+
+  * **Code:** 412 
+    **Content:** `erreur=[String]`
+
+    OR
+ * **Code:** 403 
+    **Content:** `""`
+
+**Passer son tour**
+----
+* **URL**
+
+    /api/game/:id/tour
+
+* **Method:**
+    `PUT`
+  
+* **URL Params**
+    `id=[String]`
+
+    **Required**
+    `id=[String]`
+
+* **Query Params**
+
+
+* **Data Params**
+
+
+* **Success Response:**
+  
+
+  * **Code:** 200 
+    **Content:** ` `
+ 
+* **Error Response:**
+
+  * **Code:** 412 
+    **Content:** `erreur=[String]`
+
+    OR
+ * **Code:** 403 
+    **Content:** `""`
+
+**Jouer une carte**
+----
+    Permet de jouer une carte sur une pile.
+* **URL**
+
+    /api/game/:id/card
+
+* **Method:**
+    `PUT`
+  
+* **URL Params**
+    `id=[String]`
+
+    **Required**
+    `id=[String]`
+
+* **Query Params** 
+
+* **Data Params**
+`cardValue=[Integer]`
+    `pileId=[String]`
+    **Required**
+    `cardValue=[Integer]`
+    `pileId=[String]`
+
+* **Success Response:**
+  
+
+  * **Code:** 200 
+    **Content:** ` {} `
+ 
+* **Error Response:**
+
+  * **Code:** 412 
+    **Content:** `erreur=[String]`
+
+    OR
+ * **Code:** 403 
+    **Content:** `""`
