@@ -273,7 +273,7 @@ GameSchema.statics.leaveGame = function(gameId, playerId) {
     if (res.players === undefined)
       throw Error("Il n'y a pas de joueurs dans cette partie");
     if (res.status === "waitingPlayers")
-      res.players = res.player.filter(ele => ele._id.toString() !== playerId);
+      res.players = res.players.filter(ele => ele._id.toString() !== playerId);
     return res.save();
   });
 };

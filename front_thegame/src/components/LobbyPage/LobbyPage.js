@@ -39,7 +39,7 @@ class LobbyPage extends Component {
   //////////////////////////////////////////////////////////////////////
   // Fonction pour faire une requête pour récupérer les parties en publiques
   fetchPublicGames() {
-    this.changeSnackbar("Chargement des parties", "info", 1000);
+    this.changeSnackbar("Chargement des parties", "info", 2000);
     new Request("/api/games/playable")
       .get()
       .send()
