@@ -102,7 +102,6 @@ class Game extends Component {
           throw new Error(err);
         });
       })
-      .then(res=>this.getGameInfo())
       .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
@@ -138,7 +137,7 @@ class Game extends Component {
       })
       .then(res => {
         console.log(res);
-        this.interval = setInterval(() => this.getGameInfo(), 2000);
+        this.interval = setInterval(() => this.getGameInfo(), 500);
         if (res.piles !== undefined) this.piles = res.piles;
         this.setState({ players: res.players, joined: true });
       })
@@ -156,7 +155,6 @@ class Game extends Component {
         });
       })
       .then(res => console.log(res))
-      .then(res=>this.getGameInfo())
       .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
@@ -216,8 +214,10 @@ class Game extends Component {
           });
         }
         this.runActions(res.actions);
-        if (Object.keys(newState).length > 0) this.setState(newState);
-        console.log(res);
+        if (Object.keys(newState).length > 0) {
+          this.setState(newState);
+          console.log(res);
+        }
         return res;
       })
       .catch(err => console.log(err));
@@ -253,7 +253,7 @@ class Game extends Component {
   render() {
     console.log(this.state);
     return (
-      <div>
+      <div className="gameContainer">
         {this.state.game === "playing" && (
           <div>
             {this.state.nowPlaying === this.state.playerId
