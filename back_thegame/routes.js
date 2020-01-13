@@ -93,7 +93,7 @@ router.get('/games/ended',Player.isAuthenticated,function(req,res){
 	})
 });
 
-router.put('/game/:id', Player.isAuthenticated, function(req, res) {
+router.put('/game/:id/player', Player.isAuthenticated, function(req, res) {
 	const { params: { id }, jwt: { playerId } } = req;
 	Game.joinGame(id, playerId)
 	.then(function() {
@@ -143,7 +143,17 @@ router.put('/game/:id/card',Player.isAuthenticated,function(req,res){
 		res.status(404).send(err.message);
 	})
 })
-
+router.delete('/game/:id/player',Player.isAuthenticated,function(req,res){
+	const { params: { id }, jwt: { playerId } } = req;
+	Game.leaveGame(id,playerId)
+	.then(function(){
+		res.sendStatus(200);
+	})
+	.catch(function(err){
+		console.log(err);
+		res.status(404).send(err.message);
+	})
+})
 router.put('/game/:id/ready',Player.isAuthenticated,function(req,res){
 	const { params: { id }, jwt: { playerId } } = req;
 	Game.ready(id,playerId)
