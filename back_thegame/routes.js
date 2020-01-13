@@ -82,7 +82,7 @@ router.post('/game', Player.isAuthenticated, function(req, res) {
 	})
 });
 
-router.get('/games/played',Player.isAuthenticated,function(req,res){
+router.get('/games/ended',Player.isAuthenticated,function(req,res){
 	const { jwt: { playerId } } = req;
 	Game.getEndedGamePlayerPlayed(playerId)
 	.then(function(result){
@@ -106,23 +106,10 @@ router.put('/game/:id', Player.isAuthenticated, function(req, res) {
 		console.log(err);
 		res.sendStatus(404);
 	});
-})
-.get('/game/:id',Player.isAuthenticated,function(req,res){
-	const { params: { id }, jwt: { playerId } } = req;
-	Game.getActions(id,playerId)
-	.then(function(result){
-		res.status(200).json(result);
-	})
-	.catch(function(err) {
-		console.log(err);
-		res.status(404).send(err.message);
-	});
 });
 
-
-
-router.get('/game/:id/:version',Player.isAuthenticated,function(req,res){
-	const { params: { id, version }, jwt: { playerId } } = req;
+router.get('/game/:id/actions',Player.isAuthenticated,function(req,res){
+	const { query: {version}, params: { id }, jwt: { playerId } } = req;
 	Game.getActions(id,playerId,version)
 	.then(function(result){
 		res.status(200).json(result);
@@ -133,7 +120,7 @@ router.get('/game/:id/:version',Player.isAuthenticated,function(req,res){
 	});
 });
 
-router.put('/game/:id/fintour',Player.isAuthenticated,function(req,res){
+router.put('/game/:id/tour',Player.isAuthenticated,function(req,res){
 	const { params: { id }, jwt: { playerId } } = req;
 	Game.endTurn(id,playerId)
 	.then(function(){
@@ -145,7 +132,7 @@ router.put('/game/:id/fintour',Player.isAuthenticated,function(req,res){
 	})
 });
 
-router.put('/game/:id/cartes',Player.isAuthenticated,function(req,res){
+router.put('/game/:id/card',Player.isAuthenticated,function(req,res){
 	const { body : { cardValue,pileId }, params: { id }, jwt: { playerId } } = req;
 	Game.playCard(id,playerId,cardValue,pileId)
 	.then(function(){
@@ -169,8 +156,8 @@ router.put('/game/:id/ready',Player.isAuthenticated,function(req,res){
 	})
 })
 
-router.get('/game/:id/cartes/where/:cardValue',Player.isAuthenticated,function(req,res){
-	const { params: { id,cardValue }, jwt: { playerId } } = req;
+router.get('/game/:id/card',Player.isAuthenticated,function(req,res){
+	const { query : {cardValue}, params: { id }, jwt: { playerId } } = req;
 	Game.whereToPlay(id,cardValue,playerId)
 	.then(function(result){
 		res.status(200).json({result});
@@ -181,9 +168,6 @@ router.get('/game/:id/cartes/where/:cardValue',Player.isAuthenticated,function(r
 	})
 })
 
-router.get('/', function(req, res) {
-	res.send('This page is not very interesting at the moment.');
-});
 Card.reset();
 
 module.exports = router;

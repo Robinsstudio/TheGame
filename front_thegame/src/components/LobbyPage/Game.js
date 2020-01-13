@@ -92,7 +92,7 @@ class Game extends Component {
     }
   }
   playCard(cardValue, pileId) {
-    return new Request("/api/game/" + this.state.gameId + "/cartes")
+    return new Request("/api/game/" + this.state.gameId + "/card")
       .put()
       .body({ cardValue: cardValue, pileId: pileId })
       .send()
@@ -107,7 +107,7 @@ class Game extends Component {
 
   whereToPlayCard(cardValue) {
     return new Request(
-      "/api/game/" + this.state.gameId + "/cartes/where/" + cardValue
+      "/api/game/" + this.state.gameId + "/card?cardValue=" + cardValue
     )
       .get()
       .send()
@@ -145,7 +145,7 @@ class Game extends Component {
   }
 
   playerEndTurn() {
-    new Request("/api/game/" + this.state.gameId + "/fintour")
+    new Request("/api/game/" + this.state.gameId + "/tour")
       .put()
       .send()
       .then(res => {
@@ -178,7 +178,7 @@ class Game extends Component {
   }
 
   getGameInfo() {
-    new Request("/api/game/" + this.state.gameId + "/" + this.state.version)
+    new Request("/api/game/" + this.state.gameId + "/actions?version=" + this.state.version)
       .get()
       .send()
       .then(res => {

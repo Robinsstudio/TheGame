@@ -47,7 +47,7 @@ export default class LobbyPage extends Component {
   // Fonction pour faire une réqûete et récupérer l'historique des parties du joueur
   fetchMyGames() {
     this.setState({ HistoryGame: [] });
-    new Request("/api/games/played")
+    new Request("/api/games/ended")
       .get()
       .send()
       .then(res => {
