@@ -2,15 +2,20 @@ import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import utils from "./utils.js";
 import Request from "../../js/request";
+// Tableau
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+// Icons
 import DoneIcon from "@material-ui/icons/Done";
 import CloseIcon from "@material-ui/icons/Close";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { withSnackbar } from "notistack";
+import RouteBuilder from "../../js/RouteBuilder";
+import { Redirect } from "react-router-dom";
+import "./Game.css";
 
 class Game extends Component {
   constructor(props) {
@@ -34,6 +39,7 @@ class Game extends Component {
     this.whereToPlayCard = this.whereToPlayCard.bind(this);
     this.playCard = this.playCard.bind(this);
     this.changeSnackbar = this.changeSnackbar.bind(this);
+    this.playerQuit = this.playerQuit.bind(this);
   }
 
   componentDidMount() {
@@ -125,7 +131,7 @@ class Game extends Component {
   }
 
   joinGame() {
-    new Request("/api/game/" + this.state.gameId)
+    new Request("/api/game/" + this.state.gameId + "/player")
       .put()
       .body({})
       .send()
@@ -178,7 +184,12 @@ class Game extends Component {
   }
 
   getGameInfo() {
-    new Request("/api/game/" + this.state.gameId + "/actions?version=" + this.state.version)
+    new Request(
+      "/api/game/" +
+        this.state.gameId +
+        "/actions?version=" +
+        this.state.version
+    )
       .get()
       .send()
       .then(res => {
@@ -249,76 +260,109 @@ class Game extends Component {
       .then(res => this.setState({ ready: true }))
       .catch(err => console.log(err));
   }
+  ///////////////////////////////////////////////////////////
+  /// Fonction qui envoi une requête pour que le joueur quitte la partie (avant le début)
+  playerQuit() {
+    new Request("/api/game/" + this.state.gameId + "/player")
+      .delete()
+      .send()
+      .then(res => {
+        if (res.ok) return res;
+        return res.text().then(err => {
+          throw new Error(err);
+        });
+      })
+      .then(res => this.setState({ gameId: "" }))
+      .catch(err => console.log(err));
+  }
 
   render() {
     console.log(this.state);
+    let redirect;
+    if (this.state.gameId === "")
+      redirect = <Redirect to={RouteBuilder.get("/lobby")} />;
     return (
       <div className="gameContainer">
-        {this.state.game === "playing" && (
-          <div>
-            {this.state.nowPlaying === this.state.playerId
-              ? "Votre tour"
-              : `Tour de ${this.players[`${this.state.nowPlaying}`]}`}
-          </div>
-        )}
-        {this.state.game === "playing" && (
-          <Button
-            style={{ fontSize: "20px" }}
-            color="primary"
-            onClick={() => this.playerEndTurn()}
-          >
-            Finir mon tour
-          </Button>
-        )}
-        {this.state.ready === false && this.state.game === "waitingPlayers" && (
-          <Button
-            style={{ fontSize: "20px" }}
-            color="primary"
-            onClick={() => this.playerIsReady()}
-          >
-            Prêt
-          </Button>
-        )}
-        {this.state.ready === true && this.state.game === "waitingPlayers" && (
-          <Button
-            style={{ fontSize: "20px" }}
-            color="primary"
-            onClick={() => this.playerIsReady()}
-          >
-            Pas Prêt
-          </Button>
-        )}
-        {this.state.game === "waitingPlayers" && (
-          <Table
-            style={{ maxWidth: "600px", margin: "auto" }}
-            aria-label="simple table"
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell>Joueur(s)</TableCell>
-                <TableCell align="right">Prêt(s)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {this.state.players.map(player => (
-                <TableRow key={player._id}>
-                  <TableCell component="th" scope="row">
-                    {this.players[`${player._id}`]
-                      ? this.players[`${player._id}`] + " (hote)"
-                      : this.addPlayerLogin(player._id)}
-                  </TableCell>
-                  <TableCell align="right">
-                    {player.ready ? (
-                      <DoneIcon fontSize="large" style={{ color: "green" }} />
-                    ) : (
-                      <CloseIcon fontSize="large" style={{ color: "red" }} />
-                    )}
-                  </TableCell>
+        <div className="buttonHeader">
+          {this.state.game === "waitingPlayers" && (
+            <Table
+              style={{ maxWidth: "600px", margin: "auto" }}
+              aria-label="simple table"
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>Joueur(s)</TableCell>
+                  <TableCell align="right">Prêt(s)</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+              </TableHead>
+              <TableBody>
+                {this.state.players.map(player => (
+                  <TableRow key={player._id}>
+                    <TableCell component="th" scope="row">
+                      {this.players[`${player._id}`]
+                        ? this.players[`${player._id}`]
+                        : this.addPlayerLogin(player._id)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {player.ready ? (
+                        <DoneIcon fontSize="large" style={{ color: "green" }} />
+                      ) : (
+                        <CloseIcon fontSize="large" style={{ color: "red" }} />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+          {this.state.game === "playing" && (
+            <div>
+              {this.state.nowPlaying === this.state.playerId
+                ? "Votre tour"
+                : `Tour de ${this.players[`${this.state.nowPlaying}`]}`}
+            </div>
+          )}
+          {this.state.game === "playing" && (
+            <Button
+              style={{ fontSize: "20px" }}
+              color="primary"
+              onClick={() => this.playerEndTurn()}
+            >
+              Finir mon tour
+            </Button>
+          )}
+          <div className="buttonLaunchGame">
+            {redirect}
+            {this.state.game === "waitingPlayers" && (
+              <Button
+                color="secondary"
+                className="buttonQuitGame"
+                onClick={() => this.playerQuit()}
+              >
+                Quitter la partie
+              </Button>
+            )}
+            {this.state.ready === false &&
+              this.state.game === "waitingPlayers" && (
+                <Button
+                  color="primary"
+                  className="buttonReady"
+                  onClick={() => this.playerIsReady()}
+                >
+                  Prêt
+                </Button>
+              )}
+            {this.state.ready === true && this.state.game === "waitingPlayers" && (
+              <Button
+                color="primary"
+                className="buttonReady"
+                onClick={() => this.playerIsReady()}
+              >
+                Pas Prêt
+              </Button>
+            )}
+          </div>
+        </div>
         <div key="game" id="card-table" className="tableVisible"></div>
       </div>
     );

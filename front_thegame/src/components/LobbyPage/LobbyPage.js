@@ -6,8 +6,9 @@ import ButtonSection from "./ButtonSection";
 import JoinGame from "./JoinGame";
 import HistoryGame from "./HistoryGame";
 import Request from "./../../js/request.js";
+import { withSnackbar } from "notistack";
 
-export default class LobbyPage extends Component {
+class LobbyPage extends Component {
   constructor(props) {
     super(props);
 
@@ -15,20 +16,30 @@ export default class LobbyPage extends Component {
       idGame: undefined,
       gameSelected: false,
       JoinGame: [],
-      HistoryGame: [],
+      HistoryGame: []
     };
     this.selectGame = this.selectGame.bind(this);
     this.selectIdGame = this.selectIdGame.bind(this);
     this.fetchMyGames = this.fetchMyGames.bind(this);
     this.fetchPublicGames = this.fetchPublicGames.bind(this);
+    this.changeSnackbar = this.changeSnackbar.bind(this);
   }
   componentDidMount() {
     this.fetchMyGames();
     this.fetchPublicGames();
   }
+  ////////////////////////////////////////////////////////////
+  ///// Fonction pour ouvrir les snackbars
+  changeSnackbar(message, snackType = "info", duration = 4000) {
+    this.props.enqueueSnackbar(message, {
+      variant: snackType,
+      autoHideDuration: duration
+    });
+  }
   //////////////////////////////////////////////////////////////////////
   // Fonction pour faire une requête pour récupérer les parties en publiques
   fetchPublicGames() {
+    this.changeSnackbar("Chargement des parties", "info", 2000);
     new Request("/api/games/playable")
       .get()
       .send()
@@ -44,7 +55,6 @@ export default class LobbyPage extends Component {
   //////////////////////////////////////////////////////////////////////
   // Fonction pour faire une réqûete et récupérer l'historique des parties du joueur
   fetchMyGames() {
-    this.setState({ HistoryGame: [] });
     new Request("/api/games/ended")
       .get()
       .send()
@@ -76,21 +86,21 @@ export default class LobbyPage extends Component {
     let JoinGameComponent;
     let HistoryGameComponent;
 
-      HistoryGameComponent = (
-        <HistoryGame
-          data={this.state.HistoryGame}
-          fetch={() => this.fetchMyGames()}
-        ></HistoryGame>
-      );
+    HistoryGameComponent = (
+      <HistoryGame
+        data={this.state.HistoryGame}
+        fetch={() => this.fetchMyGames()}
+      ></HistoryGame>
+    );
 
-      JoinGameComponent = (
-        <JoinGame
-          data={this.state.JoinGame}
-          selectGame={bool => this.selectGame(bool)}
-          selectIdGame={id => this.selectIdGame(id)}
-          fetch={() => this.fetchPublicGames()}
-        ></JoinGame>
-      );
+    JoinGameComponent = (
+      <JoinGame
+        data={this.state.JoinGame}
+        selectGame={bool => this.selectGame(bool)}
+        selectIdGame={id => this.selectIdGame(id)}
+        fetch={() => this.fetchPublicGames()}
+      ></JoinGame>
+    );
 
     return (
       <Container maxWidth="lg">
@@ -114,3 +124,5 @@ export default class LobbyPage extends Component {
     );
   }
 }
+
+export default withSnackbar(LobbyPage);
