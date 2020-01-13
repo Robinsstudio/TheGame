@@ -2,15 +2,18 @@ import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import utils from "./utils.js";
 import Request from "../../js/request";
+// Tableau
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+// Icons
 import DoneIcon from "@material-ui/icons/Done";
 import CloseIcon from "@material-ui/icons/Close";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { withSnackbar } from "notistack";
+import "./Game.css";
 
 class Game extends Component {
   constructor(props) {
@@ -125,7 +128,7 @@ class Game extends Component {
   }
 
   joinGame() {
-    new Request("/api/game/" + this.state.gameId)
+    new Request("/api/game/" + this.state.gameId + "/player")
       .put()
       .body({})
       .send()
@@ -178,7 +181,12 @@ class Game extends Component {
   }
 
   getGameInfo() {
-    new Request("/api/game/" + this.state.gameId + "/actions?version=" + this.state.version)
+    new Request(
+      "/api/game/" +
+        this.state.gameId +
+        "/actions?version=" +
+        this.state.version
+    )
       .get()
       .send()
       .then(res => {
@@ -254,71 +262,82 @@ class Game extends Component {
     console.log(this.state);
     return (
       <div className="gameContainer">
-        {this.state.game === "playing" && (
-          <div>
-            {this.state.nowPlaying === this.state.playerId
-              ? "Votre tour"
-              : `Tour de ${this.players[`${this.state.nowPlaying}`]}`}
-          </div>
-        )}
-        {this.state.game === "playing" && (
-          <Button
-            style={{ fontSize: "20px" }}
-            color="primary"
-            onClick={() => this.playerEndTurn()}
-          >
-            Finir mon tour
-          </Button>
-        )}
-        {this.state.ready === false && this.state.game === "waitingPlayers" && (
-          <Button
-            style={{ fontSize: "20px" }}
-            color="primary"
-            onClick={() => this.playerIsReady()}
-          >
-            Prêt
-          </Button>
-        )}
-        {this.state.ready === true && this.state.game === "waitingPlayers" && (
-          <Button
-            style={{ fontSize: "20px" }}
-            color="primary"
-            onClick={() => this.playerIsReady()}
-          >
-            Pas Prêt
-          </Button>
-        )}
-        {this.state.game === "waitingPlayers" && (
-          <Table
-            style={{ maxWidth: "600px", margin: "auto" }}
-            aria-label="simple table"
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell>Joueur(s)</TableCell>
-                <TableCell align="right">Prêt(s)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {this.state.players.map(player => (
-                <TableRow key={player._id}>
-                  <TableCell component="th" scope="row">
-                    {this.players[`${player._id}`]
-                      ? this.players[`${player._id}`] + " (hote)"
-                      : this.addPlayerLogin(player._id)}
-                  </TableCell>
-                  <TableCell align="right">
-                    {player.ready ? (
-                      <DoneIcon fontSize="large" style={{ color: "green" }} />
-                    ) : (
-                      <CloseIcon fontSize="large" style={{ color: "red" }} />
-                    )}
-                  </TableCell>
+        <div className="buttonHeader">
+          {this.state.game === "waitingPlayers" && (
+            <Table
+              style={{ maxWidth: "600px", margin: "auto" }}
+              aria-label="simple table"
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>Joueur(s)</TableCell>
+                  <TableCell align="right">Prêt(s)</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+              </TableHead>
+              <TableBody>
+                {this.state.players.map(player => (
+                  <TableRow key={player._id}>
+                    <TableCell component="th" scope="row">
+                      {this.players[`${player._id}`]
+                        ? this.players[`${player._id}`]
+                        : this.addPlayerLogin(player._id)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {player.ready ? (
+                        <DoneIcon fontSize="large" style={{ color: "green" }} />
+                      ) : (
+                        <CloseIcon fontSize="large" style={{ color: "red" }} />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+          {this.state.game === "playing" && (
+            <div>
+              {this.state.nowPlaying === this.state.playerId
+                ? "Votre tour"
+                : `Tour de ${this.players[`${this.state.nowPlaying}`]}`}
+            </div>
+          )}
+          {this.state.game === "playing" && (
+            <Button
+              style={{ fontSize: "20px" }}
+              color="primary"
+              onClick={() => this.playerEndTurn()}
+            >
+              Finir mon tour
+            </Button>
+          )}
+          {this.state.game === "waitingPlayers" && (
+            <Button
+              style={{ fontSize: "20px", marginRight: "3em" }}
+              color="secondary"
+              onClick={() => this.playerIsReady()}
+            >
+              Quitter la partie
+            </Button>
+          )}
+          {this.state.ready === false && this.state.game === "waitingPlayers" && (
+            <Button
+              style={{ fontSize: "20px" }}
+              color="primary"
+              onClick={() => this.playerIsReady()}
+            >
+              Prêt
+            </Button>
+          )}
+          {this.state.ready === true && this.state.game === "waitingPlayers" && (
+            <Button
+              style={{ fontSize: "20px" }}
+              color="primary"
+              onClick={() => this.playerIsReady()}
+            >
+              Pas Prêt
+            </Button>
+          )}
+        </div>
         <div key="game" id="card-table" className="tableVisible"></div>
       </div>
     );
