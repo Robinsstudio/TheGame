@@ -326,6 +326,7 @@ export default class HistoryGame extends Component {
 
   componentDidMount() {
     MyHistoryProps = this.props;
+    HistoryArray = [];
   }
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.data.length !== this.props.data.length) {
