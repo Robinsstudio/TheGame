@@ -6,7 +6,7 @@
 }
 .veen {
   width: 70%;
-  margin: 10em auto 0;
+  margin: 6em auto 0;
   background: rgba(255, 255, 255, 0.5);
   height: 450px;
   display: table;
@@ -261,4 +261,10 @@ label {
 }
 .submit {
   margin-top: 2em;
+}
+
+@media (max-height: 700px) {
+  .veen {
+    margin: 60px auto 0;
+  }
 }
