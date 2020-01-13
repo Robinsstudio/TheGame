@@ -37,13 +37,13 @@ router.post('/account', function(req, res) {
 	const {jwt : {playerId}} = req;
 	Player.deletePlayer(playerId)
 	.then(()=>res.clearCookie(Constants.JWT_COOKIE).status(200).send("Compte supprimé"))
-	.catch(()=>res.status(404).send('Impossible de supprimer le compte'));
+	.catch(()=>res.status(500).send('Impossible de supprimer le compte'));
 });
 
 router.get('/player/:id/login',Player.isAuthenticated,function(req,res){
 	Player.getPlayerLogin(req.params.id)
 	.then(r=>res.status(200).json(r))
-	.then(err=>res.status(404).send(err.message))
+	.then(err=>res.status(412).send(err.message))
 });
 
 router.put('/authentication', function(req, res) {
@@ -69,7 +69,8 @@ router.put('/authentication', function(req, res) {
 });
 
 router.post('/game', Player.isAuthenticated, function(req, res) {
-	Game.createGame(req.body.name,req.body.public,req.body.nbPile).then(game => res.status(201).json(({ id: game._id })));
+	Game.createGame(req.body.name,req.body.public,req.body.nbPile).then(game => res.status(201).json(({ id: game._id })))
+	.catch(err=>res.sendStatus(500));
 })
 .get('/games/playable',Player.isAuthenticated,function(req,res){
 	const { jwt: { playerId } } = req;
