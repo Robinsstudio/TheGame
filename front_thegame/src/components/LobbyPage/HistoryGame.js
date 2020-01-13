@@ -230,13 +230,12 @@ function MyHistoryTable(props) {
   }
 
   const emptyRows =
-    rowsPerPage -
-    Math.min(rowsPerPage, props.rows.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, props.rows.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={0} fetch={props.fetch}/>
+        <EnhancedTableToolbar numSelected={0} fetch={props.fetch} />
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -254,6 +253,7 @@ function MyHistoryTable(props) {
               {stableSort(props.rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => {
+                  console.log(row);
                   return (
                     <TableRow
                       role="checkbox"
@@ -313,44 +313,47 @@ function MyHistoryTable(props) {
 }
 
 let MyHistoryProps;
+let HistoryArray = [];
 
 export default class HistoryGame extends Component {
-    constructor(props) {
+  constructor(props) {
     super(props);
 
     this.state = {
       rows: this.props.data
-    }
+    };
   }
 
   componentDidMount() {
     MyHistoryProps = this.props;
-
-    
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.data.length !== this.props.data.length) {
-      this.setState({
-        rows: nextProps.data,
-      }, 
-      nextProps.data.forEach(game => {
-      let resultatPartie = "Perdue (" + game.remaining + " cartes restantes)";
-      let background = "loseGame";
-      if (game.status === "won") {
-        resultatPartie = "Gagnée";
-        background = "winGame";
-      }
-      this.state.rows.push(
-        createDataHistory(
-          game.id,
-          game.name,
-          game.players,
-          game.piles,
-          resultatPartie,
-          background
-        )
+      HistoryArray = [];
+      this.setState(
+        {
+          rows: nextProps.data
+        },
+        nextProps.data.forEach(game => {
+          let resultatPartie =
+            "Perdue (" + game.remaining + " cartes restantes)";
+          let background = "loseGame";
+          if (game.status === "won") {
+            resultatPartie = "Gagnée";
+            background = "winGame";
+          }
+          HistoryArray.push(
+            createDataHistory(
+              game.id,
+              game.name,
+              game.players,
+              game.piles,
+              resultatPartie,
+              background
+            )
+          );
+        })
       );
-    }))
     }
   }
   refreshData() {
@@ -358,6 +361,11 @@ export default class HistoryGame extends Component {
   }
 
   render() {
-    return <MyHistoryTable rows={this.state.rows} fetch={() => this.refreshData()}></MyHistoryTable>;
+    return (
+      <MyHistoryTable
+        rows={HistoryArray}
+        fetch={() => this.refreshData()}
+      ></MyHistoryTable>
+    );
   }
 }
