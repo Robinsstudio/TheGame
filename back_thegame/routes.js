@@ -71,7 +71,7 @@ router.put('/authentication', function(req, res) {
 router.post('/game', Player.isAuthenticated, function(req, res) {
 	Game.createGame(req.body.name,req.body.public,req.body.nbPile).then(game => res.status(201).json(({ id: game._id })));
 })
-.get('/game',Player.isAuthenticated,function(req,res){
+.get('/games/playable',Player.isAuthenticated,function(req,res){
 	const { jwt: { playerId } } = req;
 	Game.getGamePlayerCanJoin(playerId)
 	.then(function(result){
@@ -82,7 +82,7 @@ router.post('/game', Player.isAuthenticated, function(req, res) {
 	})
 });
 
-router.get('/playedgame',Player.isAuthenticated,function(req,res){
+router.get('/games/played',Player.isAuthenticated,function(req,res){
 	const { jwt: { playerId } } = req;
 	Game.getEndedGamePlayerPlayed(playerId)
 	.then(function(result){
