@@ -15,9 +15,7 @@ export default class LobbyPage extends Component {
       idGame: undefined,
       gameSelected: false,
       JoinGame: [],
-      JoinGameLoad: false,
       HistoryGame: [],
-      HistoryGameLoad: false
     };
     this.selectGame = this.selectGame.bind(this);
     this.selectIdGame = this.selectIdGame.bind(this);
@@ -40,7 +38,7 @@ export default class LobbyPage extends Component {
           throw new Error(err);
         });
       })
-      .then(res => this.setState({ JoinGame: res, JoinGameLoad: true }))
+      .then(res => this.setState({ JoinGame: res }))
       .catch(err => console.log(err));
   }
   //////////////////////////////////////////////////////////////////////
@@ -56,7 +54,7 @@ export default class LobbyPage extends Component {
           throw new Error(err);
         });
       })
-      .then(res => this.setState({ HistoryGame: res, HistoryGameLoad: true }))
+      .then(res => this.setState({ HistoryGame: res }))
       .catch(err => console.log(err));
   }
   //////////////////////////////////////////////////////////////////////
@@ -78,16 +76,13 @@ export default class LobbyPage extends Component {
     let JoinGameComponent;
     let HistoryGameComponent;
 
-    if (this.state.HistoryGameLoad === true) {
       HistoryGameComponent = (
         <HistoryGame
           data={this.state.HistoryGame}
           fetch={() => this.fetchMyGames()}
         ></HistoryGame>
       );
-    }
 
-    if (this.state.JoinGameLoad === true) {
       JoinGameComponent = (
         <JoinGame
           data={this.state.JoinGame}
@@ -96,7 +91,6 @@ export default class LobbyPage extends Component {
           fetch={() => this.fetchPublicGames()}
         ></JoinGame>
       );
-    }
 
     return (
       <Container maxWidth="lg">
