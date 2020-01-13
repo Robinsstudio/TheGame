@@ -102,6 +102,7 @@ class Game extends Component {
           throw new Error(err);
         });
       })
+      .then(res=>this.getGameInfo())
       .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
@@ -155,6 +156,7 @@ class Game extends Component {
         });
       })
       .then(res => console.log(res))
+      .then(res=>this.getGameInfo())
       .catch(err => this.changeSnackbar(err.message, "error"));
   }
 

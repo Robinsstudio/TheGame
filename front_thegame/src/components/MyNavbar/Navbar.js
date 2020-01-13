@@ -29,7 +29,10 @@ class Navbar extends Component {
       .delete()
       .send()
       .then(res => {
-        if (this.props.onDisconnect !== undefined) this.props.onDisconnect(res);
+        if (this.props.onDisconnect !== undefined) {
+          this.changeSnackbar();
+          this.props.onDisconnect(res);
+        }
       });
   }
 
@@ -113,7 +116,6 @@ class Navbar extends Component {
               <Account
                 login={this.props.login}
                 disconnect={this.disconnect}
-                snackbar={this.changeSnackbar}
               />
             </Toolbar>
           </AppBar>

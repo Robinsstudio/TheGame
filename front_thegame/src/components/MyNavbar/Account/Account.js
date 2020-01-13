@@ -18,7 +18,8 @@ function Account({ login, disconnect, snackbar }) {
 
   const handleClose = () => {
     setAnchorEl(null);
-    snackbar();
+    if(snackbar !== undefined)
+      snackbar();
   };
 
   const open = Boolean(anchorEl);
