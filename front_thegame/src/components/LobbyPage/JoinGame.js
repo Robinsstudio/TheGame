@@ -258,7 +258,10 @@ function MyTableJoin(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbarJoin numSelected={selected.length} fetch={props.fetch} />
+        <EnhancedTableToolbarJoin
+          numSelected={selected.length}
+          fetch={props.fetch}
+        />
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -337,29 +340,31 @@ export default class JoinGame extends Component {
 
     this.state = {
       rows: this.props.data
-    }
+    };
   }
 
   componentDidMount() {
     MyProps = this.props;
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.data.length !== this.props.data.length) {
-      this.setState({
-        rows: nextProps.data,
-      }, 
-      nextProps.data.forEach(game => {
-      this.state.rows.push(
-        createDataJoin(
-          game.id,
-          game.name,
-          game.players,
-          game.piles,
-          game.version
-        )
+      this.setState(
+        {
+          rows: nextProps.data
+        },
+        nextProps.data.forEach(game => {
+          this.state.rows.push(
+            createDataJoin(
+              game.id,
+              game.name,
+              game.players,
+              game.piles,
+              game.version
+            )
+          );
+        })
       );
-    }))
     }
   }
   refreshData() {
@@ -367,6 +372,11 @@ export default class JoinGame extends Component {
   }
 
   render() {
-    return <MyTableJoin rows={this.state.rows} fetch={() => this.refreshData()}></MyTableJoin>;
+    return (
+      <MyTableJoin
+        rows={this.state.rows}
+        fetch={() => this.refreshData()}
+      ></MyTableJoin>
+    );
   }
 }
