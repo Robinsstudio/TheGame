@@ -8,11 +8,11 @@ Route               | GET | POST | PUT | DELETE
 api/authentication  | ✓   | ✗   | ✓   | ✓
 api/account         | ✗   | ✓   | ✓   | ✓
 api/game            | ✗   | ✓   | ✗   | ✗
-api/game/:id        | ✗   | ✗   | ✓   | ✗
 api/game/:id/actions| ✓   | ✗   | ✗   | ✗
 api/game/:id/tour   | ✗   | ✗   | ✓   | ✗
 api/game/:id/card   | ✓   | ✗   | ✓   | ✗
 api/game/:id/ready  | ✗   | ✗   | ✓   | ✗
+api/game/:id/player | ✗   | ✗   | ✓   | ✓
 api/games/playable  | ✓   | ✗   | ✗   | ✗
 api/games/ended     | ✓   | ✗   | ✗   | ✗
 api/authenticate    | ✗   | ✓   | ✗   | ✗

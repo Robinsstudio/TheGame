@@ -93,7 +93,7 @@ router.get('/games/ended',Player.isAuthenticated,function(req,res){
 	})
 });
 
-router.put('/game/:id', Player.isAuthenticated, function(req, res) {
+router.put('/game/:id/player', Player.isAuthenticated, function(req, res) {
 	const { params: { id }, jwt: { playerId } } = req;
 	Game.joinGame(id, playerId)
 	.then(function() {
