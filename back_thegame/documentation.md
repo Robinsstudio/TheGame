@@ -31,15 +31,10 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 ----
 
 * **URL**
-
     /api/account
 
 * **Method:**
     `POST`
-  
-* **URL Params**
-
-* **Query Params**
 
 * **Data Params**
 
@@ -53,15 +48,11 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
     `password=[String]`
     `email=[String]`
 
-
 * **Success Response:**
-  
-
   * **Code:** 201 
     **Content:** ` `
  
 * **Error Response:**
-
   * **Code:** 409 
     **Content:** `"Pseudo déjà utilisé"`
 
@@ -70,15 +61,10 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 ----
     Permet de modifier les champs login, email ou password.
 * **URL**
-
     /api/account
 
 * **Method:**
     `PUT`
-  
-* **URL Params**
-
-* **Query Params**
 
 * **Data Params**
 
@@ -94,52 +80,35 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
     `newPassword=[String]`
     `email=[String]`
 
-
 * **Success Response:**
-  
-
   * **Code:** 200 
     **Content:** ` `
  
 * **Error Response:**
-
   * **Code:** 409 
     **Content:** `"Pseudo déjà utilisé"`
-
-    OR
- * **Code:** 401 
+  * **Code:** 401 
     **Content:** `""`
 
 **Supprimer son compte**
 ----
 * **URL**
-
     /api/account
 
 * **Method:**
     `DELETE`
-  
-* **URL Params**
-
-* **Query Params**
-
-* **Data Params**
 
 * **Success Response:**
-  
-
   * **Code:** 200 
     **Content:** ` `
  
 * **Error Response:**
-
   * **Code:** 500 
     **Content:** `"Pseudo déjà utilisé"`
 
 **Obtenir le pseudo d'un joueur à partir de son id**
 ----
 * **URL**
-
     /api/player/:id/login
 
 * **Method:**
@@ -149,19 +118,12 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
     `id=[String]`
     ** Required ** 
     `id=[String]`
-* **Query Params**
-
-* **Data Params**
-
 
 * **Success Response:**
-  
-
   * **Code:** 200 
     **Content:** `userLogin`
  
 * **Error Response:**
-
   * **Code:** 412 
     **Content:** `"Un login doit être fourni"`
 
@@ -169,26 +131,16 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 ----
     Permet de s'identifier à partir d'un token stocké dans les cookies
 * **URL**
-
     /api/authentication
 
 * **Method:**
     `GET`
-  
-* **URL Params**
-
-* **Query Params**
-
-* **Data Params**
 
 * **Success Response:**
-  
-
   * **Code:** 200 
     **Content:** `{id : [String], login : [String], email : [String]} `
  
 * **Error Response:**
-
   * **Code:** 403 
     **Content:** `"Mot de passe incorrect"`
 
@@ -196,15 +148,10 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 ----
 
 * **URL**
-
     /api/authenticate
 
 * **Method:**
     `PUT`
-  
-* **URL Params**
-
-* **Query Params**
 
 * **Data Params**
 
@@ -218,13 +165,10 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 
 
 * **Success Response:**
-  
-
   * **Code:** 200 
     **Content:** `{id : [String], login : [String], email :[String]} `
  
 * **Error Response:**
-
  * **Code:** 403 
     **Content:** `"Login ou mot de passe incorrect"`
 
@@ -232,42 +176,27 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 ----
 
 * **URL**
-
     /api/authenticate
 
 * **Method:**
     `DELETE`
-  
-* **URL Params**
-
-* **Query Params**
-
-* **Data Params**
 
 * **Success Response:**
-  
-
   * **Code:** 204 
     **Content:** ` `
  
 * **Error Response:**
-
   * **Code:** 401 
     **Content:** `""`
 
 **Créer une partie**
 ----
 * **URL**
-
     /api/game
 
 * **Method:**
     `POST`
   
-* **URL Params**
-
-* **Query Params**
-
 * **Data Params**
 
     `name=[String]`
@@ -275,20 +204,16 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
     `nbPile=[Integer]`
 
    **Optional:**
- 
+
     `name=[String]`
     `public=[Boolean]`
     `nbPile=[Integer]`
 
-
 * **Success Response:**
-  
-
   * **Code:** 201 
     **Content:** ` {id:[String]} `
  
 * **Error Response:**
-
   * **Code:** 500 
     **Content:** `""`
 
@@ -297,7 +222,6 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
     Permet de récupérer les actions manquées depuis le dernier rafraichissement.
     Le query Param version permet de récupérer en plus de l'état de la partie actuel les dernières actions ayant mené à cet état depuis version.
 * **URL**
-
     /api/game/:id/actions
 
 * **Method:**
@@ -314,28 +238,19 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
     **Optional**
     `version=[Integer]`
 
-* **Data Params**
-
-
 * **Success Response:**
-  
-
   * **Code:** 200 
     **Content:** `Objet contenant toutes les informations sur la partie `
  
 * **Error Response:**
-
   * **Code:** 412 
     **Content:** `erreur=[String]`
-
-    OR
- * **Code:** 403 
+  * **Code:** 403 
     **Content:** `""`
 
 **Passer son tour**
 ----
 * **URL**
-
     /api/game/:id/tour
 
 * **Method:**
@@ -347,32 +262,50 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
     **Required**
     `id=[String]`
 
-* **Query Params**
-
-
-* **Data Params**
-
-
 * **Success Response:**
-  
-
   * **Code:** 200 
     **Content:** ` `
  
 * **Error Response:**
-
   * **Code:** 412 
     **Content:** `erreur=[String]`
+  * **Code:** 403 
+    **Content:** `""`
 
-    OR
- * **Code:** 403 
+**Savoir ou une carte est jouable**
+----
+    Retourne une liste contenant les id de piles sur lesquelles la carte choisie peut être posée.
+* **URL**
+    /api/game/:id/card
+
+* **Method:**
+    `GET`
+  
+* **URL Params**
+    `id=[String]`
+
+    **Required**
+    `id=[String]`
+
+* **Query Params**
+    `cardValue=[Integer]`
+    **Required**
+    `cardValue=[Integer]`
+
+* **Success Response:**
+  * **Code:** 200 
+    **Content:** `Objet contenant toutes les informations sur la partie `
+ 
+* **Error Response:**
+  * **Code:** 412 
+    **Content:** `erreur=[String]`
+  * **Code:** 403 
     **Content:** `""`
 
 **Jouer une carte**
 ----
     Permet de jouer une carte sur une pile.
 * **URL**
-
     /api/game/:id/card
 
 * **Method:**
@@ -384,26 +317,167 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
     **Required**
     `id=[String]`
 
-* **Query Params** 
-
 * **Data Params**
-`cardValue=[Integer]`
+    `cardValue=[Integer]`
     `pileId=[String]`
     **Required**
     `cardValue=[Integer]`
     `pileId=[String]`
 
 * **Success Response:**
-  
-
   * **Code:** 200 
     **Content:** ` {} `
  
 * **Error Response:**
-
   * **Code:** 412 
     **Content:** `erreur=[String]`
+  * **Code:** 403 
+    **Content:** `""`
 
-    OR
- * **Code:** 403 
+**Passer à prêt dans une partie**
+----
+    Permet de devenir prêt lorsque la partie est en attente de lancement ou inversement.
+* **URL**
+    /api/game/:id/ready
+
+* **Method:**
+    `PUT`
+  
+* **URL Params**
+    `id=[String]`
+
+    **Required**
+    `id=[String]`
+
+* **Success Response:**
+  * **Code:** 200 
+    **Content:** ` `
+ 
+* **Error Response:**
+  * **Code:** 412 
+    **Content:** `erreur=[String]`
+  * **Code:** 403 
+    **Content:** `""`
+
+**Rejoindre une partie**
+----
+    Permet de rejoindre une partie n'ayant pas commencé et ainsi faire partie des joueurs et non des spectateurs. 
+    Retourne les actions de la partie afin de connaître le nombre de joueurs, de piles...
+* **URL**
+
+    /api/game/:id/player
+
+* **Method:**
+    `PUT`
+  
+* **URL Params**
+    `id=[String]`
+
+    **Required**
+    `id=[String]`
+
+* **Success Response:**
+  * **Code:** 200 
+    **Content:** `Objet contenant toutes les informations sur la partie `
+ 
+* **Error Response:**
+  * **Code:** 412 
+    **Content:** `erreur=[String]`
+  * **Code:** 403 
+    **Content:** `""`
+
+**Quitter une partie**
+----
+    Permet de quitter une partie n'ayant pas encore commencée.
+* **URL**
+
+    /api/game/:id/player
+
+* **Method:**
+    `DELETE`
+  
+* **URL Params**
+    `id=[String]`
+
+    **Required**
+    `id=[String]`
+
+* **Success Response:**
+  * **Code:** 200 
+    **Content:** `""`
+ 
+* **Error Response:**
+    * **Code:** 412 
+    **Content:** `erreur=[String]`
+    * **Code:** 403 
+    **Content:** `""`
+
+**Récupérer les actions**
+----
+    Permet de récupérer les actions manquées depuis le dernier rafraichissement.
+    Le query Param version permet de récupérer en plus de l'état de la partie actuel les dernières actions ayant mené à cet état depuis version.
+* **URL**
+    /api/game/:id/actions
+
+* **Method:**
+    `GET`
+  
+* **URL Params**
+    `id=[String]`
+
+    **Required**
+    `id=[String]`
+
+* **Query Params**
+    `version=[Integer]`
+
+* **Success Response:**
+  * **Code:** 200 
+    **Content:** `Objet contenant toutes les informations sur la partie `
+ 
+* **Error Response:**
+  * **Code:** 412 
+    **Content:** `erreur=[String]`
+  * **Code:** 403 
+    **Content:** `""`
+
+**Récupérer les parties que l'on peut rejoindre en tant que joueur**
+----
+    Permet de récupérer une liste de parties (id,nom,version,nombre de joueurs...) publiques n'ayant pas encore débutées ou ayant déjà débutées mais pour lesquelles nous sommes joueurs.
+* **URL**
+
+    /api/games/playable
+
+* **Method:**
+    `GET`
+
+* **Success Response:**
+  * **Code:** 200 
+    **Content:** `Objet contenant une liste de partie`
+
+* **Error Response:**
+
+  * **Code:** 500 
+    **Content:** `erreur=[String]`
+  * **Code:** 403 
+    **Content:** `""`
+
+**Récupérer les parties jouées et terminées par le joueur**
+----
+    Permet de récupérer toutes les parties finies pour lesquelles le joueur était présent.
+* **URL**
+
+    /api/games/ended
+
+* **Method:**
+    `GET`
+
+* **Success Response:** 
+  * **Code:** 200 
+    **Content:** `Objet contenant toutes les informations sur la partie `
+ 
+* **Error Response:**
+  * **Code:** 412 
+    **Content:** `erreur=[String]`
+  * **Code:** 403 
     **Content:** `""`
