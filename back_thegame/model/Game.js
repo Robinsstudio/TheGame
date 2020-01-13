@@ -254,7 +254,7 @@ GameSchema.statics.ready = function(gameId, playerId) {
     if (res.status !== "waitingPlayers")
       throw Error("Cette action ne peut être exécutée actuellement");
     res.player = res.players.map(ele => {
-      if (ele._id.toString() === playerId) ele.ready = true;
+      if (ele._id.toString() === playerId) ele.ready = !ele.ready;
       return ele;
     });
     if (res.players.filter(ele => !ele.ready).length === 0) {

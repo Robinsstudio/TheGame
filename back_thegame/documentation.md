@@ -11,7 +11,7 @@ api/game            | ✗   | ✓   | ✗   | ✗
 api/game/:id        | ✗   | ✗   | ✓   | ✗
 api/game/:id/actions| ✓   | ✗   | ✗   | ✗
 api/game/:id/tour   | ✗   | ✗   | ✓   | ✗
-api/game/:id/card   | ✗   | ✗   | ✓   | ✗
+api/game/:id/card   | ✓   | ✗   | ✓   | ✗
 api/game/:id/ready  | ✗   | ✗   | ✓   | ✗
 api/games/playable  | ✓   | ✗   | ✗   | ✗
 api/games/ended     | ✓   | ✗   | ✗   | ✗
