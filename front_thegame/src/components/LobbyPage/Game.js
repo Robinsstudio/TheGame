@@ -315,22 +315,6 @@ class Game extends Component {
               </TableBody>
             </Table>
           )}
-          {this.state.game === "playing" && (
-            <div>
-              {this.state.nowPlaying === this.state.playerId
-                ? "Votre tour"
-                : `Tour de ${this.players[`${this.state.nowPlaying}`]}`}
-            </div>
-          )}
-          {this.state.game === "playing" && (
-            <Button
-              style={{ fontSize: "20px" }}
-              color="primary"
-              onClick={() => this.playerEndTurn()}
-            >
-              Finir mon tour
-            </Button>
-          )}
           <div className="buttonLaunchGame">
             {redirect}
             {this.state.game === "waitingPlayers" && (
@@ -343,6 +327,7 @@ class Game extends Component {
               </Button>
             )}
             {this.state.ready === false &&
+              this.state.players.length > 1 &&
               this.state.game === "waitingPlayers" && (
                 <Button
                   color="primary"
@@ -352,18 +337,53 @@ class Game extends Component {
                   Prêt
                 </Button>
               )}
-            {this.state.ready === true && this.state.game === "waitingPlayers" && (
-              <Button
-                color="primary"
-                className="buttonReady"
-                onClick={() => this.playerIsReady()}
-              >
-                Pas Prêt
-              </Button>
-            )}
+            {this.state.ready === false &&
+              this.state.players.length === 1 &&
+              this.state.game === "waitingPlayers" && (
+                <Button
+                  color="primary"
+                  className="buttonReady"
+                  onClick={() => this.playerIsReady()}
+                >
+                  Lancer la partie
+                </Button>
+              )}
+            {this.state.ready === true &&
+              this.state.players.length > 1 &&
+              this.state.game === "waitingPlayers" && (
+                <Button
+                  color="primary"
+                  className="buttonReady"
+                  onClick={() => this.playerIsReady()}
+                >
+                  Pas Prêt
+                </Button>
+              )}
           </div>
         </div>
-        <div key="game" id="card-table" className="tableVisible"></div>
+        <div key="game" id="card-table" className="tableVisible">
+          {this.state.game === "playing" && (
+            <div className="containerEndTurn">
+              {this.state.nowPlaying === this.state.playerId ? (
+                <Button
+                  color="primary"
+                  className="buttonEndTurn"
+                  onClick={() => this.playerEndTurn()}
+                >
+                  Finir mon tour
+                </Button>
+              ) : (
+                <Button
+                  color="primary"
+                  className="buttonEndTurn"
+                  onClick={() => this.playerEndTurn()}
+                >
+                  Ce n'est pas votre tour
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     );
   }
