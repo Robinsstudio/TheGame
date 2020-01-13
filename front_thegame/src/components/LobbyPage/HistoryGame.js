@@ -152,7 +152,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected, fetch } = props;
 
   return (
     <Toolbar
@@ -175,7 +175,7 @@ const EnhancedTableToolbar = props => {
           <div></div>
         ) : (
           <Tooltip title={<span className="tooltipPerso">Actualiser</span>}>
-            <IconButton onClick={() => MyHistoryProps.fetch()}>
+            <IconButton onClick={() => fetch()}>
               <RefreshIcon fontSize="large"></RefreshIcon>
             </IconButton>
           </Tooltip>
@@ -208,7 +208,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function MyHistoryTable() {
+function MyHistoryTable(props) {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("players");
@@ -231,12 +231,12 @@ function MyHistoryTable() {
 
   const emptyRows =
     rowsPerPage -
-    Math.min(rowsPerPage, rowsHistory.length - page * rowsPerPage);
+    Math.min(rowsPerPage, props.rows.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={0} />
+        <EnhancedTableToolbar numSelected={0} fetch={props.fetch}/>
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -248,10 +248,10 @@ function MyHistoryTable() {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rowsHistory.length}
+              rowCount={props.rows.length}
             />
             <TableBody>
-              {stableSort(rowsHistory, getSorting(order, orderBy))
+              {stableSort(props.rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => {
                   return (
@@ -294,7 +294,7 @@ function MyHistoryTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 15, 20]}
           component="div"
-          count={rowsHistory.length}
+          count={props.rows.length}
           rowsPerPage={rowsPerPage}
           labelRowsPerPage={"Parties par page :"}
           page={page}
@@ -313,20 +313,34 @@ function MyHistoryTable() {
 }
 
 let MyHistoryProps;
-let rowsHistory = [];
 
 export default class HistoryGame extends Component {
+    constructor(props) {
+    super(props);
+
+    this.state = {
+      rows: this.props.data
+    }
+  }
+
   componentDidMount() {
     MyHistoryProps = this.props;
-    rowsHistory = [];
-    MyHistoryProps.data.forEach(game => {
+
+    
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data.length !== this.props.data.length) {
+      this.setState({
+        rows: nextProps.data,
+      }, 
+      nextProps.data.forEach(game => {
       let resultatPartie = "Perdue (" + game.remaining + " cartes restantes)";
       let background = "loseGame";
       if (game.status === "won") {
         resultatPartie = "Gagnée";
         background = "winGame";
       }
-      rowsHistory.push(
+      this.state.rows.push(
         createDataHistory(
           game.id,
           game.name,
@@ -336,10 +350,14 @@ export default class HistoryGame extends Component {
           background
         )
       );
-    });
+    }))
+    }
+  }
+  refreshData() {
+    MyHistoryProps.fetch();
   }
 
   render() {
-    return <MyHistoryTable></MyHistoryTable>;
+    return <MyHistoryTable rows={this.state.rows} fetch={() => this.refreshData()}></MyHistoryTable>;
   }
 }

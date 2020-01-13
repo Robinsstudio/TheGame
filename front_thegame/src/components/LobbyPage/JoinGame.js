@@ -153,7 +153,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbarJoin = props => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected, fetch } = props;
 
   return (
     <Toolbar
@@ -178,7 +178,7 @@ const EnhancedTableToolbarJoin = props => {
           <div></div>
         ) : (
           <Tooltip title={<span className="tooltipPerso">Actualiser</span>}>
-            <IconButton onClick={() => MyProps.fetch()}>
+            <IconButton onClick={() => fetch()}>
               <RefreshIcon fontSize="large"></RefreshIcon>
             </IconButton>
           </Tooltip>
@@ -211,7 +211,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function MyTableJoin() {
+function MyTableJoin(props) {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("players");
@@ -253,12 +253,12 @@ function MyTableJoin() {
   const isSelected = name => selected.indexOf(name) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rowsJoin.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, props.rows.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbarJoin numSelected={selected.length} />
+        <EnhancedTableToolbarJoin numSelected={selected.length} fetch={props.fetch} />
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -270,10 +270,10 @@ function MyTableJoin() {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rowsJoin.length}
+              rowCount={props.rows.length}
             />
             <TableBody>
-              {stableSort(rowsJoin, getSorting(order, orderBy))
+              {stableSort(props.rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => {
                   const isItemSelected = isSelected(row.id);
@@ -311,7 +311,7 @@ function MyTableJoin() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 15, 20]}
           component="div"
-          count={rowsJoin.length}
+          count={props.rows.length}
           rowsPerPage={rowsPerPage}
           labelRowsPerPage={"Parties par page :"}
           page={page}
@@ -330,19 +330,27 @@ function MyTableJoin() {
 }
 
 let MyProps;
-let rowsJoin = [];
-let startFetch = false;
 
 export default class JoinGame extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      rows: this.props.data
+    }
+  }
+
   componentDidMount() {
     MyProps = this.props;
-    rowsJoin = [];
-    if (startFetch === false) {
-      startFetch = true;
-      this.props.fetch();
-    }
-    MyProps.data.forEach(game => {
-      rowsJoin.push(
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data.length !== this.props.data.length) {
+      this.setState({
+        rows: nextProps.data,
+      }, 
+      nextProps.data.forEach(game => {
+      this.state.rows.push(
         createDataJoin(
           game.id,
           game.name,
@@ -351,10 +359,14 @@ export default class JoinGame extends Component {
           game.version
         )
       );
-    });
+    }))
+    }
+  }
+  refreshData() {
+    MyProps.fetch();
   }
 
   render() {
-    return <MyTableJoin></MyTableJoin>;
+    return <MyTableJoin rows={this.state.rows} fetch={() => this.refreshData()}></MyTableJoin>;
   }
 }
