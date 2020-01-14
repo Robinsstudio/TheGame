@@ -10,7 +10,8 @@ const ActionSchema = new mongoose.Schema({
     details : {
         who : String,
         pile : String,
-        card : Card.schema
+        card : Card.schema,
+        info : String
     }
 });
 const Action = db.model('Action',ActionSchema);

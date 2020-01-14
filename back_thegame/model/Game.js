@@ -4,6 +4,8 @@ const Card = require("./Card");
 const Pile = require("./Pile");
 const Action = require("./Action");
 const Player = require("./Player.js");
+const MessageAppClass = require("./MessageApp.js");
+const MessageApp = new MessageAppClass();
 //-----Schéma du jeu -----//
 
 const GameSchema = new mongoose.Schema({
@@ -170,6 +172,8 @@ GameSchema.statics.countCardPlayedThisTurn = function(game) {
 GameSchema.statics.playersStillHaveCards = function(game) {
   return game.players.filter(player => player.hand.length > 0).length > 0;
 };
+
+
 
 GameSchema.statics.drawCard = function(game) {
   let maxCard = 6;
@@ -371,7 +375,8 @@ GameSchema.statics.getActions = function(gameId, playerId, version) {
       version: game.actions.length,
       nowPlaying: game.nowPlaying,
       deckPile: game.deckPile.length,
-      status: game.status
+      status: game.status,
+      messages : MessageApp.readMessage(game._id.toString(),playerId)
     };
 
     if (version !== undefined)
@@ -451,6 +456,21 @@ GameSchema.statics.getEndedGamePlayerPlayed = function(playerId) {
     })
   );
 };
+
+GameSchema.statics.sendMessage = function(gameId,playerId,message){
+  return Game.findOne({ _id: gameId })
+  .then(game => {
+      if(message === "" || message === undefined)
+        throw new Error("Pas de message à transmettre");
+      if(game.players.filter(ele=>ele._id.toString()===playerId).length>0){
+        MessageApp.writeMessage(game._id.toString(),playerId,game.players.map(ele=>ele._id.toString()),message);
+        return "";
+      }
+      else{
+        throw new Error("Joueur non présent dans la partie");
+      }
+      throw new Error("Partie introuvable");
+ })};
 
 const Game = db.model("Game", GameSchema);
 

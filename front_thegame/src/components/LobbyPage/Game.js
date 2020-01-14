@@ -97,6 +97,21 @@ class Game extends Component {
       );
     }
   }
+
+  sendMessage(message){
+    return new Request("/api/game/" + this.state.gameId + "/message")
+      .put()
+      .body({ message : message })
+      .send()
+      .then(res => {
+        if (res.ok) return "";
+        return res.text().then(err => {
+          throw new Error(err);
+        });
+      })
+      .catch(err => this.changeSnackbar(err.message, "error"));
+  }
+
   playCard(cardValue, pileId) {
     return new Request("/api/game/" + this.state.gameId + "/card")
       .put()
@@ -179,8 +194,16 @@ class Game extends Component {
         this.changeSnackbar("La partie est perdue !", "warning");
       } else if (action.type === "game won") {
         this.changeSnackbar("La partie est gagnée !", "success");
+      } else if (action.type === "message"){
+        this.changeSnackbar(`${this.players[`${action.details.who}`]} : ${action.details.info}`,"info");
       }
     }
+  }
+
+  displayMessages(messages){
+      for(let message of messages){
+        this.changeSnackbar(`${this.players[`${message.who}`]} : ${message.message}`,"info");
+      }
   }
 
   getGameInfo() {
@@ -225,6 +248,7 @@ class Game extends Component {
           });
         }
         this.runActions(res.actions);
+        this.displayMessages(res.messages);
         if (Object.keys(newState).length > 0) {
           this.setState(newState);
           console.log(res);

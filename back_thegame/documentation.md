@@ -14,6 +14,7 @@ api/game/:id/tour   | ✗   | ✗   | ✓   | ✗
 api/game/:id/card   | ✓   | ✗   | ✓   | ✗
 api/game/:id/ready  | ✗   | ✗   | ✓   | ✗
 api/game/:id/player | ✗   | ✗   | ✓   | ✓
+api/game/:id/message| ✗   | ✗   | ✓   | ✗
 api/games/playable  | ✓   | ✗   | ✗   | ✗
 api/games/ended     | ✓   | ✗   | ✗   | ✗
 
@@ -434,6 +435,34 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 * **Success Response:**
   * **Code:** 200 
     **Content:** `Objet contenant toutes les informations sur la partie `
+ 
+* **Error Response:**
+  * **Code:** 412 
+    **Content:** `erreur=[String]`
+  * **Code:** 403 
+    **Content:** `""`
+
+**Envoyer un message**
+----
+    Permet d'envoyer un message aux autres joueurs présent dans la partie et actuellement connectés.
+* **URL**
+    /api/game/:id/message
+
+* **Method:**
+    `PUT`
+  
+* **URL Params**
+    `id=[String]`
+
+    **Required**
+    `id=[String]`
+
+* **Data Params**
+    `message=[Integer]`
+
+* **Success Response:**
+  * **Code:** 200 
+    **Content:** ` `
  
 * **Error Response:**
   * **Code:** 412 
