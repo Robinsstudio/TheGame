@@ -15,6 +15,11 @@
 }
 
 .borderCard {
-  transform: scale(1.3) !important;
+  transform: scale(1.5) !important;
+  z-index: 50000 !important;
+}
+
+.cardHover {
+  transform: scale(1.5) !important;
   z-index: 50000 !important;
 }

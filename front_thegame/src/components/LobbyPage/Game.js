@@ -17,6 +17,8 @@ import RouteBuilder from "../../js/RouteBuilder";
 import { Redirect } from "react-router-dom";
 import "./Game.css";
 
+let cardsPile = 98;
+
 class Game extends Component {
   constructor(props) {
     super(props);
@@ -98,10 +100,10 @@ class Game extends Component {
     }
   }
 
-  sendMessage(message){
+  sendMessage(message) {
     return new Request("/api/game/" + this.state.gameId + "/message")
       .put()
-      .body({ message : message })
+      .body({ message: message })
       .send()
       .then(res => {
         if (res.ok) return "";
@@ -175,7 +177,9 @@ class Game extends Component {
           throw new Error(err);
         });
       })
-      .then(res => console.log(res))
+      .then(res => {
+        console.log(res);
+      })
       .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
@@ -191,19 +195,29 @@ class Game extends Component {
       } else if (action.type === "drawCard") {
         utils.drawCard(action.details.who, action.details.card.value);
       } else if (action.type === "game over") {
+        utils.CreateEndDiv();
         this.changeSnackbar("La partie est perdue !", "warning");
+        window.launchAnimation("PARTIE PERDUE");
       } else if (action.type === "game won") {
+        utils.CreateEndDiv();
         this.changeSnackbar("La partie est gagnée !", "success");
-      } else if (action.type === "message"){
-        this.changeSnackbar(`${this.players[`${action.details.who}`]} : ${action.details.info}`,"info");
+        window.launchAnimation("PARTIE GAGNEE");
+      } else if (action.type === "message") {
+        this.changeSnackbar(
+          `${this.players[`${action.details.who}`]} : ${action.details.info}`,
+          "info"
+        );
       }
     }
   }
 
-  displayMessages(messages){
-      for(let message of messages){
-        this.changeSnackbar(`${this.players[`${message.who}`]} : ${message.message}`,"info");
-      }
+  displayMessages(messages) {
+    for (let message of messages) {
+      this.changeSnackbar(
+        `${this.players[`${message.who}`]} : ${message.message}`,
+        "info"
+      );
+    }
   }
 
   getGameInfo() {
@@ -252,6 +266,13 @@ class Game extends Component {
         if (Object.keys(newState).length > 0) {
           this.setState(newState);
           console.log(res);
+          if (cardsPile !== res.deckPile && res.status === "playing") {
+            cardsPile = res.deckPile;
+            this.changeSnackbar(
+              "Il reste " + cardsPile + " cartes dans la pile.",
+              "info"
+            );
+          }
         }
         return res;
       })

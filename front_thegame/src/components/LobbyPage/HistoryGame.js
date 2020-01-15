@@ -253,7 +253,6 @@ function MyHistoryTable(props) {
               {stableSort(props.rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => {
-                  console.log(row);
                   return (
                     <TableRow
                       role="checkbox"

@@ -12,7 +12,7 @@ import NavBar from "./components/MyNavbar/Navbar";
 import Connexion from "./components/ConnexionPage/ConnexionPage";
 import Lobby from "./components/LobbyPage/LobbyPage";
 import Profile from "./components/MyNavbar/Account/Profile/Profile";
-import Settings from "./components/MyNavbar/Account/Settings";
+//import Settings from "./components/MyNavbar/Account/Settings";
 import Game from "./components/LobbyPage/Game";
 import CreateGame from "./components/LobbyPage/CreateGame";
 
@@ -97,7 +97,7 @@ class App extends Component {
             />
             <PrivateRoute
               test={this.state.id !== undefined}
-              component={Settings}
+              component={Lobby}
               path={RouteBuilder.get("/settings")}
             />
             <PrivateRoute

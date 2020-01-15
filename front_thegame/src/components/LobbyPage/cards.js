@@ -77,6 +77,16 @@ var cards = (function() {
             cursor: "pointer"
           })
           .addClass("card")
+          .hover(
+            function() {
+              if ($(this).hasClass("Visible")) {
+                $(this).addClass("cardHover");
+              }
+            },
+            function() {
+              $(this).removeClass("cardHover");
+            }
+          )
           .data("card", this)
           .appendTo($(table));
       }
@@ -125,12 +135,17 @@ var cards = (function() {
       ypos = -offsets[this.suit] * opt.cardSize.height;
       this.rotate(0);
       if (rank >= 0) {
+        // Si la carte est dans la main du joueur alors on ajoute la classe Visible pour qu'elle grossisse
+        if (this.container instanceof Hand) {
+          $(this.el).addClass("Visible");
+        }
         $(this.el).css("background-image", "url(" + opt.cardsUrl + ")");
         $(this.el).css("background-position", xpos + "px " + ypos + "px");
       }
     },
 
     hideCard: function() {
+      $(this.el).removeClass("Visible");
       $(this.el).css("background-image", "url(" + opt.cardback + ")");
       this.rotate(0);
     },
@@ -264,6 +279,12 @@ var cards = (function() {
     // Retourne la première carte du deck (la carte en dessous du deck)
     firstCard: function() {
       return this[0];
+    },
+
+    // Retourne le nombre de cartes restantes dans la pile
+    cardsLeft: function() {
+      console.log(this.length);
+      console.log(this);
     }
   });
 
@@ -360,6 +381,13 @@ var cards = (function() {
     }
   });
 
+  function CreateEndDiv() {
+    $(".App").append('<div id="three-container"></div>');
+    $(".gameContainer").fadeOut(500, function() {
+      $(this).empty();
+    });
+  }
+
   return {
     init: init,
     all: all,
@@ -369,7 +397,8 @@ var cards = (function() {
     Container: Container,
     Deck: Deck,
     Hand: Hand,
-    Pile: Pile
+    Pile: Pile,
+    CreateEndDiv: CreateEndDiv
   };
 })();
 

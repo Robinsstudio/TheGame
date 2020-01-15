@@ -42,6 +42,11 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
   deck.render({ immediate: true });
   let nbAsc = 0;
   let nbDesc = 0;
+  // Fonction pour savoir le nombre de cartes restantes
+  deck.click(function() {
+    deck.cardsLeft();
+  });
+
   for (let pile of ArrayPiles) {
     let p = new cards.Deck({
       id: pile._id,
@@ -71,7 +76,6 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
   // Fonction qui initialise les piles et mains des joueurs
   deck.deal(0, playersHand, function() {
     piles.forEach(element => {
-      //element.addCard(deck.firstCard());
       element.render();
     });
   });
@@ -164,7 +168,6 @@ export function start(playerId, ArrayPlayers) {
 export function putCard(idPlayer, cardValue, idPile) {
   let player;
   let carte;
-  //console.log(playersHand);
   // On cherche la main du joueur à partir de son id
   playersHand.map(element => {
     if (element.id === idPlayer) {
@@ -198,7 +201,6 @@ export function putCard(idPlayer, cardValue, idPile) {
 ////////////////////////////////////////////////////////
 // Fonction pour faire piocher un joueur
 export function drawCard(idPlayer, cardValue) {
-  console.log({ idPlayer, cardValue });
   playersHand.map(element => {
     if (element.id === idPlayer) {
       element.addCardPerso(deck.topCard(), cardValue);
@@ -208,4 +210,8 @@ export function drawCard(idPlayer, cardValue) {
   });
 }
 
-export default { init, start, putCard, drawCard };
+export function CreateEndDiv() {
+  cards.CreateEndDiv();
+}
+
+export default { init, start, putCard, drawCard, CreateEndDiv };

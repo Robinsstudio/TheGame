@@ -94,6 +94,35 @@ class Navbar extends Component {
         </div>
       );
     }
+    if (
+      this.props.location.pathname === RouteBuilder.get("/game") &&
+      this.props.login !== undefined
+    ) {
+      return (
+        <div className="HomeTypo" id="myNavbarDark">
+          <AppBar position="static" className="myNavbarDark">
+            <Toolbar>
+              <Link to={RouteBuilder.get("/")} className="linkHome HomeTypo">
+                <Typography variant="h6" className="HomeTypo">
+                  The Game
+                </Typography>
+              </Link>
+              <Link
+                to={RouteBuilder.get("/lobby")}
+                className="linkHome"
+                visible="false"
+              >
+                <Button color="inherit" className="HomeButton">
+                  Accueil
+                </Button>
+              </Link>
+              <Account login={this.props.login} disconnect={this.disconnect} />
+            </Toolbar>
+          </AppBar>
+        </div>
+      );
+    }
+
     if (this.props.login !== undefined) {
       return (
         <div className="HomeTypo" id="myNavbarDark">
@@ -113,10 +142,7 @@ class Navbar extends Component {
                   Jouer
                 </Button>
               </Link>
-              <Account
-                login={this.props.login}
-                disconnect={this.disconnect}
-              />
+              <Account login={this.props.login} disconnect={this.disconnect} />
             </Toolbar>
           </AppBar>
         </div>
