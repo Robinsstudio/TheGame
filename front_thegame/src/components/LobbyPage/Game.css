@@ -24,3 +24,7 @@
 .containerEndTurn {
   height: 100%;
 }
+
+.displayNone {
+  display: none !important;
+}
