@@ -173,8 +173,6 @@ GameSchema.statics.playersStillHaveCards = function(game) {
   return game.players.filter(player => player.hand.length > 0).length > 0;
 };
 
-
-
 GameSchema.statics.drawCard = function(game) {
   let maxCard = 6;
   switch (game.players.length) {
@@ -376,7 +374,7 @@ GameSchema.statics.getActions = function(gameId, playerId, version) {
       nowPlaying: game.nowPlaying,
       deckPile: game.deckPile.length,
       status: game.status,
-      messages : MessageApp.readMessage(game._id.toString(),playerId)
+      messages: MessageApp.readMessage(game._id.toString(), playerId)
     };
 
     if (version !== undefined)
@@ -424,11 +422,17 @@ GameSchema.statics.getGamePlayerCanJoin = function(playerId) {
     ]
   }).then(res =>
     res.map(ele => {
+      let versionGame;
+      if (ele.actions.length === 0) {
+        versionGame = ele.actions.length + " (Lancer la partie)";
+      } else {
+        versionGame = ele.actions.length + " (Reprendre la partie)";
+      }
       return {
         status: ele.status,
         id: ele._id,
         name: ele.name,
-        version: ele.actions.length,
+        version: versionGame,
         piles: ele.piles.length,
         players: ele.players.length
       };
@@ -457,20 +461,26 @@ GameSchema.statics.getEndedGamePlayerPlayed = function(playerId) {
   );
 };
 
-GameSchema.statics.sendMessage = function(gameId,playerId,message){
-  return Game.findOne({ _id: gameId })
-  .then(game => {
-      if(message === "" || message === undefined)
-        throw new Error("Pas de message à transmettre");
-      if(game.players.filter(ele=>ele._id.toString()===playerId).length>0){
-        MessageApp.writeMessage(game._id.toString(),playerId,game.players.map(ele=>ele._id.toString()),message);
-        return "";
-      }
-      else{
-        throw new Error("Joueur non présent dans la partie");
-      }
-      throw new Error("Partie introuvable");
- })};
+GameSchema.statics.sendMessage = function(gameId, playerId, message) {
+  return Game.findOne({ _id: gameId }).then(game => {
+    if (message === "" || message === undefined)
+      throw new Error("Pas de message à transmettre");
+    if (
+      game.players.filter(ele => ele._id.toString() === playerId).length > 0
+    ) {
+      MessageApp.writeMessage(
+        game._id.toString(),
+        playerId,
+        game.players.map(ele => ele._id.toString()),
+        message
+      );
+      return "";
+    } else {
+      throw new Error("Joueur non présent dans la partie");
+    }
+    throw new Error("Partie introuvable");
+  });
+};
 
 const Game = db.model("Game", GameSchema);
 

@@ -265,7 +265,6 @@ class Game extends Component {
         this.displayMessages(res.messages);
         if (Object.keys(newState).length > 0) {
           this.setState(newState);
-          console.log(res);
           if (cardsPile !== res.deckPile && res.status === "playing") {
             cardsPile = res.deckPile;
             this.changeSnackbar(
@@ -322,7 +321,6 @@ class Game extends Component {
   }
 
   render() {
-    console.log(this.state);
     let redirect;
     if (this.state.gameId === "")
       redirect = <Redirect to={RouteBuilder.get("/lobby")} />;

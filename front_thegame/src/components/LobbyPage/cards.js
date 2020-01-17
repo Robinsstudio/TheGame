@@ -138,6 +138,8 @@ var cards = (function() {
         // Si la carte est dans la main du joueur alors on ajoute la classe Visible pour qu'elle grossisse
         if (this.container instanceof Hand) {
           $(this.el).addClass("Visible");
+        } else {
+          $(this.el).removeClass("Visible");
         }
         $(this.el).css("background-image", "url(" + opt.cardsUrl + ")");
         $(this.el).css("background-position", xpos + "px " + ypos + "px");
