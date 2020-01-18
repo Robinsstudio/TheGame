@@ -1,0 +1,1 @@
+module.exports = require('mongoose').createConnection('mongodb://localhost:27017/thegame', { useNewUrlParser: true, useUnifiedTopology: true });

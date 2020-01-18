@@ -1,0 +1,21 @@
+.MuiSelect-root {
+  font-size: 16px !important;
+}
+
+.MuiFormLabel-root {
+  font-size: 16px !important;
+}
+
+.inputMarginCreate {
+  margin-bottom: 2em !important;
+}
+
+.formMarginTop {
+  margin-top: 1.5em !important;
+  margin-bottom: 1em !important;
+}
+
+.MuiTypography-body1 {
+  font-size: 16px !important;
+  color: rgba(0, 0, 0, 0.7);
+}

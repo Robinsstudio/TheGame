@@ -1,0 +1,30 @@
+.buttonReady {
+  font-size: 20px !important;
+  margin: 2em !important;
+}
+
+.buttonQuitGame {
+  font-size: 20px !important;
+  margin-right: 5em !important;
+  margin: 2em !important;
+}
+
+.buttonLaunchGame {
+  text-align: center;
+}
+
+.buttonEndTurn {
+  font-size: 25px !important;
+  position: absolute !important;
+  color: black !important;
+  top: 45%;
+  right: 50px;
+}
+
+.containerEndTurn {
+  height: 100%;
+}
+
+.displayNone {
+  display: none !important;
+}

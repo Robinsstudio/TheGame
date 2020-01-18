@@ -1,0 +1,39 @@
+.paper {
+  text-align: center;
+  padding: 2em;
+}
+
+.gridButtonSection {
+  margin-top: 2em !important;
+  text-align: center;
+}
+
+/* CSS des tableaux de parties */
+.MuiTableCell-root {
+  font-size: 14px !important;
+}
+.MuiTableHead-root {
+  background-color: silver;
+}
+
+.MuiButton-root.Mui-disabled {
+  background-color: silver !important;
+}
+
+.hiddenCell {
+  display: none !important;
+}
+
+.MuiTableCell-root {
+  font-weight: 500 !important;
+}
+
+.loseGame {
+  background-color: #ffd2d2;
+  color: #d8000c !important;
+}
+
+.winGame {
+  background-color: #dff2bf;
+  color: #270 !important;
+}
