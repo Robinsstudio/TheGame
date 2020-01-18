@@ -28,3 +28,18 @@
 .displayNone {
   display: none !important;
 }
+
+.chat {
+  position : relative;
+  top : 10px;
+  display : flex;
+  width : 99%;
+  justify-content : flex-end;
+}
+
+.chatInput{
+  border : 0px;
+  border-bottom : 1px solid black;
+  color : black;
+  width : 30vw;
+}
