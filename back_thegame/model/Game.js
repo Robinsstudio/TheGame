@@ -478,7 +478,6 @@ GameSchema.statics.sendMessage = function(gameId, playerId, message) {
     } else {
       throw new Error("Joueur non présent dans la partie");
     }
-    throw new Error("Partie introuvable");
   });
 };
 

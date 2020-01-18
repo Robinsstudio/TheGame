@@ -31,7 +31,7 @@ router.post('/account', function(req, res) {
 	const {jwt : {playerId}} = req;
 	Player.editPlayer(playerId,req.body.login,req.body.mail,req.body.oldPassword,req.body.newPassword)
 	.then(result=>res.status(200).json({login : result.login,mail : result.email}))
-	.catch(err=>{console.log(err);res.status(404).send(err.message)});
+	.catch(err=>{res.status(404).send(err.message)});
 })
 .delete('/account',Player.isAuthenticated,function(req,res){
 	const {jwt : {playerId}} = req;
@@ -83,7 +83,6 @@ router.put('/game/:id/player', Player.isAuthenticated, function(req, res) {
 		res.status(200).json(result);
 	})
 	.catch(function(err) {
-		console.log(err);
 		res.sendStatus(412);
 	});
 })
@@ -94,7 +93,6 @@ router.put('/game/:id/player', Player.isAuthenticated, function(req, res) {
 		res.sendStatus(200);
 	})
 	.catch(function(err){
-		console.log(err);
 		res.status(412).send(err.message);
 	})
 });
@@ -106,7 +104,6 @@ router.get('/game/:id/actions',Player.isAuthenticated,function(req,res){
 		res.status(200).json(result);
 	})
 	.catch(function(err) {
-		console.log(err);
 		res.status(412).send(err.message);
 	});
 });
@@ -118,7 +115,6 @@ router.put('/game/:id/tour',Player.isAuthenticated,function(req,res){
 		res.sendStatus(200);
 	})
 	.catch(function(err){
-		console.log(err);
 		res.status(412).send(err.message);
 	})
 });
@@ -130,7 +126,6 @@ router.put('/game/:id/ready',Player.isAuthenticated,function(req,res){
 		res.sendStatus(200);
 	})
 	.catch(function(err){
-		console.log(err);
 		res.status(412).send(err.message);
 	})
 })
@@ -142,7 +137,6 @@ router.get('/game/:id/card',Player.isAuthenticated,function(req,res){
 		res.status(200).json({result});
 	})
 	.catch(function(err){
-		console.log(err);
 		res.status(412).send(err.message);
 	})
 })
@@ -153,7 +147,6 @@ router.get('/game/:id/card',Player.isAuthenticated,function(req,res){
 		res.status(200).json({});
 	})
 	.catch(function(err){
-		console.log(err);
 		res.status(412).send(err.message);
 	})
 });
