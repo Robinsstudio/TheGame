@@ -249,30 +249,30 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 
 * **Success Response:**
   * **Code:** 200 
-    **Content:** `{
-        players : [{ 
-                _id : [String], 
-                ready : [Boolean], 
-                hand : [{_id :[String], value : [Integer]}] 
-            }],
-        nowPlaying : [String] (L'id du joueur dont c'est le tour),
-        status : [String] (Le statut de la partie),
-        deckPile : [Integer] (Le nombre de cartes restantes dans le deck),
-        version : [Integer] (La version de la partie),
-        message : [{
-                who:[String],
-                message:[String]
-            }] (Liste des messages non lus par le joueur),
-        actions : [{
-                _id:[String],
-                type:[String],
-                details:{who:[String],card:[Object]}
-            }] (Liste des actions manquées par le joueur),
-        piles : [ {
-                _id : [String],
-                cards:[Object],
-                orientation:[String]
-            }]
+    **Content:** `{<br/>
+        players : [{ <br/>
+                _id : [String], <br/>
+                ready : [Boolean], <br/>
+                hand : [{_id :[String], value : [Integer]}] <br/>
+            }],<br/>
+        nowPlaying : [String] (L'id du joueur dont c'est le tour),<br/>
+        status : [String] (Le statut de la partie),<br/>
+        deckPile : [Integer] (Le nombre de cartes restantes dans le deck),<br/>
+        version : [Integer] (La version de la partie),<br/>
+        message : [{<br/>
+                who:[String],<br/>
+                message:[String]<br/>
+            }] (Liste des messages non lus par le joueur),<br/>
+        actions : [{<br/>
+                _id:[String],<br/>
+                type:[String],<br/>
+                details:{who:[String],card:[Object]}<br/>
+            }] (Liste des actions manquées par le joueur),<br/>
+        piles : [ {<br/>
+                _id : [String],<br/>
+                cards:[Object],<br/>
+                orientation:[String]<br/>
+            }]<br/>
      } `
  
 * **Error Response:**
