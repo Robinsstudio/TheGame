@@ -1,6 +1,14 @@
 # Documentation de l'API RESTful du projet The Game
 L'API est composée d'un ensemble de routes matérialisant des ressources et associées à des verbes HTTP. Le corps des requêtes est en JSON.
 
+**Utilité de l'API**
+----
+L'objectif de cette API est de permettre aux utilisateurs d'avoir toutes les fonctions nécessaires à la gestion d'une partie du célèbre jeu de société nommé TheGame. Ainsi grâce à cette API vous pourrez créer, sauvegarder et jouer au jeu tout en laissant l'API contrôler vos actions. Celle-ci vous fournira donc toutes les routes nécessaires pour vous permettre de mettre en place un système de lobby à partir duquel le joueur pourra choisir de continuer une partie en cours ou d'en débuter une nouvelle.
+Cette API utilise principalement les modules nodes express et mongoose. Afin de sauvegarder les parties, il est nécessaire d'avoir au préalable un serveur mongoDb lancé auquel l'application pourra accéder.
+
+
+**Liste des routes utilisables de l'API**
+----
 Le tableau suivant énumère les différentes routes de l'API ainsi que les verbes avec lesquels elles sont compatibles.
 
 Route               | GET | POST | PUT | DELETE
