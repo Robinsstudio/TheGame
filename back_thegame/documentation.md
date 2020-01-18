@@ -1,6 +1,14 @@
 # Documentation de l'API RESTful du projet The Game
 L'API est composée d'un ensemble de routes matérialisant des ressources et associées à des verbes HTTP. Le corps des requêtes est en JSON.
 
+**Utilité de l'API**
+----
+L'objectif de cette API est de permettre aux utilisateurs d'avoir toutes les fonctions nécessaires à la gestion d'une partie du célèbre jeu de société nommé TheGame. Ainsi grâce à cette API vous pourrez créer, sauvegarder et jouer au jeu tout en laissant l'API contrôler vos actions. Celle-ci vous fournira donc toutes les routes nécessaires pour vous permettre de mettre en place un système de lobby à partir duquel le joueur pourra choisir de continuer une partie en cours ou d'en débuter une nouvelle.
+Cette API utilise principalement les modules nodes express et mongoose. Afin de sauvegarder les parties, il est nécessaire d'avoir au préalable un serveur mongoDb lancé auquel l'application pourra accéder.
+
+
+**Liste des routes utilisables de l'API**
+----
 Le tableau suivant énumère les différentes routes de l'API ainsi que les verbes avec lesquels elles sont compatibles.
 
 Route               | GET | POST | PUT | DELETE
@@ -149,7 +157,7 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 ----
 
 * **URL**
-    /api/authenticate
+    /api/authentication
 
 * **Method:**
     `PUT`
@@ -177,7 +185,7 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 ----
 
 * **URL**
-    /api/authenticate
+    /api/authentication
 
 * **Method:**
     `DELETE`
@@ -241,7 +249,31 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 
 * **Success Response:**
   * **Code:** 200 
-    **Content:** `Objet contenant toutes les informations sur la partie `
+    **Content:** `{
+        players : [{ 
+                _id : [String], 
+                ready : [Boolean], 
+                hand : [{_id :[String], value : [Integer]}] 
+            }],
+        nowPlaying : [String] (L'id du joueur dont c'est le tour),
+        status : [String] (Le statut de la partie),
+        deckPile : [Integer] (Le nombre de cartes restantes dans le deck),
+        version : [Integer] (La version de la partie),
+        message : [{
+                who:[String],
+                message:[String]
+            }] (Liste des messages non lus par le joueur),
+        actions : [{
+                _id:[String],
+                type:[String],
+                details:{who:[String],card:[Object]}
+            }] (Liste des actions manquées par le joueur),
+        piles : [ {
+                _id : [String],
+                cards:[Object],
+                orientation:[String]
+            }]
+     } `
  
 * **Error Response:**
   * **Code:** 412 
@@ -295,7 +327,7 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 
 * **Success Response:**
   * **Code:** 200 
-    **Content:** `Objet contenant toutes les informations sur la partie `
+    **Content:** `result:[[String]]`
  
 * **Error Response:**
   * **Code:** 412 
@@ -379,7 +411,31 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 
 * **Success Response:**
   * **Code:** 200 
-    **Content:** `Objet contenant toutes les informations sur la partie `
+    **Content:** `{
+        players : [{ 
+                _id : [String], 
+                ready : [Boolean], 
+                hand : [{_id :[String], value : [Integer]}] 
+            }],
+        nowPlaying : [String] (L'id du joueur dont c'est le tour),
+        status : [String] (Le statut de la partie),
+        deckPile : [Integer] (Le nombre de cartes restantes dans le deck),
+        version : [Integer] (La version de la partie),
+        message : [{
+                who:[String],
+                message:[String]
+            }] (Liste des messages non lus par le joueur),
+        actions : [{
+                _id:[String],
+                type:[String],
+                details:{who:[String],card:[Object]}
+            }] (Liste des actions manquées par le joueur),
+        piles : [ {
+                _id : [String],
+                cards:[Object],
+                orientation:[String]
+            }]
+     } `
  
 * **Error Response:**
   * **Code:** 412 
@@ -411,35 +467,6 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
     * **Code:** 412 
     **Content:** `erreur=[String]`
     * **Code:** 403 
-    **Content:** `""`
-
-**Récupérer les actions**
-----
-    Permet de récupérer les actions manquées depuis le dernier rafraichissement.
-    Le query Param version permet de récupérer en plus de l'état de la partie actuel les dernières actions ayant mené à cet état depuis version.
-* **URL**
-    /api/game/:id/actions
-
-* **Method:**
-    `GET`
-  
-* **URL Params**
-    `id=[String]`
-
-    **Required**
-    `id=[String]`
-
-* **Query Params**
-    `version=[Integer]`
-
-* **Success Response:**
-  * **Code:** 200 
-    **Content:** `Objet contenant toutes les informations sur la partie `
- 
-* **Error Response:**
-  * **Code:** 412 
-    **Content:** `erreur=[String]`
-  * **Code:** 403 
     **Content:** `""`
 
 **Envoyer un message**
@@ -482,7 +509,7 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 
 * **Success Response:**
   * **Code:** 200 
-    **Content:** `Objet contenant une liste de partie`
+    **Content:** `{result : [{status:[String],_id:[String],name:[String],version:[String],piles:[Integer],players:[Integer]}]}`
 
 * **Error Response:**
 
@@ -503,7 +530,7 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 
 * **Success Response:** 
   * **Code:** 200 
-    **Content:** `Objet contenant toutes les informations sur la partie `
+    **Content:** `{result : [{status:[String],_id:[String],name:[String],remaining:[Integer],piles:[Integer],players:[Integer]}]}`
  
 * **Error Response:**
   * **Code:** 412 

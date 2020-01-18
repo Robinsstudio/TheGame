@@ -167,7 +167,6 @@ class Game extends Component {
         });
       })
       .then(res => {
-        console.log(res);
         this.interval = setInterval(() => this.getGameInfo(), 500);
         if (res.piles !== undefined) this.piles = res.piles;
         this.displayMessages(res.messages);
@@ -186,15 +185,11 @@ class Game extends Component {
           throw new Error(err);
         });
       })
-      .then(res => {
-        console.log(res);
-      })
       .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
   runActions(actions) {
     for (let action of actions) {
-      console.log(action);
       if (action.type === "playCard") {
         utils.putCard(
           action.details.who,
@@ -331,7 +326,6 @@ class Game extends Component {
   }
 
   render() {
-    console.log(this.state);
     let redirect;
     if (this.state.gameId === "")
       redirect = <Redirect to={RouteBuilder.get("/lobby")} />;
