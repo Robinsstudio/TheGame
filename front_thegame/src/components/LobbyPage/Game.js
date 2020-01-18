@@ -264,6 +264,7 @@ class Game extends Component {
         this.runActions(res.actions);
         this.displayMessages(res.messages);
         if (Object.keys(newState).length > 0) {
+          console.log(res);
           this.setState(newState);
           if (cardsPile !== res.deckPile && res.status === "playing") {
             cardsPile = res.deckPile;

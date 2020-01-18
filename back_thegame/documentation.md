@@ -249,7 +249,31 @@ La plupart des routes demandent à l'utilisateur si celui-ci est authentifier av
 
 * **Success Response:**
   * **Code:** 200 
-    **Content:** `Objet contenant toutes les informations sur la partie `
+    **Content:** `{
+        players : [{ 
+                _id : [String], 
+                ready : [Boolean], 
+                hand : [{_id :[String], value : [Integer]}] 
+            }],
+        nowPlaying : [String] (L'id du joueur dont c'est le tour),
+        status : [String] (Le statut de la partie),
+        deckPile : [Integer] (Le nombre de cartes restantes dans le deck),
+        version : [Integer] (La version de la partie),
+        message : [{
+                who:[String],
+                message:[String]
+            }] (Liste des messages non lus par le joueur),
+        actions : [{
+                _id:[String],
+                type:[String],
+                details:{who:[String],card:[Object]}
+            }] (Liste des actions manquées par le joueur),
+        piles : [ {
+                _id : [String],
+                cards:[Object],
+                orientation:[String]
+            }]
+     } `
  
 * **Error Response:**
   * **Code:** 412 
