@@ -48,6 +48,7 @@ class Game extends Component {
   }
 
   componentDidMount() {
+    Notification.requestPermission();
     let searchParams = window.location.search;
     let urlSearchParams = new URLSearchParams(searchParams);
     if (urlSearchParams.has("id")) {
@@ -81,6 +82,9 @@ class Game extends Component {
         "info",
         2000
       );
+      if(this.state.playerId===this.state.nowPlaying && document.visibilityState!=="visible" && Notification.permission === "granted"){
+          new Notification("C'est à votre tour de jouer");
+      }
     }
     if (
       this.state.playerId !== undefined &&
@@ -166,6 +170,7 @@ class Game extends Component {
         console.log(res);
         this.interval = setInterval(() => this.getGameInfo(), 500);
         if (res.piles !== undefined) this.piles = res.piles;
+        this.displayMessages(res.messages);
         this.setState({ players: res.players, joined: true });
       })
       .catch(err => this.changeSnackbar(err.message, "error"));
@@ -219,7 +224,7 @@ class Game extends Component {
     for (let message of messages) {
       this.changeSnackbar(
         `${this.players[`${message.who}`]} : ${message.message}`,
-        "info",
+        "alert",
         2000
       );
     }
