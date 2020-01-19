@@ -10,16 +10,20 @@
   box-shadow: #111 1px 1px 2px;
 }
 
-.borderPile {
-  transform: scale(1.3) !important;
-}
-
-.borderCard {
-  transform: scale(1.5) !important;
+.cardHover {
+  transform: scale(1.1) !important;
   z-index: 50000 !important;
 }
 
-.cardHover {
-  transform: scale(1.5) !important;
+.borderPile {
+  transform: scale(0.85) !important;
+}
+
+.miniCard {
+  transform: scale(0.67) !important;
+}
+
+.borderCard {
+  transform: scale(1.1) !important;
   z-index: 50000 !important;
 }

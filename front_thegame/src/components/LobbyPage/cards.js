@@ -3,8 +3,8 @@
 var cards = (function() {
   //The global options
   var opt = {
-    cardSize: { width: 69, height: 106, padding: 40 },
-    animationSpeed: 500,
+    cardSize: { width: 103.4, height: 159, padding: 40 },
+    animationSpeed: 400,
     table: "body",
     cardback: "img/dos.png",
     acesHigh: false,
@@ -77,14 +77,17 @@ var cards = (function() {
             cursor: "pointer"
           })
           .addClass("card")
+          .addClass("miniCard")
           .hover(
             function() {
               if ($(this).hasClass("Visible")) {
+                $(this).removeClass("miniCard");
                 $(this).addClass("cardHover");
               }
             },
             function() {
               $(this).removeClass("cardHover");
+              $(this).addClass("miniCard");
             }
           )
           .data("card", this)
@@ -281,12 +284,6 @@ var cards = (function() {
     // Retourne la première carte du deck (la carte en dessous du deck)
     firstCard: function() {
       return this[0];
-    },
-
-    // Retourne le nombre de cartes restantes dans la pile
-    cardsLeft: function() {
-      console.log(this.length);
-      console.log(this);
     }
   });
 
@@ -314,9 +311,11 @@ var cards = (function() {
     borderChange: function(boolean) {
       const ind = this.length - 1;
       if (boolean === false) {
+        this[ind].el.addClass("miniCard");
         this[ind].el.removeClass("borderPile");
       } else {
         this[ind].el.addClass("borderPile");
+        this[ind].el.removeClass("miniCard");
       }
     },
     deal: function(count, hands, callback) {
@@ -349,9 +348,11 @@ var cards = (function() {
     // changement de taille pour la carte séléctionnée
     borderChange: function(card, boolean) {
       if (boolean === false) {
+        card.el.addClass("miniCard");
         card.el.removeClass("borderCard");
       } else {
         card.el.addClass("borderCard");
+        card.el.removeClass("miniCard");
       }
     },
     calcPosition: function(options) {
