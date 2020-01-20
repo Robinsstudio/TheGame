@@ -170,7 +170,6 @@ class Game extends Component {
         console.log(res);
         this.interval = setInterval(() => this.getGameInfo(), 500);
         if (res.piles !== undefined) this.piles = res.piles;
-        this.displayMessages(res.messages);
         this.setState({ players: res.players, joined: true });
       })
       .catch(err => this.changeSnackbar(err.message, "error"));
