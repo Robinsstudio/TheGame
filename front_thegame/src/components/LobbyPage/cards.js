@@ -140,7 +140,6 @@ var cards = (function() {
       ypos = -offsets[this.suit] * opt.cardSize.height;
       this.rotate(0);
       if (rank >= 0) {
-        console.log(this);
         if (rank === 1 && rank === 100) {
           $(this.el).removeClass("Visible");
         }
