@@ -45,6 +45,7 @@ class Game extends Component {
   }
 
   componentDidMount() {
+    Notification.requestPermission();
     let searchParams = window.location.search;
     let urlSearchParams = new URLSearchParams(searchParams);
     if (urlSearchParams.has("id")) {
@@ -78,6 +79,9 @@ class Game extends Component {
         "info",
         2000
       );
+      if(this.state.playerId===this.state.nowPlaying && document.visibilityState!=="visible" && Notification.permission === "granted"){
+        new Notification("C'est à votre tour de jouer");
+      }
     }
     if (
       this.state.playerId !== undefined &&
