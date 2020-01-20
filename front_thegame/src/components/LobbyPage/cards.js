@@ -86,8 +86,10 @@ var cards = (function() {
               }
             },
             function() {
-              $(this).removeClass("cardHover");
-              $(this).addClass("miniCard");
+              if ($(this).hasClass("Visible")) {
+                $(this).removeClass("cardHover");
+                $(this).addClass("miniCard");
+              }
             }
           )
           .data("card", this)
