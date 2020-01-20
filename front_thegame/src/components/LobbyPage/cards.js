@@ -86,8 +86,10 @@ var cards = (function() {
               }
             },
             function() {
-              $(this).removeClass("cardHover");
-              $(this).addClass("miniCard");
+              if ($(this).hasClass("Visible")) {
+                $(this).removeClass("cardHover");
+                $(this).addClass("miniCard");
+              }
             }
           )
           .data("card", this)
@@ -138,6 +140,10 @@ var cards = (function() {
       ypos = -offsets[this.suit] * opt.cardSize.height;
       this.rotate(0);
       if (rank >= 0) {
+        console.log(this);
+        if (rank === 1 && rank === 100) {
+          $(this.el).removeClass("Visible");
+        }
         // Si la carte est dans la main du joueur alors on ajoute la classe Visible pour qu'elle grossisse
         if (this.container instanceof Hand) {
           $(this.el).addClass("Visible");
