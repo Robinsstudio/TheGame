@@ -79,7 +79,11 @@ class Game extends Component {
         "info",
         2000
       );
-      if(this.state.playerId===this.state.nowPlaying && document.visibilityState!=="visible" && Notification.permission === "granted"){
+      if (
+        this.state.playerId === this.state.nowPlaying &&
+        document.visibilityState !== "visible" &&
+        Notification.permission === "granted"
+      ) {
         new Notification("C'est à votre tour de jouer");
       }
     }

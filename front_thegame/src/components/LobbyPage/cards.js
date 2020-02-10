@@ -1,10 +1,12 @@
 ﻿import $ from "jquery";
 
+let paddingCard = 40;
+
 var cards = (function() {
   //The global options
   var opt = {
-    cardSize: { width: 103.4, height: 159, padding: 40 },
-    animationSpeed: 400,
+    cardSize: { width: 155.2, height: 238.6 },
+    animationSpeed: 300,
     table: "body",
     cardback: "img/dos.png",
     acesHigh: false,
@@ -24,6 +26,14 @@ var cards = (function() {
   }
 
   function init(options) {
+    paddingCard = options.widthScreen;
+    if (paddingCard < 1450) {
+      paddingCard = 45;
+    } else if (paddingCard < 1800) {
+      paddingCard = 60;
+    } else {
+      paddingCard = 80;
+    }
     while (all.length !== 0) all.pop();
     if (options) {
       for (let i in options) {
@@ -70,7 +80,10 @@ var cards = (function() {
       if (rank >= 0) {
         this.el = $("<div/>")
           .css({
-            width: opt.cardSize.width,
+            width:
+              this.rank === 1 || this.rank === 100
+                ? opt.cardSize.width - 2
+                : opt.cardSize.width,
             height: opt.cardSize.height,
             "background-image": "url(" + opt.cardsUrl + ")",
             position: "absolute",
@@ -112,12 +125,7 @@ var cards = (function() {
     },
 
     rotate: function(angle) {
-      $(this.el)
-        .css("-webkit-transform", "rotate(" + angle + "deg)")
-        .css("-moz-transform", "rotate(" + angle + "deg)")
-        .css("-ms-transform", "rotate(" + angle + "deg)")
-        .css("transform", "rotate(" + angle + "deg)")
-        .css("-o-transform", "rotate(" + angle + "deg)");
+      $(this.el).css("transform", "rotate(" + angle + "deg)");
     },
 
     showCard: function() {
@@ -140,10 +148,6 @@ var cards = (function() {
       ypos = -offsets[this.suit] * opt.cardSize.height;
       this.rotate(0);
       if (rank >= 0) {
-        console.log(this);
-        if (rank === 1 && rank === 100) {
-          $(this.el).removeClass("Visible");
-        }
         // Si la carte est dans la main du joueur alors on ajoute la classe Visible pour qu'elle grossisse
         if (this.container instanceof Hand) {
           $(this.el).addClass("Visible");
@@ -193,7 +197,8 @@ var cards = (function() {
       card.column = column;
       card.rank = cardValue;
       card.name = "carte" + cardValue;
-
+      $(card.el).removeClass("Visible");
+      $(card.el).removeClass("cardHover");
       this.addCards([card]);
     },
 
@@ -363,12 +368,12 @@ var cards = (function() {
     },
     calcPosition: function(options) {
       options = options || {};
-      var width = opt.cardSize.width + (this.length - 1) * opt.cardSize.padding;
+      var width = opt.cardSize.width + (this.length - 1) * paddingCard;
       var left = Math.round(this.x - width / 2);
       var top = Math.round(this.y - opt.cardSize.height / 2, 0);
       for (var i = 0; i < this.length; i++) {
         this[i].targetTop = top;
-        this[i].targetLeft = left + i * opt.cardSize.padding;
+        this[i].targetLeft = left + i * paddingCard;
       }
     }
   });

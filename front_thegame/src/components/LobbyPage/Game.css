@@ -13,18 +13,200 @@
   text-align: center;
 }
 
-.buttonEndTurn {
-  font-size: 25px !important;
-  position: absolute !important;
-  color: black !important;
-  top: 45%;
-  right: 50px;
+.displayNone {
+  display: none !important;
 }
 
+.gameContainer,
+.parentContainer,
 .containerEndTurn {
   height: 100%;
 }
 
-.displayNone {
-  display: none !important;
+.buttonEndTurn {
+  font-size: 20px !important;
+  color: black !important;
+}
+
+#card-table {
+  background-color: #e6e6e6;
+  height: 85%;
+  border: solid 6px black;
+  border-radius: 8px;
+  box-shadow: #111 1px 1px 2px;
+}
+
+/***********************************************************************\
+/* Si écran égal 150% zoom mais large */
+@media screen and (min-width: 1210px) and (max-width: 1800px) and (min-height: 300px) and (max-height: 650px) {
+  .buttonEndTurn {
+    font-size: 20px !important;
+    position: absolute !important;
+    color: black !important;
+    top: 45%;
+    right: 40px;
+  }
+  .cardHover {
+    transform: scale(0.6) !important;
+    z-index: 50000 !important;
+  }
+
+  .borderPile {
+    transform: scale(0.55) !important;
+  }
+
+  .miniCard {
+    transform: scale(0.45) !important;
+  }
+
+  .borderCard {
+    transform: scale(0.6) !important;
+    z-index: 50000 !important;
+  }
+}
+/***********************************************************************\
+/* Si écran égal 150% zoom non large */
+@media screen and (min-width: 800px) and (max-width: 1209px) and (min-height: 300px) and (max-height: 650px) {
+  .buttonEndTurn {
+    font-size: 20px !important;
+    position: absolute !important;
+    color: black !important;
+    top: 45%;
+    left: 0px;
+  }
+  .cardHover {
+    transform: scale(0.6) !important;
+    z-index: 50000 !important;
+  }
+
+  .borderPile {
+    transform: scale(0.55) !important;
+  }
+
+  .miniCard {
+    transform: scale(0.45) !important;
+  }
+
+  .borderCard {
+    transform: scale(0.6) !important;
+    z-index: 50000 !important;
+  }
+}
+
+/***********************************************************************\
+/***********************************************************************\
+/***********************************************************************\
+/* Si écran égal 125% zoom mais large */
+@media screen and (min-width: 1440px) and (max-width: 1800px) and (min-height: 650px) and (max-height: 800px) {
+  .buttonEndTurn {
+    font-size: 26px !important;
+    position: absolute !important;
+    color: black !important;
+    top: 45%;
+    right: 40px;
+  }
+  .cardHover {
+    transform: scale(0.8) !important;
+    z-index: 50000 !important;
+  }
+
+  .borderPile {
+    transform: scale(0.75) !important;
+  }
+
+  .miniCard {
+    transform: scale(0.6) !important;
+  }
+
+  .borderCard {
+    transform: scale(0.8) !important;
+    z-index: 50000 !important;
+  }
+}
+/***********************************************************************\
+/* Si écran égal 125% zoom non large */
+@media screen and (max-width: 1439px) and (min-height: 650px) and (max-height: 800px) {
+  .buttonEndTurn {
+    font-size: 26px !important;
+    position: absolute !important;
+    color: black !important;
+    top: 45%;
+    left: 20px;
+  }
+  .cardHover {
+    transform: scale(0.8) !important;
+    z-index: 50000 !important;
+  }
+
+  .borderPile {
+    transform: scale(0.75) !important;
+  }
+
+  .miniCard {
+    transform: scale(0.6) !important;
+  }
+
+  .borderCard {
+    transform: scale(0.8) !important;
+    z-index: 50000 !important;
+  }
+}
+
+/***********************************************************************\
+/***********************************************************************\
+/***********************************************************************\
+/* Si écran égal 100% zoom mais large */
+@media screen and (min-width: 1810px) and (min-height: 800px) and (max-height: 1500px) {
+  .buttonEndTurn {
+    font-size: 36px !important;
+    position: absolute !important;
+    color: black !important;
+    top: 45%;
+    right: 40px;
+  }
+  .cardHover {
+    transform: scale(1) !important;
+    z-index: 50000 !important;
+  }
+
+  .borderPile {
+    transform: scale(0.9) !important;
+  }
+
+  .miniCard {
+    transform: scale(0.7) !important;
+  }
+
+  .borderCard {
+    transform: scale(1) !important;
+    z-index: 50000 !important;
+  }
+}
+/***********************************************************************\
+/* Si écran égal 100% zoom non large */
+@media screen and (max-width: 1809px) and (min-height: 800px) and (max-height: 1500px) {
+  .buttonEndTurn {
+    font-size: 36px !important;
+    position: absolute !important;
+    color: black !important;
+    top: 45%;
+    left: 40px;
+  }
+  .cardHover {
+    transform: scale(1) !important;
+    z-index: 50000 !important;
+  }
+
+  .borderPile {
+    transform: scale(0.9) !important;
+  }
+
+  .miniCard {
+    transform: scale(0.7) !important;
+  }
+
+  .borderCard {
+    transform: scale(1) !important;
+    z-index: 50000 !important;
+  }
 }
