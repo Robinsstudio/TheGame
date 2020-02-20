@@ -6,6 +6,7 @@ let playersHand = [];
 
 let tableHeight = 0;
 let tableWidth = 0;
+let limitePioche = 8;
 
 let myHand = new cards.Hand({
   id: "",
@@ -211,9 +212,16 @@ export function putCard(idPlayer, cardValue, idPile) {
 
 ////////////////////////////////////////////////////////
 // Fonction pour faire piocher un joueur
-export function drawCard(idPlayer, cardValue) {
+export function drawCard(idPlayer, cardValue, nbPlayers) {
+  if (nbPlayers === 5) {
+    limitePioche = 6;
+  } else if (nbPlayers === 2) {
+    limitePioche = 7;
+  } else if (nbPlayers === 1) {
+    limitePioche = 8;
+  }
   playersHand.map(element => {
-    if (element.id === idPlayer) {
+    if (element.id === idPlayer && element.length < limitePioche) {
       element.addCardPerso(deck.topCard(), cardValue);
       element.render();
     }

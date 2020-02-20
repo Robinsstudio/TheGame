@@ -42,6 +42,7 @@ class Game extends Component {
     this.playCard = this.playCard.bind(this);
     this.changeSnackbar = this.changeSnackbar.bind(this);
     this.playerQuit = this.playerQuit.bind(this);
+    this.runActions = this.runActions.bind(this);
   }
 
   componentDidMount() {
@@ -196,7 +197,11 @@ class Game extends Component {
           action.details.pile
         );
       } else if (action.type === "drawCard") {
-        utils.drawCard(action.details.who, action.details.card.value);
+        utils.drawCard(
+          action.details.who,
+          action.details.card.value,
+          this.state.players.length
+        );
       } else if (action.type === "game over") {
         utils.CreateEndDiv();
         this.changeSnackbar("La partie est perdue !", "warning");

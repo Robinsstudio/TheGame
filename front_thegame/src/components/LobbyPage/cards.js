@@ -5,7 +5,7 @@ let paddingCard = 40;
 var cards = (function() {
   //The global options
   var opt = {
-    cardSize: { width: 155.2, height: 238.6 },
+    cardSize: { width: 155.6, height: 238.6 },
     animationSpeed: 300,
     table: "body",
     cardback: "img/dos.png",
