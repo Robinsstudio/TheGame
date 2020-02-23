@@ -213,7 +213,7 @@ export function putCard(idPlayer, cardValue, idPile) {
 ////////////////////////////////////////////////////////
 // Fonction pour faire piocher un joueur
 export function drawCard(idPlayer, cardValue, nbPlayers) {
-  if (nbPlayers === 5) {
+  if (nbPlayers > 2) {
     limitePioche = 6;
   } else if (nbPlayers === 2) {
     limitePioche = 7;
