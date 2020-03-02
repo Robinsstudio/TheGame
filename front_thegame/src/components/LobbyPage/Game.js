@@ -15,6 +15,8 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { withSnackbar } from "notistack";
 import RouteBuilder from "../../js/RouteBuilder";
 import { Redirect } from "react-router-dom";
+import IconButton from '@material-ui/core/IconButton';
+import SendIcon from '@material-ui/icons/Send';
 import "./Game.css";
 
 let cardsPile = 98;
@@ -30,7 +32,8 @@ class Game extends Component {
       players: [],
       game: "waitingPlayers",
       nowPlaying: undefined,
-      version: 0
+      version: 0,
+      message : ""
     };
     this.piles = [];
     this.players = {};
@@ -109,12 +112,13 @@ class Game extends Component {
     }
   }
 
-  sendMessage(message) {
+  sendMessage() {
     return new Request("/api/game/" + this.state.gameId + "/message")
       .put()
-      .body({ message: message })
+      .body({ message: this.state.message })
       .send()
       .then(res => {
+        this.setState({message:""});
         if (res.ok) return "";
         return res.text().then(err => {
           throw new Error(err);
@@ -122,6 +126,7 @@ class Game extends Component {
       })
       .catch(err => this.changeSnackbar(err.message, "error"));
   }
+
 
   playCard(cardValue, pileId) {
     return new Request("/api/game/" + this.state.gameId + "/card")
@@ -223,7 +228,8 @@ class Game extends Component {
     for (let message of messages) {
       this.changeSnackbar(
         `${this.players[`${message.who}`]} : ${message.message}`,
-        "info"
+        "alert",
+        2000
       );
     }
   }
@@ -443,8 +449,13 @@ class Game extends Component {
               </div>
             )}
           </div>
+          {this.state.game === "playing" && this.state.players.filter(ele=>ele._id===this.state.playerId).length !== 0 && (
+            <form className="chat" onSubmit={(e)=>{e.preventDefault();this.sendMessage();}}>
+              <input placeholder="Ecrivez un message ..." className="chatInput" value={this.state.message} onChange={(e)=>this.setState({message:e.target.value})}/>
+              <IconButton disabled={this.state.message===""} type="submit"><SendIcon color={(this.state.message==="")?"disabled":"primary"} fontSize="large"/></IconButton>
+            </form>
+        )}
         </div>
-
         {this.state.version > 0 && this.state.game !== "playing" && (
           <div className="buttonLaunchGame">
             <Button

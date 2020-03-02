@@ -104,7 +104,7 @@ PlayerSchema.statics.editPlayer = function(playerId,login,mail,oldPass,newPass){
 }
 
 PlayerSchema.statics.getPlayerLogin = function(id) {
-	if(id===undefined)
+	if(id===undefined ||id==="" ||id===null)
 		throw new Error("Un login doit être fourni");
 	return Player.findOne({_id : id}).then(res=>{return {login : res.login}})
 }

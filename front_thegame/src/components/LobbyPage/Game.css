@@ -35,6 +35,19 @@
   border-radius: 8px;
   box-shadow: #111 1px 1px 2px;
 }
+.chat {
+  position : block;
+  display : flex;
+  width : 99%;
+  justify-content : flex-end;
+}
+
+.chatInput{
+  border : 0px;
+  border-bottom : 1px solid black;
+  color : black;
+  width : 30vw;
+}
 
 /***********************************************************************\
 /* Si écran égal 150% zoom mais large */
