@@ -18,3 +18,11 @@
   margin-right: 10px;
   transform: rotateY(180deg);
 }
+
+.DeleteButton {
+  font-size: 1.1em !important;
+  padding: 0.4em !important;
+  margin-left: 2em !important;
+  color: white !important;
+  background-color: #b80c0c !important;
+}
