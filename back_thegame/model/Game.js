@@ -474,6 +474,14 @@ GameSchema.statics.getEndedGamePlayerPlayed = function (playerId) {
   );
 };
 
+// Fonction pour supprimer toutes les parties en base de données
+GameSchema.statics.deleteAllGames = function () {
+  Game.deleteMany({}, function (res, err) {
+    if (err) return err;
+    return res;
+  });
+};
+
 GameSchema.statics.sendMessage = function (gameId, playerId, message) {
   return Game.findOne({ _id: gameId }).then((game) => {
     if (message === "" || message === undefined)
