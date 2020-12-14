@@ -11,21 +11,21 @@ let limitePioche = 8;
 let myHand = new cards.Hand({
   id: "",
   faceUp: true,
-  y: 400
+  y: 400,
 });
 let askWhichColumn;
 let putCardOnPile;
 ///////////////////////////////////////////////////////////
 // Fonction pour supprimer les bordures des cartes
 function deleteBorderCards() {
-  myHand.forEach(function(card) {
+  myHand.forEach(function (card) {
     myHand.borderChange(card, false);
   });
 }
 ////////////////////////////////////////////////////
 // Fonction pour supprimer les bordures des piles
 function deleteBorderPiles() {
-  piles.map(pile => pile.borderChange(false));
+  piles.map((pile) => pile.borderChange(false));
 }
 
 export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
@@ -37,7 +37,7 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
   cards.init({
     table: "#card-table",
     piles: ArrayPiles,
-    widthScreen: document.getElementById("card-table").offsetWidth
+    widthScreen: document.getElementById("card-table").offsetWidth,
   });
   //Create a new deck of cards
   deck = new cards.Deck();
@@ -50,7 +50,7 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
   let nbAsc = 0;
   let nbDesc = 0;
   // Fonction pour savoir le nombre de cartes restantes
-  deck.click(function() {
+  deck.click(function () {
     deck.cardsLeft();
   });
   // en 150% width = 1263 px et height = 491 px
@@ -62,17 +62,17 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
   for (let pile of ArrayPiles) {
     let p = new cards.Deck({
       id: pile._id,
-      faceUp: true
+      faceUp: true,
     });
     if (pile.orientation === "up") {
-      p.x += 75 + (tableWidth / 12) * nbDesc++;
+      p.x += 120 + (tableWidth / 9) * nbDesc++;
       p.addCardPerso(deck.firstCard(), 1);
     } else if (pile.orientation === "down") {
-      p.x -= 185 + (tableWidth / 12) * nbAsc++;
+      p.x -= 250 + (tableWidth / 9) * nbAsc++;
       p.addCardPerso(deck.firstCard(), 0);
     }
     // eslint-disable-next-line
-    p.click(function() {
+    p.click(function () {
       const ind = p.length - 1;
       if (p[ind].el.hasClass("borderPile")) {
         const cardSelected = getCardSelected(myHand);
@@ -84,10 +84,10 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
     });
     piles.unshift(p);
   }
-  piles.forEach(element => element.render());
+  piles.forEach((element) => element.render());
   // Fonction qui initialise les piles et mains des joueurs
-  deck.deal(0, playersHand, function() {
-    piles.forEach(element => {
+  deck.deal(0, playersHand, function () {
+    piles.forEach((element) => {
       element.render();
     });
   });
@@ -95,7 +95,7 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
   // Fonction pour récupérer la carte sélectionnée
   function getCardSelected(myHand) {
     let cardSelected = "";
-    myHand.forEach(function(card) {
+    myHand.forEach(function (card) {
       if (card.el.hasClass("borderCard")) {
         cardSelected = card;
       }
@@ -105,16 +105,16 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
 }
 
 export function start(playerId, ArrayPlayers) {
-  ArrayPlayers.filter(ele => ele === playerId).map(ele => {
+  ArrayPlayers.filter((ele) => ele === playerId).map((ele) => {
     myHand = new cards.Hand({
       id: ele,
       faceUp: true,
-      y: tableHeight - 100
+      y: tableHeight - 100,
     });
     playersHand.push(myHand);
     ////////////////////////////////////////////////////
     // Fonction pour sélectionner une carte dans notre main
-    myHand.click(function(card) {
+    myHand.click(function (card) {
       let isSelected = false;
       // On regarde si la carte était déjà sélectionnée
       if (card.el.hasClass("borderCard")) {
@@ -127,17 +127,17 @@ export function start(playerId, ArrayPlayers) {
       let cardValue = card.rank;
       // On regarde si la carte était déjà sélectionnée
       if (isSelected === false) {
-        askWhichColumn(cardValue).then(res => {
+        askWhichColumn(cardValue).then((res) => {
           piles
-            .filter(pile => res.includes(pile.id))
-            .map(pile => pile.borderChange(true));
+            .filter((pile) => res.includes(pile.id))
+            .map((pile) => pile.borderChange(true));
         });
         myHand.borderChange(card, true);
       }
     });
     return null;
   });
-  ArrayPlayers.filter(ele => ele !== playerId).map((ele, index) => {
+  ArrayPlayers.filter((ele) => ele !== playerId).map((ele, index) => {
     let x;
     let y;
     switch (index) {
@@ -163,13 +163,13 @@ export function start(playerId, ArrayPlayers) {
       id: ele,
       faceUp: false,
       y: y,
-      x: x
+      x: x,
     });
     playersHand.push(hand);
     return null;
   });
-  deck.deal(0, playersHand, function() {
-    piles.forEach(element => {
+  deck.deal(0, playersHand, function () {
+    piles.forEach((element) => {
       //element.addCard(deck.firstCard());
       element.render();
     });
@@ -181,13 +181,13 @@ export function putCard(idPlayer, cardValue, idPile) {
   let player;
   let carte;
   // On cherche la main du joueur à partir de son id
-  playersHand.map(element => {
+  playersHand.map((element) => {
     if (element.id === idPlayer) {
       player = element;
       if (myHand.id !== idPlayer && element[0] !== undefined) {
         carte = element[0];
       } else {
-        element.map(el => {
+        element.map((el) => {
           if (el.rank === cardValue) {
             carte = el;
             deleteBorderPiles();
@@ -200,7 +200,7 @@ export function putCard(idPlayer, cardValue, idPile) {
     return null;
   });
   // On cherche la pile où mettre la carte
-  piles.map(element => {
+  piles.map((element) => {
     if (element.id === idPile) {
       element.addCardPerso(carte, cardValue);
       element.render();
@@ -220,7 +220,7 @@ export function drawCard(idPlayer, cardValue, nbPlayers) {
   } else if (nbPlayers === 1) {
     limitePioche = 8;
   }
-  playersHand.map(element => {
+  playersHand.map((element) => {
     if (element.id === idPlayer && element.length < limitePioche) {
       element.addCardPerso(deck.topCard(), cardValue);
       element.render();

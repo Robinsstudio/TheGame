@@ -7,6 +7,8 @@ import JoinGame from "./JoinGame";
 import HistoryGame from "./HistoryGame";
 import Request from "./../../js/request.js";
 import { withSnackbar } from "notistack";
+import Button from "@material-ui/core/Button";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 class LobbyPage extends Component {
   constructor(props) {
@@ -16,13 +18,14 @@ class LobbyPage extends Component {
       idGame: undefined,
       gameSelected: false,
       JoinGame: [],
-      HistoryGame: []
+      HistoryGame: [],
     };
     this.selectGame = this.selectGame.bind(this);
     this.selectIdGame = this.selectIdGame.bind(this);
     this.fetchMyGames = this.fetchMyGames.bind(this);
     this.fetchPublicGames = this.fetchPublicGames.bind(this);
     this.changeSnackbar = this.changeSnackbar.bind(this);
+    this.deleteAllGames = this.deleteAllGames.bind(this);
   }
   componentDidMount() {
     this.fetchMyGames();
@@ -33,7 +36,7 @@ class LobbyPage extends Component {
   changeSnackbar(message, snackType = "info", duration = 4000) {
     this.props.enqueueSnackbar(message, {
       variant: snackType,
-      autoHideDuration: duration
+      autoHideDuration: duration,
     });
   }
   //////////////////////////////////////////////////////////////////////
@@ -43,14 +46,14 @@ class LobbyPage extends Component {
     new Request("/api/games/playable")
       .get()
       .send()
-      .then(res => {
+      .then((res) => {
         if (res.ok) return res.json();
-        return res.text().then(err => {
+        return res.text().then((err) => {
           throw new Error(err);
         });
       })
-      .then(res => this.setState({ JoinGame: res }))
-      .catch(err => console.log(err));
+      .then((res) => this.setState({ JoinGame: res }))
+      .catch((err) => console.log(err));
   }
   //////////////////////////////////////////////////////////////////////
   // Fonction pour faire une réqûete et récupérer l'historique des parties du joueur
@@ -58,28 +61,52 @@ class LobbyPage extends Component {
     new Request("/api/games/ended")
       .get()
       .send()
-      .then(res => {
+      .then((res) => {
         if (res.ok) return res.json();
-        return res.text().then(err => {
+        return res.text().then((err) => {
           throw new Error(err);
         });
       })
-      .then(res => this.setState({ HistoryGame: res }))
-      .catch(err => console.log(err));
+      .then((res) => this.setState({ HistoryGame: res }))
+      .catch((err) => console.log(err));
   }
   //////////////////////////////////////////////////////////////////////
   // fonction pour dire si une partie a été sélectionnée dans le tableau
   selectGame(bool) {
     this.setState({
-      gameSelected: bool
+      gameSelected: bool,
     });
   }
   //////////////////////////////////////////////////////////////////////
   // fonction pour modifier l'id d'une game sélectionnée dans un tableau
   selectIdGame(id) {
     this.setState({
-      idGame: id
+      idGame: id,
     });
+  }
+  //////////////////////////////////////////////////////////////////////
+  // fonction pour supprimer toutes les parties dans la base de données
+  deleteAllGames() {
+    this.changeSnackbar("Suppression de toutes les parties", "info", 2000);
+    new Request("/api/games/deleteAll")
+      .delete()
+      .send()
+      .then((res) => {
+        if (res.ok) {
+          this.changeSnackbar(
+            "Toutes les parties ont été supprimées",
+            "success",
+            2000
+          );
+          this.fetchMyGames();
+          this.fetchPublicGames();
+          return res.json();
+        }
+        return res.text().then((err) => {
+          throw new Error(err);
+        });
+      })
+      .catch((err) => console.log(err));
   }
 
   render() {
@@ -96,8 +123,8 @@ class LobbyPage extends Component {
     JoinGameComponent = (
       <JoinGame
         data={this.state.JoinGame}
-        selectGame={bool => this.selectGame(bool)}
-        selectIdGame={id => this.selectIdGame(id)}
+        selectGame={(bool) => this.selectGame(bool)}
+        selectIdGame={(id) => this.selectIdGame(id)}
         fetch={() => this.fetchPublicGames()}
       ></JoinGame>
     );
@@ -118,6 +145,17 @@ class LobbyPage extends Component {
           <Grid item xs={12} sm={6}>
             <h3>Votre historique de parties :</h3>
             {HistoryGameComponent}
+          </Grid>
+        </Grid>
+        <Grid container spacing={3}>
+          <Grid item xs={12} className="gridButtonSection">
+            <Button
+              className="DeleteButton"
+              onClick={() => this.deleteAllGames()}
+            >
+              <DeleteIcon className="lobbyIcon"></DeleteIcon> Supprimer toutes
+              les parties
+            </Button>
           </Grid>
         </Grid>
       </Container>

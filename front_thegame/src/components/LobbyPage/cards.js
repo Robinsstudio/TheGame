@@ -2,7 +2,7 @@
 
 let paddingCard = 40;
 
-var cards = (function() {
+var cards = (function () {
   //The global options
   var opt = {
     cardSize: { width: 155.6, height: 238.6 },
@@ -10,7 +10,7 @@ var cards = (function() {
     table: "body",
     cardback: "img/dos.png",
     acesHigh: false,
-    cardsUrl: "img/cards.png"
+    cardsUrl: "img/cards.png",
   };
   var zIndexCounter = 100;
   var all = []; //All the cards created.
@@ -32,7 +32,7 @@ var cards = (function() {
     } else if (paddingCard < 1800) {
       paddingCard = 60;
     } else {
-      paddingCard = 80;
+      paddingCard = 100;
     }
     while (all.length !== 0) all.pop();
     if (options) {
@@ -70,7 +70,7 @@ var cards = (function() {
   }
 
   Card.prototype = {
-    init: function(suit, column, rank, table) {
+    init: function (suit, column, rank, table) {
       this.shortName = rank;
       this.column = column;
       this.suit = suit;
@@ -82,23 +82,23 @@ var cards = (function() {
           .css({
             width:
               this.rank === 1 || this.rank === 100
-                ? opt.cardSize.width - 2
+                ? opt.cardSize.width - 3
                 : opt.cardSize.width,
             height: opt.cardSize.height,
             "background-image": "url(" + opt.cardsUrl + ")",
             position: "absolute",
-            cursor: "pointer"
+            cursor: "pointer",
           })
           .addClass("card")
           .addClass("miniCard")
           .hover(
-            function() {
+            function () {
               if ($(this).hasClass("Visible")) {
                 $(this).removeClass("miniCard");
                 $(this).addClass("cardHover");
               }
             },
-            function() {
+            function () {
               if ($(this).hasClass("Visible")) {
                 $(this).removeClass("cardHover");
                 $(this).addClass("miniCard");
@@ -112,34 +112,34 @@ var cards = (function() {
       this.moveToFront();
     },
 
-    toString: function() {
+    toString: function () {
       return this.name;
     },
 
-    moveTo: function(x, y, speed, callback) {
+    moveTo: function (x, y, speed, callback) {
       var props = {
         top: y - opt.cardSize.height / 2,
-        left: x - opt.cardSize.width / 2
+        left: x - opt.cardSize.width / 2,
       };
       $(this.el).animate(props, speed || opt.animationSpeed, callback);
     },
 
-    rotate: function(angle) {
+    rotate: function (angle) {
       $(this.el).css("transform", "rotate(" + angle + "deg)");
     },
 
-    showCard: function() {
+    showCard: function () {
       var offsets = {
-        "0": 0,
-        "1": 1,
-        "2": 2,
-        "3": 3,
-        "4": 4,
-        "5": 5,
-        "6": 6,
-        "7": 7,
-        "8": 8,
-        "9": 9
+        0: 0,
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+        5: 5,
+        6: 6,
+        7: 7,
+        8: 8,
+        9: 9,
       };
       var xpos, ypos;
       var rank = this.rank;
@@ -159,31 +159,31 @@ var cards = (function() {
       }
     },
 
-    hideCard: function() {
+    hideCard: function () {
       $(this.el).removeClass("Visible");
       $(this.el).css("background-image", "url(" + opt.cardback + ")");
       this.rotate(0);
     },
 
-    moveToFront: function() {
+    moveToFront: function () {
       $(this.el).css("z-index", zIndexCounter++);
-    }
+    },
   };
 
   function Container() {}
 
   Container.prototype = [];
-  Container.prototype.extend = function(obj) {
+  Container.prototype.extend = function (obj) {
     for (var prop in obj) {
       this[prop] = obj[prop];
     }
   };
   Container.prototype.extend({
-    addCard: function(card) {
+    addCard: function (card) {
       this.addCards([card]);
     },
 
-    addCardPerso: function(card, cardValue) {
+    addCardPerso: function (card, cardValue) {
       let line;
       let column;
       if (cardValue > 9) {
@@ -202,7 +202,7 @@ var cards = (function() {
       this.addCards([card]);
     },
 
-    addCards: function(cards) {
+    addCards: function (cards) {
       for (var i = 0; i < cards.length; i++) {
         var card = cards[i];
         if (card.container) {
@@ -213,7 +213,7 @@ var cards = (function() {
       }
     },
 
-    removeCard: function(cardValue) {
+    removeCard: function (cardValue) {
       for (var i = 0; i < this.length; i++) {
         if (this[i].shortName === cardValue) {
           this.splice(i, 1);
@@ -223,7 +223,7 @@ var cards = (function() {
       return false;
     },
 
-    init: function(options) {
+    init: function (options) {
       options = options || {};
       this.x = options.x || $(opt.table).width() / 2;
       this.y = options.y || $(opt.table).height() / 2;
@@ -231,19 +231,19 @@ var cards = (function() {
       this.id = options.id;
     },
 
-    click: function(func, context) {
+    click: function (func, context) {
       this._click = { func: func, context: context };
     },
 
-    mousedown: function(func, context) {
+    mousedown: function (func, context) {
       this._mousedown = { func: func, context: context };
     },
 
-    mouseup: function(func, context) {
+    mouseup: function (func, context) {
       this._mouseup = { func: func, context: context };
     },
 
-    render: function(options) {
+    render: function (options) {
       options = options || {};
       var speed = opt.animationSpeed;
       this.calcPosition(options);
@@ -257,7 +257,7 @@ var cards = (function() {
           var props = {
             top: card.targetTop,
             left: card.targetLeft,
-            queue: false
+            queue: false,
           };
           if (options.immediate) {
             $(card.el).css(props);
@@ -267,7 +267,7 @@ var cards = (function() {
         }
       }
       var me = this;
-      var flip = function() {
+      var flip = function () {
         for (var i = 0; i < me.length; i++) {
           if (me.faceUp) {
             me[i].showCard();
@@ -288,14 +288,14 @@ var cards = (function() {
     },
 
     // Retourne la carte sur le paquet (donc la dernière du tableau)
-    topCard: function() {
+    topCard: function () {
       return this[this.length - 1];
     },
 
     // Retourne la première carte du deck (la carte en dessous du deck)
-    firstCard: function() {
+    firstCard: function () {
       return this[0];
-    }
+    },
   });
 
   function Deck(options) {
@@ -304,7 +304,7 @@ var cards = (function() {
 
   Deck.prototype = new Container();
   Deck.prototype.extend({
-    calcPosition: function(options) {
+    calcPosition: function (options) {
       options = options || {};
       var left = Math.round(this.x - opt.cardSize.width / 2, 0);
       var top = Math.round(this.y - opt.cardSize.height / 2, 0);
@@ -319,7 +319,7 @@ var cards = (function() {
       }
     },
     // Changement taille de la pile
-    borderChange: function(boolean) {
+    borderChange: function (boolean) {
       const ind = this.length - 1;
       if (boolean === false) {
         this[ind].el.addClass("miniCard");
@@ -329,7 +329,7 @@ var cards = (function() {
         this[ind].el.removeClass("miniCard");
       }
     },
-    deal: function(count, hands, callback) {
+    deal: function (count, hands, callback) {
       var me = this;
       var i = 0;
       var totalCount = count * hands.length;
@@ -343,12 +343,12 @@ var cards = (function() {
         hands[i % hands.length].addCard(me.topCard());
         hands[i % hands.length].render({
           callback: dealOne,
-          speed: opt.animationSpeed
+          speed: opt.animationSpeed,
         });
         i++;
       }
       dealOne();
-    }
+    },
   });
 
   function Hand(options) {
@@ -357,7 +357,7 @@ var cards = (function() {
   Hand.prototype = new Container();
   Hand.prototype.extend({
     // changement de taille pour la carte séléctionnée
-    borderChange: function(card, boolean) {
+    borderChange: function (card, boolean) {
       if (boolean === false) {
         card.el.addClass("miniCard");
         card.el.removeClass("borderCard");
@@ -366,7 +366,7 @@ var cards = (function() {
         card.el.removeClass("miniCard");
       }
     },
-    calcPosition: function(options) {
+    calcPosition: function (options) {
       options = options || {};
       var width = opt.cardSize.width + (this.length - 1) * paddingCard;
       var left = Math.round(this.x - width / 2);
@@ -375,7 +375,7 @@ var cards = (function() {
         this[i].targetTop = top;
         this[i].targetLeft = left + i * paddingCard;
       }
-    }
+    },
   });
 
   function Pile(options) {
@@ -384,20 +384,20 @@ var cards = (function() {
 
   Pile.prototype = new Container();
   Pile.prototype.extend({
-    calcPosition: function(options) {
+    calcPosition: function (options) {
       options = options || {};
     },
 
-    deal: function(count, hands) {
+    deal: function (count, hands) {
       if (!this.dealCounter) {
         this.dealCounter = count * hands.length;
       }
-    }
+    },
   });
 
   function CreateEndDiv() {
-    $(".App").append('<div id="three-container"></div>');
-    $(".gameContainer").fadeOut(500, function() {
+    $(".App > div:nth-child(2)").append('<div id="three-container"></div>');
+    $(".gameContainer").fadeOut(500, function () {
       $(this).empty();
     });
   }
@@ -412,7 +412,7 @@ var cards = (function() {
     Deck: Deck,
     Hand: Hand,
     Pile: Pile,
-    CreateEndDiv: CreateEndDiv
+    CreateEndDiv: CreateEndDiv,
   };
 })();
 

@@ -210,3 +210,34 @@
     z-index: 50000 !important;
   }
 }
+
+/***********************************************************************\
+/***********************************************************************\
+/***********************************************************************\
+/* Si écran très large */
+@media screen and (min-width: 1900px) and (min-height: 700px) {
+  .buttonEndTurn {
+    font-size: 36px !important;
+    position: absolute !important;
+    color: black !important;
+    top: 45%;
+    right: 40px;
+  }
+  .cardHover {
+    transform: scale(1.2) !important;
+    z-index: 50000 !important;
+  }
+
+  .borderPile {
+    transform: scale(1.1) !important;
+  }
+
+  .miniCard {
+    transform: scale(0.9) !important;
+  }
+
+  .borderCard {
+    transform: scale(1.2) !important;
+    z-index: 50000 !important;
+  }
+}
