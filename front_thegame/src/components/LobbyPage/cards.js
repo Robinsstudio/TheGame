@@ -1,10 +1,12 @@
 ﻿import $ from "jquery";
 
+let paddingCard = 40;
+
 var cards = (function() {
   //The global options
   var opt = {
-    cardSize: { width: 69, height: 106, padding: 40 },
-    animationSpeed: 500,
+    cardSize: { width: 155.6, height: 238.6 },
+    animationSpeed: 300,
     table: "body",
     cardback: "img/dos.png",
     acesHigh: false,
@@ -24,6 +26,14 @@ var cards = (function() {
   }
 
   function init(options) {
+    paddingCard = options.widthScreen;
+    if (paddingCard < 1450) {
+      paddingCard = 45;
+    } else if (paddingCard < 1800) {
+      paddingCard = 60;
+    } else {
+      paddingCard = 80;
+    }
     while (all.length !== 0) all.pop();
     if (options) {
       for (let i in options) {
@@ -70,21 +80,29 @@ var cards = (function() {
       if (rank >= 0) {
         this.el = $("<div/>")
           .css({
-            width: opt.cardSize.width,
+            width:
+              this.rank === 1 || this.rank === 100
+                ? opt.cardSize.width - 2
+                : opt.cardSize.width,
             height: opt.cardSize.height,
             "background-image": "url(" + opt.cardsUrl + ")",
             position: "absolute",
             cursor: "pointer"
           })
           .addClass("card")
+          .addClass("miniCard")
           .hover(
             function() {
               if ($(this).hasClass("Visible")) {
+                $(this).removeClass("miniCard");
                 $(this).addClass("cardHover");
               }
             },
             function() {
-              $(this).removeClass("cardHover");
+              if ($(this).hasClass("Visible")) {
+                $(this).removeClass("cardHover");
+                $(this).addClass("miniCard");
+              }
             }
           )
           .data("card", this)
@@ -107,12 +125,7 @@ var cards = (function() {
     },
 
     rotate: function(angle) {
-      $(this.el)
-        .css("-webkit-transform", "rotate(" + angle + "deg)")
-        .css("-moz-transform", "rotate(" + angle + "deg)")
-        .css("-ms-transform", "rotate(" + angle + "deg)")
-        .css("transform", "rotate(" + angle + "deg)")
-        .css("-o-transform", "rotate(" + angle + "deg)");
+      $(this.el).css("transform", "rotate(" + angle + "deg)");
     },
 
     showCard: function() {
@@ -138,6 +151,8 @@ var cards = (function() {
         // Si la carte est dans la main du joueur alors on ajoute la classe Visible pour qu'elle grossisse
         if (this.container instanceof Hand) {
           $(this.el).addClass("Visible");
+        } else {
+          $(this.el).removeClass("Visible");
         }
         $(this.el).css("background-image", "url(" + opt.cardsUrl + ")");
         $(this.el).css("background-position", xpos + "px " + ypos + "px");
@@ -182,7 +197,8 @@ var cards = (function() {
       card.column = column;
       card.rank = cardValue;
       card.name = "carte" + cardValue;
-
+      $(card.el).removeClass("Visible");
+      $(card.el).removeClass("cardHover");
       this.addCards([card]);
     },
 
@@ -279,12 +295,6 @@ var cards = (function() {
     // Retourne la première carte du deck (la carte en dessous du deck)
     firstCard: function() {
       return this[0];
-    },
-
-    // Retourne le nombre de cartes restantes dans la pile
-    cardsLeft: function() {
-      console.log(this.length);
-      console.log(this);
     }
   });
 
@@ -312,9 +322,11 @@ var cards = (function() {
     borderChange: function(boolean) {
       const ind = this.length - 1;
       if (boolean === false) {
+        this[ind].el.addClass("miniCard");
         this[ind].el.removeClass("borderPile");
       } else {
         this[ind].el.addClass("borderPile");
+        this[ind].el.removeClass("miniCard");
       }
     },
     deal: function(count, hands, callback) {
@@ -347,19 +359,21 @@ var cards = (function() {
     // changement de taille pour la carte séléctionnée
     borderChange: function(card, boolean) {
       if (boolean === false) {
+        card.el.addClass("miniCard");
         card.el.removeClass("borderCard");
       } else {
         card.el.addClass("borderCard");
+        card.el.removeClass("miniCard");
       }
     },
     calcPosition: function(options) {
       options = options || {};
-      var width = opt.cardSize.width + (this.length - 1) * opt.cardSize.padding;
+      var width = opt.cardSize.width + (this.length - 1) * paddingCard;
       var left = Math.round(this.x - width / 2);
       var top = Math.round(this.y - opt.cardSize.height / 2, 0);
       for (var i = 0; i < this.length; i++) {
         this[i].targetTop = top;
-        this[i].targetLeft = left + i * opt.cardSize.padding;
+        this[i].targetLeft = left + i * paddingCard;
       }
     }
   });

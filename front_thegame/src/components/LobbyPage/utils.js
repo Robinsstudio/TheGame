@@ -4,6 +4,10 @@ let deck;
 let piles = [];
 let playersHand = [];
 
+let tableHeight = 0;
+let tableWidth = 0;
+let limitePioche = 8;
+
 let myHand = new cards.Hand({
   id: "",
   faceUp: true,
@@ -30,8 +34,11 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
   askWhichColumn = callbackAskColumn;
   putCardOnPile = callbackPutCardOnPile;
   //Tell the library which element to use for the table
-  //cards.init({ table: "#card-table", piles: ArrayPiles.length });
-  cards.init({ table: "#card-table", piles: ArrayPiles });
+  cards.init({
+    table: "#card-table",
+    piles: ArrayPiles,
+    widthScreen: document.getElementById("card-table").offsetWidth
+  });
   //Create a new deck of cards
   deck = new cards.Deck();
   //By default it's in the middle of the container, put it slightly to the side
@@ -46,6 +53,11 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
   deck.click(function() {
     deck.cardsLeft();
   });
+  // en 150% width = 1263 px et height = 491 px
+  // en 125% width = 1519 px et height = 614 px
+  // en 100% width = 1903 px et height = 796 px
+  tableHeight = document.getElementById("card-table").offsetHeight;
+  tableWidth = document.getElementById("card-table").offsetWidth;
 
   for (let pile of ArrayPiles) {
     let p = new cards.Deck({
@@ -53,10 +65,10 @@ export function init(ArrayPiles, callbackAskColumn, callbackPutCardOnPile) {
       faceUp: true
     });
     if (pile.orientation === "up") {
-      p.x += 50 + 100 * nbDesc++;
+      p.x += 75 + (tableWidth / 12) * nbDesc++;
       p.addCardPerso(deck.firstCard(), 1);
     } else if (pile.orientation === "down") {
-      p.x -= 150 + 100 * nbAsc++;
+      p.x -= 185 + (tableWidth / 12) * nbAsc++;
       p.addCardPerso(deck.firstCard(), 0);
     }
     // eslint-disable-next-line
@@ -97,7 +109,7 @@ export function start(playerId, ArrayPlayers) {
     myHand = new cards.Hand({
       id: ele,
       faceUp: true,
-      y: 400
+      y: tableHeight - 100
     });
     playersHand.push(myHand);
     ////////////////////////////////////////////////////
@@ -130,19 +142,19 @@ export function start(playerId, ArrayPlayers) {
     let y;
     switch (index) {
       case 0:
-        y = 60;
+        y = tableHeight / 7;
         break;
       case 1:
-        y = 60;
+        y = tableHeight / 7;
         x = 300;
         break;
       case 2:
-        y = 400;
-        x = 200;
+        y = tableHeight / 7;
+        x = tableWidth - 300;
         break;
       case 3:
-        y = 400;
-        x = 1000;
+        y = tableHeight - 100;
+        x = tableWidth - 300;
         break;
       default:
         break;
@@ -200,9 +212,16 @@ export function putCard(idPlayer, cardValue, idPile) {
 
 ////////////////////////////////////////////////////////
 // Fonction pour faire piocher un joueur
-export function drawCard(idPlayer, cardValue) {
+export function drawCard(idPlayer, cardValue, nbPlayers) {
+  if (nbPlayers > 2) {
+    limitePioche = 6;
+  } else if (nbPlayers === 2) {
+    limitePioche = 7;
+  } else if (nbPlayers === 1) {
+    limitePioche = 8;
+  }
   playersHand.map(element => {
-    if (element.id === idPlayer) {
+    if (element.id === idPlayer && element.length < limitePioche) {
       element.addCardPerso(deck.topCard(), cardValue);
       element.render();
     }

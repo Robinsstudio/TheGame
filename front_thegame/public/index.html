@@ -1,23 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
+
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>The Game</title>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway|Candal"
-    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway|Candal" />
     <link rel="stylesheet" href="bootstrap.min.css" />
     <link rel="stylesheet" href="example.css" />
   </head>
@@ -38,7 +29,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
 
     <script>
-      THREE.ShapeUtils.triangulateShape = (function() {
+      THREE.ShapeUtils.triangulateShape = (function () {
         var pnlTriangulator = new PNLTRI.Triangulator();
         return function triangulateShape(contour, holes) {
           return pnlTriangulator.triangulate_polygon([contour].concat(holes));
@@ -70,7 +61,7 @@
           }
         );
         createTweenScrubber(tween);
-        setTimeout(stopAnimation, 15000);
+        setTimeout(stopAnimation, 16000);
       }
 
       function createTweenScrubber(tween, seekSpeed) {
@@ -165,7 +156,7 @@
         for (
           i = 0, i2 = 0, i3 = 0, i4 = 0;
           i < faceCount;
-          i++, i2 += 6, i3 += 9, i4 += 12
+          i++ , i2 += 6, i3 += 9, i4 += 12
         ) {
           var face = textGeometry.faces[i];
           var centroid = THREE.BAS.Utils.computeCentroid(textGeometry, face);
@@ -242,10 +233,10 @@
       TextAnimation.prototype.constructor = TextAnimation;
 
       Object.defineProperty(TextAnimation.prototype, "animationProgress", {
-        get: function() {
+        get: function () {
           return this._animationProgress;
         },
-        set: function(v) {
+        set: function (v) {
           this._animationProgress = v;
           this.material.uniforms["uTime"].value = this.animationDuration * v;
         }
@@ -297,18 +288,18 @@
         window.addEventListener("resize", this.resize, false);
       }
       THREERoot.prototype = {
-        tick: function() {
+        tick: function () {
           this.update();
           this.render();
           requestAnimationFrame(this.tick);
         },
-        update: function() {
+        update: function () {
           this.controls && this.controls.update();
         },
-        render: function() {
+        render: function () {
           this.renderer.render(this.scene, this.camera);
         },
-        resize: function() {
+        resize: function () {
           this.camera.aspect = window.innerWidth / window.innerHeight;
           this.camera.updateProjectionMatrix();
 
@@ -321,7 +312,7 @@
       ////////////////////
 
       var utils = {
-        extend: function(dst, src) {
+        extend: function (dst, src) {
           for (var key in src) {
             dst[key] = src[key];
           }
@@ -332,7 +323,10 @@
 
       function stopAnimation() {
         $("#three-container").remove();
+        $("#gameEnded").removeClass("displayNone");
+        $("#gameEnded").addClass("buttonQuitGame");
       }
     </script>
   </body>
+
 </html>

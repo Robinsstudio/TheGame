@@ -42,9 +42,11 @@ class Game extends Component {
     this.playCard = this.playCard.bind(this);
     this.changeSnackbar = this.changeSnackbar.bind(this);
     this.playerQuit = this.playerQuit.bind(this);
+    this.runActions = this.runActions.bind(this);
   }
 
   componentDidMount() {
+    Notification.requestPermission();
     let searchParams = window.location.search;
     let urlSearchParams = new URLSearchParams(searchParams);
     if (urlSearchParams.has("id")) {
@@ -78,6 +80,13 @@ class Game extends Component {
         "info",
         2000
       );
+      if (
+        this.state.playerId === this.state.nowPlaying &&
+        document.visibilityState !== "visible" &&
+        Notification.permission === "granted"
+      ) {
+        new Notification("C'est à votre tour de jouer");
+      }
     }
     if (
       this.state.playerId !== undefined &&
@@ -159,7 +168,6 @@ class Game extends Component {
         });
       })
       .then(res => {
-        console.log(res);
         this.interval = setInterval(() => this.getGameInfo(), 500);
         if (res.piles !== undefined) this.piles = res.piles;
         this.setState({ players: res.players, joined: true });
@@ -177,15 +185,11 @@ class Game extends Component {
           throw new Error(err);
         });
       })
-      .then(res => {
-        console.log(res);
-      })
       .catch(err => this.changeSnackbar(err.message, "error"));
   }
 
   runActions(actions) {
     for (let action of actions) {
-      console.log(action);
       if (action.type === "playCard") {
         utils.putCard(
           action.details.who,
@@ -193,7 +197,11 @@ class Game extends Component {
           action.details.pile
         );
       } else if (action.type === "drawCard") {
-        utils.drawCard(action.details.who, action.details.card.value);
+        utils.drawCard(
+          action.details.who,
+          action.details.card.value,
+          this.state.players.length
+        );
       } else if (action.type === "game over") {
         utils.CreateEndDiv();
         this.changeSnackbar("La partie est perdue !", "warning");
@@ -265,7 +273,6 @@ class Game extends Component {
         this.displayMessages(res.messages);
         if (Object.keys(newState).length > 0) {
           this.setState(newState);
-          console.log(res);
           if (cardsPile !== res.deckPile && res.status === "playing") {
             cardsPile = res.deckPile;
             this.changeSnackbar(
@@ -322,113 +329,134 @@ class Game extends Component {
   }
 
   render() {
-    console.log(this.state);
     let redirect;
     if (this.state.gameId === "")
       redirect = <Redirect to={RouteBuilder.get("/lobby")} />;
     return (
-      <div className="gameContainer">
-        <div className="buttonHeader">
-          {this.state.game === "waitingPlayers" && (
-            <Table
-              style={{ maxWidth: "600px", margin: "auto" }}
-              aria-label="simple table"
-            >
-              <TableHead>
-                <TableRow>
-                  <TableCell>Joueur(s)</TableCell>
-                  <TableCell align="right">Prêt(s)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {this.state.players.map(player => (
-                  <TableRow key={player._id}>
-                    <TableCell component="th" scope="row">
-                      {this.players[`${player._id}`]
-                        ? this.players[`${player._id}`]
-                        : this.addPlayerLogin(player._id)}
-                    </TableCell>
-                    <TableCell align="right">
-                      {player.ready ? (
-                        <DoneIcon fontSize="large" style={{ color: "green" }} />
-                      ) : (
-                        <CloseIcon fontSize="large" style={{ color: "red" }} />
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-          <div className="buttonLaunchGame">
-            {redirect}
+      <div className="parentContainer">
+        <div className="gameContainer">
+          <div className="buttonHeader">
             {this.state.game === "waitingPlayers" && (
-              <Button
-                color="secondary"
-                className="buttonQuitGame"
-                onClick={() => this.playerQuit()}
+              <Table
+                style={{ maxWidth: "600px", margin: "auto" }}
+                aria-label="simple table"
               >
-                Quitter la partie
-              </Button>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Joueur(s)</TableCell>
+                    <TableCell align="right">Prêt(s)</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {this.state.players.map(player => (
+                    <TableRow key={player._id}>
+                      <TableCell component="th" scope="row">
+                        {this.players[`${player._id}`]
+                          ? this.players[`${player._id}`]
+                          : this.addPlayerLogin(player._id)}
+                      </TableCell>
+                      <TableCell align="right">
+                        {player.ready ? (
+                          <DoneIcon
+                            fontSize="large"
+                            style={{ color: "green" }}
+                          />
+                        ) : (
+                          <CloseIcon
+                            fontSize="large"
+                            style={{ color: "red" }}
+                          />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
-            {this.state.ready === false &&
-              this.state.players.length > 1 &&
-              this.state.game === "waitingPlayers" && (
-                <Button
-                  color="primary"
-                  className="buttonReady"
-                  onClick={() => this.playerIsReady()}
-                >
-                  Prêt
-                </Button>
-              )}
-            {this.state.ready === false &&
-              this.state.players.length === 1 &&
-              this.state.game === "waitingPlayers" && (
-                <Button
-                  color="primary"
-                  className="buttonReady"
-                  onClick={() => this.playerIsReady()}
-                >
-                  Lancer la partie
-                </Button>
-              )}
-            {this.state.ready === true &&
-              this.state.players.length > 1 &&
-              this.state.game === "waitingPlayers" && (
-                <Button
-                  color="primary"
-                  className="buttonReady"
-                  onClick={() => this.playerIsReady()}
-                >
-                  Pas Prêt
-                </Button>
-              )}
+            <div className="buttonLaunchGame">
+              {redirect}
+              {this.state.ready === false &&
+                this.state.game === "waitingPlayers" && (
+                  <Button
+                    color="secondary"
+                    className="buttonQuitGame"
+                    onClick={() => this.playerQuit()}
+                  >
+                    Quitter la partie
+                  </Button>
+                )}
+              {this.state.ready === false &&
+                this.state.players.length > 1 &&
+                this.state.game === "waitingPlayers" && (
+                  <Button
+                    color="primary"
+                    className="buttonReady"
+                    onClick={() => this.playerIsReady()}
+                  >
+                    Prêt
+                  </Button>
+                )}
+              {this.state.ready === false &&
+                this.state.players.length === 1 &&
+                this.state.game === "waitingPlayers" && (
+                  <Button
+                    color="primary"
+                    className="buttonReady"
+                    onClick={() => this.playerIsReady()}
+                  >
+                    Lancer la partie
+                  </Button>
+                )}
+              {this.state.ready === true &&
+                this.state.players.length > 1 &&
+                this.state.game === "waitingPlayers" && (
+                  <Button
+                    color="primary"
+                    className="buttonReady"
+                    onClick={() => this.playerIsReady()}
+                  >
+                    Pas Prêt
+                  </Button>
+                )}
+            </div>
+          </div>
+          <div key="game" id="card-table" className="tableVisible">
+            {this.state.game === "playing" && (
+              <div className="containerEndTurn">
+                {this.state.nowPlaying === this.state.playerId ? (
+                  <Button
+                    color="primary"
+                    className="buttonEndTurn"
+                    onClick={() => this.playerEndTurn()}
+                  >
+                    Finir mon tour
+                  </Button>
+                ) : (
+                  <Button
+                    color="primary"
+                    className="buttonEndTurn"
+                    onClick={() => this.playerEndTurn()}
+                  >
+                    Ce n'est pas votre tour
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
-        <div key="game" id="card-table" className="tableVisible">
-          {this.state.game === "playing" && (
-            <div className="containerEndTurn">
-              {this.state.nowPlaying === this.state.playerId ? (
-                <Button
-                  color="primary"
-                  className="buttonEndTurn"
-                  onClick={() => this.playerEndTurn()}
-                >
-                  Finir mon tour
-                </Button>
-              ) : (
-                <Button
-                  color="primary"
-                  className="buttonEndTurn"
-                  onClick={() => this.playerEndTurn()}
-                >
-                  Ce n'est pas votre tour
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
+
+        {this.state.version > 0 && this.state.game !== "playing" && (
+          <div className="buttonLaunchGame">
+            <Button
+              color="secondary"
+              id="gameEnded"
+              className="displayNone"
+              onClick={() => this.playerQuit()}
+            >
+              Retourner à l'accueil
+            </Button>
+          </div>
+        )}
       </div>
     );
   }

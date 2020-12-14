@@ -435,11 +435,17 @@ GameSchema.statics.getGamePlayerCanJoin = function (playerId) {
     ],
   }).then((res) =>
     res.map((ele) => {
+      let versionGame;
+      if (ele.actions.length === 0) {
+        versionGame = ele.actions.length + " (Lancer la partie)";
+      } else {
+        versionGame = ele.actions.length + " (Reprendre la partie)";
+      }
       return {
         status: ele.status,
         id: ele._id,
         name: ele.name,
-        version: ele.actions.length,
+        version: versionGame,
         piles: ele.piles.length,
         players: ele.players.length,
       };
@@ -468,14 +474,6 @@ GameSchema.statics.getEndedGamePlayerPlayed = function (playerId) {
   );
 };
 
-// Fonction pour supprimer toutes les parties en base de données
-GameSchema.statics.deleteAllGames = function () {
-  Game.deleteMany({}, function (res, err) {
-    if (err) return err;
-    return res;
-  });
-};
-
 GameSchema.statics.sendMessage = function (gameId, playerId, message) {
   return Game.findOne({ _id: gameId }).then((game) => {
     if (message === "" || message === undefined)
@@ -493,7 +491,6 @@ GameSchema.statics.sendMessage = function (gameId, playerId, message) {
     } else {
       throw new Error("Joueur non présent dans la partie");
     }
-    throw new Error("Partie introuvable");
   });
 };
 
